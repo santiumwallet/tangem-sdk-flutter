@@ -11,34 +11,59 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
     
     private var _sdk: Any?
     
+    // Store custom derivation paths configuration
+    private var customDerivationPaths: [EllipticCurve: [DerivationPath]]?
+    private var mergeWithDefaults: Bool = true
+    
     @available(iOS 13, *)
     private var sdk: TangemSdk {
         if _sdk == nil {
             var config = Config()
-            config.defaultDerivationPaths = [
-                .secp256k1: [
-                    try! DerivationPath(rawPath: "m/44'/60'/0'/0/0"),   // EVM based blockchains
-                    try! DerivationPath(rawPath: "m/44'/1'/0'/0/0"),    // EVM based blockchain testnets
-                    try! DerivationPath(rawPath: "m/84'/0'/0'/0/0"),    // Bitcoin
-                    try! DerivationPath(rawPath: "m/44'/3'/0'/0/0"),    // Dogecoin
-                    try! DerivationPath(rawPath: "m/44'/144'/0'/0/0"),  // XRP
-                    try! DerivationPath(rawPath: "m/84'/2'/0'/0/0"),    // Litecoin
-                ],
-                .ed25519: [
-                    try! DerivationPath(rawPath: "m/44'/501'/0'"),      // Solana
-                    try! DerivationPath(rawPath: "m/1852'/1815'/0'/0/0"),// Cardano
-                    try! DerivationPath(rawPath: "m/44'/607'/0'"),       // TON
-                ],
-                .bip0340: [
-                    try! DerivationPath(rawPath: "m/0'/1")
-                ]
-            ]
+            config.defaultDerivationPaths = buildDerivationPaths()
             
             let sdk = TangemSdk()
             sdk.config = config
             _sdk = sdk
         }
         return _sdk as! TangemSdk
+    }
+    
+    @available(iOS 13, *)
+    private func buildDerivationPaths() -> [EllipticCurve: [DerivationPath]] {
+        var defaultPaths: [EllipticCurve: [DerivationPath]] = [
+            .secp256k1: [
+                try! DerivationPath(rawPath: "m/44'/60'/0'/0/0"),   // EVM based blockchains
+                try! DerivationPath(rawPath: "m/44'/1'/0'/0/0"),    // EVM based blockchain testnets
+                try! DerivationPath(rawPath: "m/84'/0'/0'/0/0"),    // Bitcoin
+                try! DerivationPath(rawPath: "m/44'/3'/0'/0/0"),    // Dogecoin
+                try! DerivationPath(rawPath: "m/44'/144'/0'/0/0"),  // XRP
+                try! DerivationPath(rawPath: "m/84'/2'/0'/0/0"),    // Litecoin
+            ],
+            .ed25519: [
+                try! DerivationPath(rawPath: "m/44'/501'/0'"),      // Solana
+                try! DerivationPath(rawPath: "m/1852'/1815'/0'/0/0"),// Cardano
+                try! DerivationPath(rawPath: "m/44'/607'/0'"),       // TON
+            ],
+            .bip0340: [
+                try! DerivationPath(rawPath: "m/0'/1")
+            ]
+        ]
+        
+        if let customPaths = customDerivationPaths {
+            if mergeWithDefaults {
+                // Merge custom paths with defaults
+                for (curve, paths) in customPaths {
+                    var existingPaths = defaultPaths[curve] ?? []
+                    existingPaths.append(contentsOf: paths)
+                    defaultPaths[curve] = existingPaths
+                }
+            } else {
+                // Replace defaults with custom paths completely
+                return customPaths
+            }
+        }
+        
+        return defaultPaths
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -48,6 +73,9 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
                 try runJSONRPCRequest(call.arguments, result)
             case "setScanImage":
                 try setScanImage(call.arguments)
+                result("{\"success\": true}")
+            case "configureDerivationPaths":
+                try configureDerivationPaths(call.arguments, result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -96,6 +124,45 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
         sdk.config.style.scanTagImage = scanTagImage
     }
     
+    @available(iOS 13, *)
+    private func configureDerivationPaths(_ args: Any?, _ completion: @escaping FlutterResult) throws {
+        guard let arguments = args as? [String: Any] else {
+            throw FlutterError.missingArguments
+        }
+        
+        mergeWithDefaults = (arguments["mergeWithDefaults"] as? Bool) ?? true
+        
+        if let derivationPathsDict = arguments["derivationPaths"] as? [String: [String]] {
+            customDerivationPaths = [:]
+            
+            for (curveString, pathStrings) in derivationPathsDict {
+                let curve: EllipticCurve
+                switch curveString {
+                case "secp256k1":
+                    curve = .secp256k1
+                case "secp256r1":
+                    curve = .secp256r1
+                case "ed25519":
+                    curve = .ed25519
+                case "bip0340":
+                    curve = .bip0340
+                default:
+                    // Skip unsupported curves on iOS
+                    print("Skipping unsupported curve on iOS: \(curveString)")
+                    continue
+                }
+                
+                let derivationPaths = try pathStrings.map { try DerivationPath(rawPath: $0) }
+                customDerivationPaths![curve] = derivationPaths
+            }
+            
+            // Update the SDK config with new derivation paths
+            sdk.config.defaultDerivationPaths = buildDerivationPaths()
+        }
+        
+        completion("{\"success\": true, \"message\": \"Derivation paths configured successfully\"}")
+    }
+    
     private func getArg<T>(for key: ArgKey, from arguments: Any?) -> T? {
         if let value = (arguments as? NSDictionary)?[key.rawValue] {
             return value as? T
@@ -121,6 +188,10 @@ fileprivate extension FlutterError {
     
     static var missingRequest: FlutterError {
         FlutterError(code: genericCode, message: "Missing JSON RPC request", details: nil)
+    }
+    
+    static var missingArguments: FlutterError {
+        FlutterError(code: genericCode, message: "Missing arguments", details: nil)
     }
     
     static func underlyingError(_ error: Error) -> FlutterError {

@@ -15,10 +15,13 @@ class RowActions extends StatelessWidget {
       wrappedChildren.add(spacer);
     });
     return Container(
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: wrappedChildren,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: wrappedChildren,
+        ),
       ),
     );
   }

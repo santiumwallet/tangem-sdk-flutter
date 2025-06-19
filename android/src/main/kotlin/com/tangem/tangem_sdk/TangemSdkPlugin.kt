@@ -45,6 +45,10 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private val converter = MoshiJsonConverter.default()
 
     private var replyAlreadySubmit = false
+    
+    // Store custom derivation paths configuration
+    private var customDerivationPaths: MutableMap<EllipticCurve, List<DerivationPath>>? = null
+    private var mergeWithDefaults: Boolean = true
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "tangem_sdk")
@@ -65,35 +69,10 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         val config = Config()
         config.apply {
             filter.allowedCardTypes = FirmwareVersion.FirmwareType.values().toList()
-            /// Derivations based on https://github.com/tangem/blockchain-sdk-kotlin/blob/develop/blockchain/src/main/java/com/tangem/blockchain/common/derivation/DerivationConfigV3.kt
-            defaultDerivationPaths = mutableMapOf(
-                EllipticCurve.Secp256k1 to listOf(
-                    // EVM based blockchains
-                    DerivationPath(rawPath = "m/44'/60'/0'/0/0"),
-                    // EVM based blockchain testnets
-                    DerivationPath(rawPath = "m/44'/1'/0'/0/0"),
-                    // Bitcoin
-                    DerivationPath(rawPath = "m/84'/0'/0'/0/0"),
-                    // Dogecoin
-                    DerivationPath(rawPath = "m/44'/3'/0'/0/0"),
-                    // xrp
-                    DerivationPath(rawPath = "m/44'/144'/0'/0/0"),
-                    // litecoin
-                    DerivationPath(rawPath = "m/84'/2'/0'/0/0"),
-                ),
-                EllipticCurve.Ed25519 to listOf(
-                    // Solana
-                    DerivationPath(rawPath = "m/44'/501'/0'"),
-                    // Cardano
-                    DerivationPath(rawPath = "m/1852'/1815'/0'/0/0"),
-                    // TON
-                    DerivationPath(rawPath = "m/44'/607'/0'"),
-                )
-            )
+            defaultDerivationPaths = buildDerivationPaths()
         }
 
         val nfcAvailabilityProvider = AndroidNfcAvailabilityProvider(activity)
-
 
         val authenticationManager = TangemSdk.initAuthenticationManager(activity)
         val wordlist: Wordlist = Wordlist.getWordlist(activity)
@@ -102,6 +81,49 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         nfcManager.onStart(
             activity
         )
+    }
+    
+    private fun buildDerivationPaths(): MutableMap<EllipticCurve, List<DerivationPath>> {
+        val defaultPaths = mutableMapOf(
+            EllipticCurve.Secp256k1 to listOf(
+                // EVM based blockchains
+                DerivationPath(rawPath = "m/44'/60'/0'/0/0"),
+                // EVM based blockchain testnets
+                DerivationPath(rawPath = "m/44'/1'/0'/0/0"),
+                // Bitcoin
+                DerivationPath(rawPath = "m/84'/0'/0'/0/0"),
+                // Dogecoin
+                DerivationPath(rawPath = "m/44'/3'/0'/0/0"),
+                // xrp
+                DerivationPath(rawPath = "m/44'/144'/0'/0/0"),
+                // litecoin
+                DerivationPath(rawPath = "m/84'/2'/0'/0/0"),
+            ),
+            EllipticCurve.Ed25519 to listOf(
+                // Solana
+                DerivationPath(rawPath = "m/44'/501'/0'"),
+                // Cardano
+                DerivationPath(rawPath = "m/1852'/1815'/0'/0/0"),
+                // TON
+                DerivationPath(rawPath = "m/44'/607'/0'"),
+            )
+        )
+        
+        if (customDerivationPaths != null) {
+            if (mergeWithDefaults) {
+                // Merge custom paths with defaults
+                for ((curve, paths) in customDerivationPaths!!) {
+                    val existingPaths = defaultPaths[curve]?.toMutableList() ?: mutableListOf()
+                    existingPaths.addAll(paths)
+                    defaultPaths[curve] = existingPaths
+                }
+            } else {
+                // Replace defaults with custom paths completely
+                return customDerivationPaths!!
+            }
+        }
+        
+        return defaultPaths
     }
 
     override fun onDetachedFromActivity() {
@@ -123,6 +145,9 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
             "setScanImage" -> {
                 setScanImage(call, result)
+            }
+            "configureDerivationPaths" -> {
+                configureDerivationPaths(call, result)
             }
             else -> result.notImplemented()
         }
@@ -168,6 +193,52 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 sdk.setScanImage(scanTagImage)
                 sendSuccessResult(callback)
             }
+        } catch (ex: Exception) {
+            handleException(ex, callback)
+        }
+    }
+    
+    /**
+     * Configure custom derivation paths
+     * {
+     *    "derivationPaths": {
+     *       "secp256k1": ["m/44'/60'/0'/0/0", "m/44'/1'/0'/0/0"],
+     *       "ed25519": ["m/44'/501'/0'"]
+     *    },
+     *    "mergeWithDefaults": true
+     * }
+     */
+    private fun configureDerivationPaths(call: MethodCall, callback: Result) {
+        try {
+            val derivationPathsMap: Map<String, List<String>>? = call.extractOptional("derivationPaths")
+            mergeWithDefaults = call.extractOptional("mergeWithDefaults") ?: true
+            
+            if (derivationPathsMap != null) {
+                customDerivationPaths = mutableMapOf()
+                
+                for ((curveString, pathStrings) in derivationPathsMap) {
+                    val curve = when (curveString) {
+                        "secp256k1" -> EllipticCurve.Secp256k1
+                        "secp256r1" -> EllipticCurve.Secp256r1
+                        "ed25519" -> EllipticCurve.Ed25519
+                        "ed25519Slip0010" -> EllipticCurve.Ed25519Slip0010
+                        "bls12381G2" -> EllipticCurve.Bls12381G2
+                        "bls12381G2Aug" -> EllipticCurve.Bls12381G2Aug
+                        "bls12381G2Pop" -> EllipticCurve.Bls12381G2Pop
+                        "bip0340" -> EllipticCurve.Bip0340
+                        else -> continue // Skip unknown curves
+                    }
+                    
+                    val derivationPaths = pathStrings.map { DerivationPath(rawPath = it) }
+                    customDerivationPaths!![curve] = derivationPaths
+                }
+                
+                // Update the SDK config with new derivation paths
+                sdk.config.defaultDerivationPaths = buildDerivationPaths()
+            }
+            
+            val successResult = "{ \"success\": true, \"message\": \"Derivation paths configured successfully\" }"
+            handleResult(successResult, callback)
         } catch (ex: Exception) {
             handleException(ex, callback)
         }

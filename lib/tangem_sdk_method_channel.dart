@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'model/sdk.dart';
+import 'model/derivation_config.dart';
 import 'tangem_sdk_platform_interface.dart';
 
 /// An implementation of [TangemSdkPlatform] that uses method channels.
@@ -27,5 +28,11 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
       args = scanCardImage.toJson();
     }
     return await methodChannel.invokeMethod("setScanImage", args);
+  }
+
+  @override
+  Future<String> configureDerivationPaths(DerivationPathConfig config) async {
+    return await methodChannel.invokeMethod(
+        "configureDerivationPaths", config.toJson());
   }
 }

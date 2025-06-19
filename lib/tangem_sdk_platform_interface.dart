@@ -1,6 +1,7 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'model/sdk.dart';
+import 'model/derivation_config.dart';
 import 'tangem_sdk_method_channel.dart';
 
 abstract class TangemSdkPlatform extends PlatformInterface {
@@ -25,4 +26,6 @@ abstract class TangemSdkPlatform extends PlatformInterface {
   Future<String> runJSONRPCRequest(Map<String, dynamic> request);
 
   Future<String> setScanImage(ScanTagImage? scanCardImage);
+
+  Future<String> configureDerivationPaths(DerivationPathConfig config);
 }

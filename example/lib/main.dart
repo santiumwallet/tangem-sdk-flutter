@@ -85,6 +85,16 @@ class _CommandListWidgetState extends State<CommandListWidget> {
               ActionButton("Remove", _handleRemoveScanImage),
             ],
           ),
+          ActionType("Derivation Paths Configuration"),
+          RowActions(
+            [
+              ActionButton(
+                  "Configure Custom Paths", _handleConfigureCustomPaths),
+              ActionButton(
+                  "Configure Merged Paths", _handleConfigureMergedPaths),
+              ActionButton("Reset to Defaults", _handleResetToDefaults),
+            ],
+          ),
           ActionType("Wallet"),
           RowActions(
             [
@@ -294,6 +304,73 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       "passcode": "ABCDEFGH",
     });
     _execJsonRPCRequest(request, _cardId);
+  }
+
+  void _handleConfigureCustomPaths() async {
+    try {
+      // Example: Configure custom derivation paths that completely replace defaults
+      // Using only cross-platform compatible curves
+      final config = DerivationPathConfig(
+        derivationPaths: {
+          EllipticCurve.secp256k1: [
+            "m/44'/60'/0'/0/1", // Ethereum mainnet
+            "m/44'/0'/0'/0/1", // Bitcoin mainnet
+            "m/44'/2'/0'/0/1", // Litecoin
+            "m/44'/145'/0'/0/0", // Bitcoin Cash
+          ],
+          EllipticCurve.ed25519: [
+            "m/44'/501'/0'", // Solana
+            "m/44'/472'/0'", // Arweave
+          ],
+          // Note: Using only curves supported on both Android and iOS
+        },
+        mergeWithDefaults: false, // Replace completely
+      );
+
+      final result = await _sdk.configureDerivationPaths(config);
+      print("Custom derivation paths configured: $result");
+      _printResponse("Custom derivation paths configured: $result");
+    } catch (e) {
+      _notify("Error configuring custom paths: ${e.toString()}");
+    }
+  }
+
+  void _handleConfigureMergedPaths() async {
+    try {
+      // Example: Add custom derivation paths to existing defaults
+      final config = DerivationPathConfig(
+        derivationPaths: {
+          EllipticCurve.secp256k1: [
+            "m/44'/714'/0'/0/0", // BNB Chain
+            "m/44'/966'/0'/0/0", // Polygon
+          ],
+          EllipticCurve.ed25519: [
+            "m/44'/397'/0'", // NEAR Protocol
+          ],
+        },
+        mergeWithDefaults: true, // Add to existing paths
+      );
+
+      final result = await _sdk.configureDerivationPaths(config);
+      _printResponse("Merged derivation paths configured: $result");
+    } catch (e) {
+      _notify("Error configuring merged paths: ${e.toString()}");
+    }
+  }
+
+  void _handleResetToDefaults() async {
+    try {
+      // Reset to only default paths by configuring empty custom paths
+      final config = DerivationPathConfig(
+        derivationPaths: {},
+        mergeWithDefaults: true,
+      );
+
+      final result = await _sdk.configureDerivationPaths(config);
+      _printResponse("Reset to default derivation paths: $result");
+    } catch (e) {
+      _notify("Error resetting to defaults: ${e.toString()}");
+    }
   }
 
   void _handleJsonRpc(String text) {
