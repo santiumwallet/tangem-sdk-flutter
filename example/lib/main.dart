@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tangem_sdk/model/tangem_requests.dart';
 import 'package:tangem_sdk/tangem_sdk.dart';
 import 'package:tangem_sdk_example/app_widgets.dart';
 import 'package:tangem_sdk_example/source.dart';
+import 'package:tangem_sdk_example/scan_card_direct_example.dart';
+import 'package:tangem_sdk_example/linked_terminal_example.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,9 +19,62 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Tangem SDK plugin example')),
-        body: CommandListWidget(),
+      title: 'Tangem SDK Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: const TangemExampleApp(),
+    );
+  }
+}
+
+class TangemExampleApp extends StatefulWidget {
+  const TangemExampleApp({Key? key}) : super(key: key);
+
+  @override
+  State<TangemExampleApp> createState() => _TangemExampleAppState();
+}
+
+class _TangemExampleAppState extends State<TangemExampleApp>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tangem SDK Examples'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(icon: Icon(Icons.list), text: 'All Features'),
+            Tab(icon: Icon(Icons.flash_on), text: 'Direct Scan'),
+            Tab(icon: Icon(Icons.link), text: 'Linked Terminal'),
+            Tab(icon: Icon(Icons.settings), text: 'Settings'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          CommandListWidget(),
+          const ScanCardDirectExample(),
+          const LinkedTerminalExample(),
+          const SettingsTab(),
+        ],
       ),
     );
   }
@@ -49,6 +105,14 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   final _controller = TextEditingController();
   final _accesscodeController = TextEditingController();
+  
+  // Enhanced signing widget state
+  String _signStatus = '';
+  bool _isSigningWithDirect = false;
+  bool _isSigningWithJsonRpc = false;
+  int? _lastDirectSignTime;
+  int? _lastJsonRpcSignTime;
+  bool _isLinkedTerminalEnabled = false;
 
   @override
   void initState() {
@@ -61,6 +125,9 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     _accesscodeController.addListener(() {
       setState(() {});
     });
+    
+    // Initialize linked terminal status
+    _updateLinkedTerminalStatus();
   }
 
   @override
@@ -78,6 +145,8 @@ class _CommandListWidgetState extends State<CommandListWidget> {
               ActionButton("Sign hash", _handleSign),
             ],
           ),
+          ActionType("Enhanced Signing Demo"),
+          _buildEnhancedSigningWidget(),
           ActionType("Set scan image"),
           RowActions(
             [
@@ -473,6 +542,358 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       return _jsonEncoder.convert(value);
     }
   }
+
+  Widget _buildEnhancedSigningWidget() {
+    final bool hasCard = _cardId != null && _walletPublicKey != null;
+    final bool canSign = hasCard && !_isSigningWithDirect && !_isSigningWithJsonRpc;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Performance Comparison: Direct vs JSON-RPC Signing',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            hasCard 
+              ? 'Card: ${_cardId?.substring(0, 8)}...'
+              : 'Please scan a card first',
+            style: TextStyle(
+              fontSize: 14, 
+              color: hasCard ? Colors.green : Colors.orange,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildFastSigningIndicator(),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: canSign ? _handleDirectSigning : null,
+                  icon: _isSigningWithDirect 
+                    ? const SizedBox(
+                        width: 16, 
+                        height: 16, 
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.flash_on),
+                  label: Text(_isSigningWithDirect ? 'Signing...' : 'Sign Direct'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.all(12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: canSign ? _handleJsonRpcSigning : null,
+                  icon: _isSigningWithJsonRpc 
+                    ? const SizedBox(
+                        width: 16, 
+                        height: 16, 
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.code),
+                  label: Text(_isSigningWithJsonRpc ? 'Signing...' : 'Sign JSON-RPC'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.all(12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (_signStatus.isNotEmpty) ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: _signStatus.contains('success') 
+                  ? Colors.green[50] 
+                  : _signStatus.contains('error') 
+                    ? Colors.red[50]
+                    : Colors.blue[50],
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                _signStatus,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+          if (_lastDirectSignTime != null || _lastJsonRpcSignTime != null) ...[
+            const Text(
+              'Performance Results:',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            _buildPerformanceComparison(),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFastSigningIndicator() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: _isLinkedTerminalEnabled ? Colors.green[100] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: _isLinkedTerminalEnabled ? Colors.green[300]! : Colors.orange[300]!,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            _isLinkedTerminalEnabled ? Icons.flash_on : Icons.flash_off,
+            size: 16,
+            color: _isLinkedTerminalEnabled ? Colors.green[700] : Colors.orange[700],
+          ),
+          const SizedBox(width: 6),
+          Text(
+            _isLinkedTerminalEnabled 
+              ? 'Fast Signing: Enabled' 
+              : 'Fast Signing: Disabled',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: _isLinkedTerminalEnabled ? Colors.green[700] : Colors.orange[700],
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: _toggleLinkedTerminalForDemo,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.blue[100],
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Colors.blue[300]!),
+              ),
+              child: Text(
+                'Toggle',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.blue[700],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _toggleLinkedTerminalForDemo() async {
+    try {
+      final newState = !_isLinkedTerminalEnabled;
+      await _sdk.setLinkedTerminal(newState);
+      setState(() {
+        _isLinkedTerminalEnabled = newState;
+      });
+    } catch (e) {
+      setState(() {
+        _signStatus = 'Error toggling linked terminal: ${e.toString()}';
+      });
+    }
+  }
+
+  void _updateLinkedTerminalStatus() async {
+    try {
+      // Note: There's no direct way to get the current linked terminal status
+      // from the SDK, so we'll track it based on Settings tab changes
+      final prefs = await SharedPreferences.getInstance();
+      final savedLinkedTerminal = prefs.getBool('linked_terminal_enabled') ?? false;
+      setState(() {
+        _isLinkedTerminalEnabled = savedLinkedTerminal;
+      });
+    } catch (e) {
+      // Handle error silently for this demo
+    }
+  }
+
+  Widget _buildPerformanceComparison() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Column(
+        children: [
+          if (_lastDirectSignTime != null)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.flash_on, size: 16, color: Colors.green),
+                    SizedBox(width: 4),
+                    Text('Direct Method:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Text('${_lastDirectSignTime}ms', style: const TextStyle(color: Colors.green)),
+              ],
+            ),
+          if (_lastJsonRpcSignTime != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.code, size: 16, color: Colors.blue),
+                    SizedBox(width: 4),
+                    Text('JSON-RPC:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Text('${_lastJsonRpcSignTime}ms', style: const TextStyle(color: Colors.blue)),
+              ],
+            ),
+          ],
+          if (_lastDirectSignTime != null && _lastJsonRpcSignTime != null) ...[
+            const SizedBox(height: 8),
+            const Divider(),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Performance Improvement:', 
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${((_lastJsonRpcSignTime! - _lastDirectSignTime!) / _lastJsonRpcSignTime! * 100).toStringAsFixed(1)}% faster',
+                      style: const TextStyle(
+                        color: Colors.green, 
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (_isLinkedTerminalEnabled)
+                      const Text(
+                        '⚡ With fast signing',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _handleDirectSigning() async {
+    if (_cardId == null || _walletPublicKey == null) {
+      setState(() {
+        _signStatus = 'Error: Please scan a card first';
+      });
+      return;
+    }
+
+    setState(() {
+      _isSigningWithDirect = true;
+      _signStatus = 'Signing with direct method...';
+    });
+
+    try {
+      final stopwatch = Stopwatch()..start();
+      
+      final result = await _sdk.signHashDirect(
+        walletPublicKey: _walletPublicKey!,
+        hash: "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
+        cardId: _cardId,
+        accessCode: _accesscode,
+      );
+      
+      stopwatch.stop();
+
+      setState(() {
+        _lastDirectSignTime = stopwatch.elapsedMilliseconds;
+        if (result.result != null) {
+          _signStatus = 'Direct signing success! (${_lastDirectSignTime}ms)';
+        } else {
+          _signStatus = 'Direct signing failed: ${result.error}';
+        }
+        _isSigningWithDirect = false;
+      });
+    } catch (e) {
+      setState(() {
+        _signStatus = 'Direct signing error: ${e.toString()}';
+        _isSigningWithDirect = false;
+      });
+    }
+  }
+
+  Future<void> _handleJsonRpcSigning() async {
+    if (_cardId == null || _walletPublicKey == null) {
+      setState(() {
+        _signStatus = 'Error: Please scan a card first';
+      });
+      return;
+    }
+
+    setState(() {
+      _isSigningWithJsonRpc = true;
+      _signStatus = 'Signing with JSON-RPC method...';
+    });
+
+    try {
+      final stopwatch = Stopwatch()..start();
+      
+      final req = SignHashRequest(
+        walletPublicKey: _walletPublicKey!,
+        hash: "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
+        cardId: _cardId,
+        accessCode: _accesscode,
+      );
+
+      final result = await _sdk.signHash(req);
+      
+      stopwatch.stop();
+
+      setState(() {
+        _lastJsonRpcSignTime = stopwatch.elapsedMilliseconds;
+        if (result.result != null) {
+          _signStatus = 'JSON-RPC signing success! (${_lastJsonRpcSignTime}ms)';
+        } else {
+          _signStatus = 'JSON-RPC signing failed: ${result.error}';
+        }
+        _isSigningWithJsonRpc = false;
+      });
+    } catch (e) {
+      setState(() {
+        _signStatus = 'JSON-RPC signing error: ${e.toString()}';
+        _isSigningWithJsonRpc = false;
+      });
+    }
+  }
 // describeEnum
 }
 
@@ -490,4 +911,219 @@ enum SdkMethod {
   delete_files,
   read_files,
   write_files,
+}
+
+class SettingsTab extends StatefulWidget {
+  const SettingsTab({Key? key}) : super(key: key);
+
+  @override
+  State<SettingsTab> createState() => _SettingsTabState();
+}
+
+class _SettingsTabState extends State<SettingsTab> {
+  final TangemSdk _tangemSdk = TangemSdk();
+  bool _isLinkedTerminal = false;
+  String _status = 'Loading settings...';
+  bool _isLoading = true;
+
+  static const String _linkedTerminalKey = 'linked_terminal_enabled';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedLinkedTerminal = prefs.getBool(_linkedTerminalKey) ?? false;
+      
+      setState(() {
+        _isLinkedTerminal = savedLinkedTerminal;
+        _status = 'Settings loaded successfully';
+        _isLoading = false;
+      });
+
+      await _tangemSdk.setLinkedTerminal(savedLinkedTerminal);
+    } catch (e) {
+      setState(() {
+        _status = 'Error loading settings: ${e.toString()}';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_linkedTerminalKey, _isLinkedTerminal);
+    } catch (e) {
+      print('Error saving settings: $e');
+    }
+  }
+
+  Future<void> _toggleLinkedTerminal() async {
+    if (_isLoading) return;
+    
+    try {
+      final newState = !_isLinkedTerminal;
+      
+      final result = await _tangemSdk.setLinkedTerminal(newState);
+      
+      setState(() {
+        _isLinkedTerminal = newState;
+        _status = 'Linked Terminal ${newState ? "enabled" : "disabled"} successfully';
+      });
+      
+      await _saveSettings();
+      print('setLinkedTerminal result: $result');
+    } catch (e) {
+      setState(() {
+        _status = 'Error: ${e.toString()}';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'SDK Configuration',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Configure various SDK settings and features.',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+          const SizedBox(height: 32),
+          
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.link, color: Colors.blue),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Linked Terminal',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'When enabled, the Tangem SDK will automatically manage Terminal_PublicKey '
+                    'and Terminal_Transaction_Signature exchange with the card during SIGN '
+                    'commands to bypass the security delay.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Enable Linked Terminal', style: TextStyle(fontSize: 16)),
+                      Switch(
+                        value: _isLinkedTerminal,
+                        onChanged: _isLoading ? null : (_) => _toggleLinkedTerminal(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _status.contains('Error') 
+                          ? Colors.red[50] 
+                          : _status.contains('successfully')
+                              ? Colors.green[50]
+                              : Colors.grey[100],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _status.contains('Error') 
+                              ? Icons.error_outline
+                              : _status.contains('successfully')
+                                  ? Icons.check_circle_outline
+                                  : Icons.info_outline,
+                          size: 16,
+                          color: _status.contains('Error') 
+                              ? Colors.red 
+                              : _status.contains('successfully')
+                                  ? Colors.green
+                                  : Colors.grey,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _status,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 24),
+          
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.info_outline, color: Colors.orange),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'About This App',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'This example app demonstrates the capabilities of the Tangem SDK for Flutter. '
+                    'It includes examples for all major SDK features including scanning cards, '
+                    'direct method calls, linked terminal functionality, and more.',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Features Demonstrated:',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    '• Card scanning and wallet operations\n'
+                    '• Direct method channel implementation\n'
+                    '• Linked terminal for fast signing\n'
+                    '• Derivation path configuration\n'
+                    '• Access code and passcode management\n'
+                    '• JSON-RPC command execution',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

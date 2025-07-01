@@ -27,6 +27,20 @@ class MockTangemSdkPlatform
   Future<String> configureDerivationPaths(DerivationPathConfig config) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<String> setLinkedTerminal(bool isLinked) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> scanCardDirect(
+      {String? cardId,
+      Map<String, String>? initialMessage,
+      String? accessCode}) {
+    // TODO: implement scanCardDirect
+    throw UnimplementedError();
+  }
 }
 
 void main() {

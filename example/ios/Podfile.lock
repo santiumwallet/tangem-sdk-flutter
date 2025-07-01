@@ -1,5 +1,8 @@
 PODS:
   - Flutter (1.0.0)
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - tangem_sdk (1.0.0):
     - Flutter
     - TangemSdk (~> 3.11.0)
@@ -7,6 +10,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - tangem_sdk (from `.symlinks/plugins/tangem_sdk/ios`)
 
 SPEC REPOS:
@@ -16,11 +20,14 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   tangem_sdk:
     :path: ".symlinks/plugins/tangem_sdk/ios"
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   tangem_sdk: f4b0b9ff5ec22098a1698ed6f5502a52512aa7ba
   TangemSdk: 6c3c73f63d7adab1bfd1e87668502f2bfa52c677
 

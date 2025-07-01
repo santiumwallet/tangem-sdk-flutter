@@ -28,4 +28,43 @@ abstract class TangemSdkPlatform extends PlatformInterface {
   Future<String> setScanImage(ScanTagImage? scanCardImage);
 
   Future<String> configureDerivationPaths(DerivationPathConfig config);
+
+  Future<String> setLinkedTerminal(bool isLinked);
+
+  Future<String> scanCardDirect({
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  });
+
+  Future<String> signHashDirect({
+    required String walletPublicKey,
+    required String hash,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  });
+
+  Future<String> signHashesDirect({
+    required String walletPublicKey,
+    required List<String> hashes,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  });
+
+  Future<String> createWalletDirect({
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  });
+
+  Future<String> purgeWalletDirect({
+    required int walletIndex,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  });
 }
