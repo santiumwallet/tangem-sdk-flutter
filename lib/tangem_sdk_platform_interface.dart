@@ -31,13 +31,13 @@ abstract class TangemSdkPlatform extends PlatformInterface {
 
   Future<String> setLinkedTerminal(bool isLinked);
 
-  Future<String> scanCardDirect({
+  Future<String> scanCard({
     String? cardId,
     Map<String, String>? initialMessage,
     String? accessCode,
   });
 
-  Future<String> signHashDirect({
+  Future<String> signHash({
     required String walletPublicKey,
     required String hash,
     String? cardId,
@@ -46,7 +46,7 @@ abstract class TangemSdkPlatform extends PlatformInterface {
     String? derivationPath,
   });
 
-  Future<String> signHashesDirect({
+  Future<String> signHashes({
     required String walletPublicKey,
     required List<String> hashes,
     String? cardId,
@@ -55,14 +55,15 @@ abstract class TangemSdkPlatform extends PlatformInterface {
     String? derivationPath,
   });
 
-  Future<String> createWalletDirect({
+  Future<String> createWallet({
+    required String curve,
     String? cardId,
     Map<String, String>? initialMessage,
     String? accessCode,
   });
 
-  Future<String> purgeWalletDirect({
-    required int walletIndex,
+  Future<String> purgeWallet({
+    required String walletPublicKey,
     String? cardId,
     Map<String, String>? initialMessage,
     String? accessCode,

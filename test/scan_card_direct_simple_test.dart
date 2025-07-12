@@ -11,14 +11,13 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class SimpleMockPlatform
     with MockPlatformInterfaceMixin
     implements TangemSdkPlatform {
-  
   bool jsonRpcCalled = false;
   bool directScanCalled = false;
   Map<String, dynamic>? lastDirectArgs;
-  
+
   // Simple valid response that won't fail parsing
   final mockResponse = '{"result": null, "error": "Mock response", "id": 1}';
-  
+
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 
@@ -44,7 +43,7 @@ class SimpleMockPlatform
   }
 
   @override
-  Future<String> scanCardDirect({
+  Future<String> scanCard({
     String? cardId,
     Map<String, String>? initialMessage,
     String? accessCode,
@@ -56,6 +55,50 @@ class SimpleMockPlatform
       'accessCode': accessCode,
     };
     return Future.value(mockResponse);
+  }
+
+  @override
+  Future<String> signHash({
+    required String walletPublicKey,
+    required String hash,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> signHashes({
+    required String walletPublicKey,
+    required List<String> hashes,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> createWallet({
+    required String curve,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> purgeWallet({
+    required String walletPublicKey,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
+    throw UnimplementedError();
   }
 }
 
@@ -77,12 +120,12 @@ void main() {
         initialMessage: request.Message('Header', 'Body'),
         accessCode: 'ACCESS',
       );
-      
+
       // Verify direct method was called
       expect(mockPlatform.directScanCalled, true);
       // Verify JSON-RPC was NOT called
       expect(mockPlatform.jsonRpcCalled, false);
-      
+
       // Verify parameters were passed correctly
       expect(mockPlatform.lastDirectArgs!['cardId'], 'TEST123');
       expect(mockPlatform.lastDirectArgs!['accessCode'], 'ACCESS');
@@ -99,7 +142,7 @@ void main() {
         message: request.Message('Header', 'Body'),
         accessCode: 'ACCESS',
       ));
-      
+
       // Verify JSON-RPC was called
       expect(mockPlatform.jsonRpcCalled, true);
       // Verify direct method was NOT called
@@ -110,15 +153,15 @@ void main() {
       // Reset flags
       mockPlatform.jsonRpcCalled = false;
       mockPlatform.directScanCalled = false;
-      
+
       // Call direct method
       await tangemSdk.scanCardDirect(cardId: 'DIRECT');
       expect(mockPlatform.directScanCalled, true);
       expect(mockPlatform.jsonRpcCalled, false);
-      
+
       // Reset flags
       mockPlatform.directScanCalled = false;
-      
+
       // Call JSON-RPC method
       await tangemSdk.scanCard(ScanCardRequest(cardId: 'JSONRPC'));
       expect(mockPlatform.jsonRpcCalled, true);

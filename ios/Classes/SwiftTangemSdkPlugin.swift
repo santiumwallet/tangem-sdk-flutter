@@ -82,16 +82,16 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
                 try getUserCodeRequestPolicy(call.arguments, result)
             case "setLinkedTerminal":
                 try setLinkedTerminal(call.arguments, result)
-            case "scanCardDirect":
-                try scanCardDirect(call.arguments, result)
-            case "signHashDirect":
-                try signHashDirect(call.arguments, result)
-            case "signHashesDirect":
-                try signHashesDirect(call.arguments, result)
-            case "createWalletDirect":
-                try createWalletDirect(call.arguments, result)
-            case "purgeWalletDirect":
-                try purgeWalletDirect(call.arguments, result)
+            case "scanCard":
+                try scanCard(call.arguments, result)
+            case "signHash":
+                try signHash(call.arguments, result)
+            case "signHashes":
+                try signHashes(call.arguments, result)
+            case "createWallet":
+                try createWallet(call.arguments, result)
+            case "purgeWallet":
+                try purgeWallet(call.arguments, result)
             default:
                 result(FlutterMethodNotImplemented)
             }
@@ -150,7 +150,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
         completion("{\"success\": true, \"message\": \"Linked terminal configured successfully\", \"isLinked\": \(isLinked)}")
     }
     
-    private func scanCardDirect(_ args: Any?, _ completion: @escaping FlutterResult) throws {
+    private func scanCard(_ args: Any?, _ completion: @escaping FlutterResult) throws {
         guard #available(iOS 13, *) else {
             throw FlutterError.iosTooOld
         }
@@ -218,7 +218,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func signHashDirect(_ args: Any?, _ completion: @escaping FlutterResult) throws {
+    private func signHash(_ args: Any?, _ completion: @escaping FlutterResult) throws {
         guard #available(iOS 13, *) else {
             throw FlutterError.iosTooOld
         }
@@ -316,7 +316,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func signHashesDirect(_ args: Any?, _ completion: @escaping FlutterResult) throws {
+    private func signHashes(_ args: Any?, _ completion: @escaping FlutterResult) throws {
         guard #available(iOS 13, *) else {
             throw FlutterError.iosTooOld
         }
@@ -416,7 +416,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func createWalletDirect(_ args: Any?, _ completion: @escaping FlutterResult) throws {
+    private func createWallet(_ args: Any?, _ completion: @escaping FlutterResult) throws {
         guard #available(iOS 13, *) else {
             throw FlutterError.iosTooOld
         }
@@ -515,7 +515,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func purgeWalletDirect(_ args: Any?, _ completion: @escaping FlutterResult) throws {
+    private func purgeWallet(_ args: Any?, _ completion: @escaping FlutterResult) throws {
         guard #available(iOS 13, *) else {
             throw FlutterError.iosTooOld
         }

@@ -163,20 +163,20 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             "setLinkedTerminal" -> {
                 setLinkedTerminal(call, result)
             }
-            "scanCardDirect" -> {
-                scanCardDirect(call, result)
+            "scanCard" -> {
+                scanCard(call, result)
             }
-            "signHashDirect" -> {
-                signHashDirect(call, result)
+            "signHash" -> {
+                signHash(call, result)
             }
-            "signHashesDirect" -> {
-                signHashesDirect(call, result)
+            "signHashes" -> {
+                signHashes(call, result)
             }
-            "createWalletDirect" -> {
-                createWalletDirect(call, result)
+            "createWallet" -> {
+                createWallet(call, result)
             }
-            "purgeWalletDirect" -> {
-                purgeWalletDirect(call, result)
+            "purgeWallet" -> {
+                purgeWallet(call, result)
             }
             else -> result.notImplemented()
         }
@@ -284,7 +284,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun scanCardDirect(call: MethodCall, result: Result) {
+    private fun scanCard(call: MethodCall, result: Result) {
         try {
             val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
             val allowRequestUserCodeFromRepository: Boolean = call.argument("allowRequestUserCodeFromRepository") ?: false
@@ -332,7 +332,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun signHashDirect(call: MethodCall, result: Result) {
+    private fun signHash(call: MethodCall, result: Result) {
         try {
             val walletPublicKey: String = call.argument("walletPublicKey") ?: throw IllegalArgumentException("walletPublicKey is required")
             val hash: String = call.argument("hash") ?: throw IllegalArgumentException("hash is required")
@@ -392,7 +392,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun signHashesDirect(call: MethodCall, result: Result) {
+    private fun signHashes(call: MethodCall, result: Result) {
         try {
             val walletPublicKey: String = call.argument("walletPublicKey") ?: throw IllegalArgumentException("walletPublicKey is required")
             val hashes: List<String> = call.argument("hashes") ?: throw IllegalArgumentException("hashes is required")
@@ -456,7 +456,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun createWalletDirect(call: MethodCall, result: Result) {
+    private fun createWallet(call: MethodCall, result: Result) {
         try {
             val cardId: String = call.argument("cardId") ?: throw IllegalArgumentException("cardId is required")
             val curveString: String = call.argument("curve") ?: throw IllegalArgumentException("curve is required")
@@ -525,7 +525,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun purgeWalletDirect(call: MethodCall, result: Result) {
+    private fun purgeWallet(call: MethodCall, result: Result) {
         try {
             val walletPublicKey: String = call.argument("walletPublicKey") ?: throw IllegalArgumentException("walletPublicKey is required")
             val cardId: String = call.argument("cardId") ?: throw IllegalArgumentException("cardId is required")

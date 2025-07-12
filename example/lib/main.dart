@@ -105,7 +105,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   final _controller = TextEditingController();
   final _accesscodeController = TextEditingController();
-  
+
   // Enhanced signing widget state
   String _signStatus = '';
   bool _isSigningWithDirect = false;
@@ -125,7 +125,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     _accesscodeController.addListener(() {
       setState(() {});
     });
-    
+
     // Initialize linked terminal status
     _updateLinkedTerminalStatus();
   }
@@ -545,7 +545,8 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   Widget _buildEnhancedSigningWidget() {
     final bool hasCard = _cardId != null && _walletPublicKey != null;
-    final bool canSign = hasCard && !_isSigningWithDirect && !_isSigningWithJsonRpc;
+    final bool canSign =
+        hasCard && !_isSigningWithDirect && !_isSigningWithJsonRpc;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -563,11 +564,11 @@ class _CommandListWidgetState extends State<CommandListWidget> {
           ),
           const SizedBox(height: 8),
           Text(
-            hasCard 
-              ? 'Card: ${_cardId?.substring(0, 8)}...'
-              : 'Please scan a card first',
+            hasCard
+                ? 'Card: ${_cardId?.substring(0, 8)}...'
+                : 'Please scan a card first',
             style: TextStyle(
-              fontSize: 14, 
+              fontSize: 14,
               color: hasCard ? Colors.green : Colors.orange,
             ),
           ),
@@ -579,14 +580,15 @@ class _CommandListWidgetState extends State<CommandListWidget> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: canSign ? _handleDirectSigning : null,
-                  icon: _isSigningWithDirect 
-                    ? const SizedBox(
-                        width: 16, 
-                        height: 16, 
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.flash_on),
-                  label: Text(_isSigningWithDirect ? 'Signing...' : 'Sign Direct'),
+                  icon: _isSigningWithDirect
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.flash_on),
+                  label:
+                      Text(_isSigningWithDirect ? 'Signing...' : 'Sign Direct'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
@@ -598,14 +600,15 @@ class _CommandListWidgetState extends State<CommandListWidget> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: canSign ? _handleJsonRpcSigning : null,
-                  icon: _isSigningWithJsonRpc 
-                    ? const SizedBox(
-                        width: 16, 
-                        height: 16, 
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.code),
-                  label: Text(_isSigningWithJsonRpc ? 'Signing...' : 'Sign JSON-RPC'),
+                  icon: _isSigningWithJsonRpc
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.code),
+                  label: Text(
+                      _isSigningWithJsonRpc ? 'Signing...' : 'Sign JSON-RPC'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
@@ -620,11 +623,11 @@ class _CommandListWidgetState extends State<CommandListWidget> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: _signStatus.contains('success') 
-                  ? Colors.green[50] 
-                  : _signStatus.contains('error') 
-                    ? Colors.red[50]
-                    : Colors.blue[50],
+                color: _signStatus.contains('success')
+                    ? Colors.green[50]
+                    : _signStatus.contains('error')
+                        ? Colors.red[50]
+                        : Colors.blue[50],
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -651,10 +654,13 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: _isLinkedTerminalEnabled ? Colors.green[100] : Colors.orange[100],
+        color:
+            _isLinkedTerminalEnabled ? Colors.green[100] : Colors.orange[100],
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: _isLinkedTerminalEnabled ? Colors.green[300]! : Colors.orange[300]!,
+          color: _isLinkedTerminalEnabled
+              ? Colors.green[300]!
+              : Colors.orange[300]!,
         ),
       ),
       child: Row(
@@ -663,17 +669,21 @@ class _CommandListWidgetState extends State<CommandListWidget> {
           Icon(
             _isLinkedTerminalEnabled ? Icons.flash_on : Icons.flash_off,
             size: 16,
-            color: _isLinkedTerminalEnabled ? Colors.green[700] : Colors.orange[700],
+            color: _isLinkedTerminalEnabled
+                ? Colors.green[700]
+                : Colors.orange[700],
           ),
           const SizedBox(width: 6),
           Text(
-            _isLinkedTerminalEnabled 
-              ? 'Fast Signing: Enabled' 
-              : 'Fast Signing: Disabled',
+            _isLinkedTerminalEnabled
+                ? 'Fast Signing: Enabled'
+                : 'Fast Signing: Disabled',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: _isLinkedTerminalEnabled ? Colors.green[700] : Colors.orange[700],
+              color: _isLinkedTerminalEnabled
+                  ? Colors.green[700]
+                  : Colors.orange[700],
             ),
           ),
           const SizedBox(width: 8),
@@ -720,7 +730,8 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       // Note: There's no direct way to get the current linked terminal status
       // from the SDK, so we'll track it based on Settings tab changes
       final prefs = await SharedPreferences.getInstance();
-      final savedLinkedTerminal = prefs.getBool('linked_terminal_enabled') ?? false;
+      final savedLinkedTerminal =
+          prefs.getBool('linked_terminal_enabled') ?? false;
       setState(() {
         _isLinkedTerminalEnabled = savedLinkedTerminal;
       });
@@ -746,10 +757,12 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                   children: [
                     Icon(Icons.flash_on, size: 16, color: Colors.green),
                     SizedBox(width: 4),
-                    Text('Direct Method:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('Direct Method:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
-                Text('${_lastDirectSignTime}ms', style: const TextStyle(color: Colors.green)),
+                Text('${_lastDirectSignTime}ms',
+                    style: const TextStyle(color: Colors.green)),
               ],
             ),
           if (_lastJsonRpcSignTime != null) ...[
@@ -761,10 +774,12 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                   children: [
                     Icon(Icons.code, size: 16, color: Colors.blue),
                     SizedBox(width: 4),
-                    Text('JSON-RPC:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('JSON-RPC:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
-                Text('${_lastJsonRpcSignTime}ms', style: const TextStyle(color: Colors.blue)),
+                Text('${_lastJsonRpcSignTime}ms',
+                    style: const TextStyle(color: Colors.blue)),
               ],
             ),
           ],
@@ -776,7 +791,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Performance Improvement:', 
+                  'Performance Improvement:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 Column(
@@ -785,7 +800,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                     Text(
                       '${((_lastJsonRpcSignTime! - _lastDirectSignTime!) / _lastJsonRpcSignTime! * 100).toStringAsFixed(1)}% faster',
                       style: const TextStyle(
-                        color: Colors.green, 
+                        color: Colors.green,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
@@ -824,14 +839,15 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
     try {
       final stopwatch = Stopwatch()..start();
-      
+
       final result = await _sdk.signHashDirect(
         walletPublicKey: _walletPublicKey!,
-        hash: "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
+        hash:
+            "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
         cardId: _cardId,
         accessCode: _accesscode,
       );
-      
+
       stopwatch.stop();
 
       setState(() {
@@ -866,16 +882,17 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
     try {
       final stopwatch = Stopwatch()..start();
-      
+
       final req = SignHashRequest(
         walletPublicKey: _walletPublicKey!,
-        hash: "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
+        hash:
+            "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
         cardId: _cardId,
         accessCode: _accesscode,
       );
 
       final result = await _sdk.signHash(req);
-      
+
       stopwatch.stop();
 
       setState(() {
@@ -938,7 +955,7 @@ class _SettingsTabState extends State<SettingsTab> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedLinkedTerminal = prefs.getBool(_linkedTerminalKey) ?? false;
-      
+
       setState(() {
         _isLinkedTerminal = savedLinkedTerminal;
         _status = 'Settings loaded successfully';
@@ -965,17 +982,18 @@ class _SettingsTabState extends State<SettingsTab> {
 
   Future<void> _toggleLinkedTerminal() async {
     if (_isLoading) return;
-    
+
     try {
       final newState = !_isLinkedTerminal;
-      
+
       final result = await _tangemSdk.setLinkedTerminal(newState);
-      
+
       setState(() {
         _isLinkedTerminal = newState;
-        _status = 'Linked Terminal ${newState ? "enabled" : "disabled"} successfully';
+        _status =
+            'Linked Terminal ${newState ? "enabled" : "disabled"} successfully';
       });
-      
+
       await _saveSettings();
       print('setLinkedTerminal result: $result');
     } catch (e) {
@@ -989,140 +1007,145 @@ class _SettingsTabState extends State<SettingsTab> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'SDK Configuration',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Configure various SDK settings and features.',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-          const SizedBox(height: 32),
-          
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.link, color: Colors.blue),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Linked Terminal',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'When enabled, the Tangem SDK will automatically manage Terminal_PublicKey '
-                    'and Terminal_Transaction_Signature exchange with the card during SIGN '
-                    'commands to bypass the security delay.',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Enable Linked Terminal', style: TextStyle(fontSize: 16)),
-                      Switch(
-                        value: _isLinkedTerminal,
-                        onChanged: _isLoading ? null : (_) => _toggleLinkedTerminal(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: _status.contains('Error') 
-                          ? Colors.red[50] 
-                          : _status.contains('successfully')
-                              ? Colors.green[50]
-                              : Colors.grey[100],
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Row(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'SDK Configuration',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Configure various SDK settings and features.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 32),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        Icon(
-                          _status.contains('Error') 
-                              ? Icons.error_outline
-                              : _status.contains('successfully')
-                                  ? Icons.check_circle_outline
-                                  : Icons.info_outline,
-                          size: 16,
-                          color: _status.contains('Error') 
-                              ? Colors.red 
-                              : _status.contains('successfully')
-                                  ? Colors.green
-                                  : Colors.grey,
-                        ),
+                        const Icon(Icons.link, color: Colors.blue),
                         const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _status,
-                            style: const TextStyle(fontSize: 12),
-                          ),
+                        const Text(
+                          'Linked Terminal',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 24),
-          
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.info_outline, color: Colors.orange),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'About This App',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'When enabled, the Tangem SDK will automatically manage Terminal_PublicKey '
+                      'and Terminal_Transaction_Signature exchange with the card during SIGN '
+                      'commands to bypass the security delay.',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Enable Linked Terminal',
+                            style: TextStyle(fontSize: 16)),
+                        Switch(
+                          value: _isLinkedTerminal,
+                          onChanged: _isLoading
+                              ? null
+                              : (_) => _toggleLinkedTerminal(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _status.contains('Error')
+                            ? Colors.red[50]
+                            : _status.contains('successfully')
+                                ? Colors.green[50]
+                                : Colors.grey[100],
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'This example app demonstrates the capabilities of the Tangem SDK for Flutter. '
-                    'It includes examples for all major SDK features including scanning cards, '
-                    'direct method calls, linked terminal functionality, and more.',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Features Demonstrated:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    '• Card scanning and wallet operations\n'
-                    '• Direct method channel implementation\n'
-                    '• Linked terminal for fast signing\n'
-                    '• Derivation path configuration\n'
-                    '• Access code and passcode management\n'
-                    '• JSON-RPC command execution',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ],
+                      child: Row(
+                        children: [
+                          Icon(
+                            _status.contains('Error')
+                                ? Icons.error_outline
+                                : _status.contains('successfully')
+                                    ? Icons.check_circle_outline
+                                    : Icons.info_outline,
+                            size: 16,
+                            color: _status.contains('Error')
+                                ? Colors.red
+                                : _status.contains('successfully')
+                                    ? Colors.green
+                                    : Colors.grey,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _status,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.info_outline, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'About This App',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'This example app demonstrates the capabilities of the Tangem SDK for Flutter. '
+                      'It includes examples for all major SDK features including scanning cards, '
+                      'direct method calls, linked terminal functionality, and more.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Features Demonstrated:',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Card scanning and wallet operations\n'
+                      '• Direct method channel implementation\n'
+                      '• Linked terminal for fast signing\n'
+                      '• Derivation path configuration\n'
+                      '• Access code and passcode management\n'
+                      '• JSON-RPC command execution',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

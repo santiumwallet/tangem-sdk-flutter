@@ -38,12 +38,12 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
 
   @override
   Future<String> setLinkedTerminal(bool isLinked) async {
-    return await methodChannel.invokeMethod(
-        "setLinkedTerminal", {"isLinked": isLinked});
+    return await methodChannel
+        .invokeMethod("setLinkedTerminal", {"isLinked": isLinked});
   }
 
   @override
-  Future<String> scanCardDirect({
+  Future<String> scanCard({
     String? cardId,
     Map<String, String>? initialMessage,
     String? accessCode,
@@ -52,12 +52,12 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
     if (accessCode != null) args['accessCode'] = accessCode;
-    
-    return await methodChannel.invokeMethod("scanCardDirect", args);
+
+    return await methodChannel.invokeMethod("scanCard", args);
   }
 
   @override
-  Future<String> signHashDirect({
+  Future<String> signHash({
     required String walletPublicKey,
     required String hash,
     String? cardId,
@@ -73,12 +73,12 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     if (initialMessage != null) args['initialMessage'] = initialMessage;
     if (accessCode != null) args['accessCode'] = accessCode;
     if (derivationPath != null) args['derivationPath'] = derivationPath;
-    
-    return await methodChannel.invokeMethod("signHashDirect", args);
+
+    return await methodChannel.invokeMethod("signHash", args);
   }
 
   @override
-  Future<String> signHashesDirect({
+  Future<String> signHashes({
     required String walletPublicKey,
     required List<String> hashes,
     String? cardId,
@@ -94,38 +94,41 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     if (initialMessage != null) args['initialMessage'] = initialMessage;
     if (accessCode != null) args['accessCode'] = accessCode;
     if (derivationPath != null) args['derivationPath'] = derivationPath;
-    
-    return await methodChannel.invokeMethod("signHashesDirect", args);
+
+    return await methodChannel.invokeMethod("signHashes", args);
   }
 
   @override
-  Future<String> createWalletDirect({
-    String? cardId,
-    Map<String, String>? initialMessage,
-    String? accessCode,
-  }) async {
-    final args = <String, dynamic>{};
-    if (cardId != null) args['cardId'] = cardId;
-    if (initialMessage != null) args['initialMessage'] = initialMessage;
-    if (accessCode != null) args['accessCode'] = accessCode;
-    
-    return await methodChannel.invokeMethod("createWalletDirect", args);
-  }
-
-  @override
-  Future<String> purgeWalletDirect({
-    required int walletIndex,
+  Future<String> createWallet({
+    required String curve,
     String? cardId,
     Map<String, String>? initialMessage,
     String? accessCode,
   }) async {
     final args = <String, dynamic>{
-      'walletIndex': walletIndex,
+      'curve': curve,
     };
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
     if (accessCode != null) args['accessCode'] = accessCode;
-    
-    return await methodChannel.invokeMethod("purgeWalletDirect", args);
+
+    return await methodChannel.invokeMethod("createWallet", args);
+  }
+
+  @override
+  Future<String> purgeWallet({
+    required String walletPublicKey,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) async {
+    final args = <String, dynamic>{
+      'walletPublicKey': walletPublicKey,
+    };
+    if (cardId != null) args['cardId'] = cardId;
+    if (initialMessage != null) args['initialMessage'] = initialMessage;
+    if (accessCode != null) args['accessCode'] = accessCode;
+
+    return await methodChannel.invokeMethod("purgeWallet", args);
   }
 }

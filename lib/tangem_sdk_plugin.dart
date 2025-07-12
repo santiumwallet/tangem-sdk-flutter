@@ -30,10 +30,13 @@ class TangemSdk {
     request.Message? initialMessage,
     String? accessCode,
   }) async {
-    final res = await TangemSdkPlatform.instance.scanCardDirect(
+    final res = await TangemSdkPlatform.instance.scanCard(
       cardId: cardId,
       initialMessage: initialMessage != null
-          ? <String, String>{'header': initialMessage.header, 'body': initialMessage.body}
+          ? <String, String>{
+              'header': initialMessage.header,
+              'body': initialMessage.body
+            }
           : null,
       accessCode: accessCode,
     );
@@ -90,7 +93,7 @@ class TangemSdk {
 
   /// Direct method channel implementation of signHash
   /// Bypasses JSON-RPC for improved performance and leverages fast signing when linked terminal is enabled
-  /// 
+  ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if hex strings are malformed
   Future<SignHashResult> signHashDirect({
@@ -119,15 +122,19 @@ class TangemSdk {
 
     // Validate derivation path format if provided
     if (derivationPath != null && !_isValidDerivationPath(derivationPath)) {
-      throw FormatException('derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
+      throw FormatException(
+          'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
     }
 
-    final res = await TangemSdkPlatform.instance.signHashDirect(
+    final res = await TangemSdkPlatform.instance.signHash(
       walletPublicKey: walletPublicKey,
       hash: hash,
       cardId: cardId,
       initialMessage: initialMessage != null
-          ? <String, String>{'header': initialMessage.header, 'body': initialMessage.body}
+          ? <String, String>{
+              'header': initialMessage.header,
+              'body': initialMessage.body
+            }
           : null,
       accessCode: accessCode,
       derivationPath: derivationPath,
@@ -139,7 +146,7 @@ class TangemSdk {
 
   /// Direct method channel implementation of signHashes
   /// Bypasses JSON-RPC for improved performance and leverages fast signing when linked terminal is enabled
-  /// 
+  ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if hex strings are malformed
   Future<SignHashesResult> signHashesDirect({
@@ -162,7 +169,7 @@ class TangemSdk {
     if (!_isValidHex(walletPublicKey)) {
       throw FormatException('walletPublicKey must be a valid hex string');
     }
-    
+
     for (int i = 0; i < hashes.length; i++) {
       if (!_isValidHex(hashes[i])) {
         throw FormatException('hash at index $i must be a valid hex string');
@@ -171,15 +178,19 @@ class TangemSdk {
 
     // Validate derivation path format if provided
     if (derivationPath != null && !_isValidDerivationPath(derivationPath)) {
-      throw FormatException('derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
+      throw FormatException(
+          'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
     }
 
-    final res = await TangemSdkPlatform.instance.signHashesDirect(
+    final res = await TangemSdkPlatform.instance.signHashes(
       walletPublicKey: walletPublicKey,
       hashes: hashes,
       cardId: cardId,
       initialMessage: initialMessage != null
-          ? <String, String>{'header': initialMessage.header, 'body': initialMessage.body}
+          ? <String, String>{
+              'header': initialMessage.header,
+              'body': initialMessage.body
+            }
           : null,
       accessCode: accessCode,
       derivationPath: derivationPath,
@@ -192,18 +203,19 @@ class TangemSdk {
   /// Validate hex string format
   static bool _isValidHex(String value) {
     if (value.isEmpty) return false;
-    
+
     // Remove 0x prefix if present
     final cleanValue = value.startsWith('0x') ? value.substring(2) : value;
-    
+
     // Check if all characters are valid hex and length is even
-    return RegExp(r'^[0-9a-fA-F]+$').hasMatch(cleanValue) && cleanValue.length % 2 == 0;
+    return RegExp(r'^[0-9a-fA-F]+$').hasMatch(cleanValue) &&
+        cleanValue.length % 2 == 0;
   }
 
   /// Validate derivation path format
   static bool _isValidDerivationPath(String path) {
     if (path.isEmpty) return false;
-    
+
     // Basic validation for derivation path format: m/44'/60'/0'/0/0
     return RegExp(r"^m(/\d+'?)+$").hasMatch(path);
   }
@@ -211,40 +223,45 @@ class TangemSdk {
   /// Validate card ID format
   static bool _isValidCardId(String cardId) {
     if (cardId.isEmpty) return false;
-    
+
     // Card ID can be hex string or alphanumeric identifier
     // Most Tangem cards have 12-16 character hex IDs
     return RegExp(r'^[0-9a-fA-F]{12,16}$').hasMatch(cardId) ||
-           RegExp(r'^[a-zA-Z0-9_-]{4,20}$').hasMatch(cardId);
+        RegExp(r'^[a-zA-Z0-9_-]{4,20}$').hasMatch(cardId);
   }
 
   /// Validate access code format
   static bool _isValidAccessCode(String accessCode) {
     if (accessCode.isEmpty) return false;
-    
+
     // Access codes are typically 4-6 digit numeric codes
     return RegExp(r'^\d{4,6}$').hasMatch(accessCode);
   }
 
   /// Direct method channel implementation of createWallet
   /// Bypasses JSON-RPC for improved performance
-  /// 
+  ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if card ID format is invalid
   /// Throws [StateError] if wallet creation fails due to card state
   Future<CreateWalletResult> createWalletDirect({
+    required String curve,
     String? cardId,
     request.Message? initialMessage,
     String? accessCode,
   }) async {
     // Validate cardId format if provided
     if (cardId != null && cardId.isNotEmpty && !_isValidCardId(cardId)) {
-      throw FormatException('cardId has invalid format. Expected hex string or card identifier');
+      throw FormatException(
+          'cardId has invalid format. Expected hex string or card identifier');
     }
 
     // Validate access code format if provided
-    if (accessCode != null && accessCode.isNotEmpty && !_isValidAccessCode(accessCode)) {
-      throw FormatException('accessCode has invalid format. Expected 4-6 digit code');
+    if (accessCode != null &&
+        accessCode.isNotEmpty &&
+        !_isValidAccessCode(accessCode)) {
+      throw FormatException(
+          'accessCode has invalid format. Expected 4-6 digit code');
     }
 
     // Validate initial message
@@ -258,10 +275,14 @@ class TangemSdk {
     }
 
     try {
-      final res = await TangemSdkPlatform.instance.createWalletDirect(
+      final res = await TangemSdkPlatform.instance.createWallet(
+        curve: curve,
         cardId: cardId,
         initialMessage: initialMessage != null
-            ? <String, String>{'header': initialMessage.header, 'body': initialMessage.body}
+            ? <String, String>{
+                'header': initialMessage.header,
+                'body': initialMessage.body
+              }
             : null,
         accessCode: accessCode,
       );
@@ -271,11 +292,14 @@ class TangemSdk {
     } catch (e) {
       // Enhance error handling for common wallet creation failures
       if (e.toString().contains('card not found')) {
-        throw StateError('No Tangem card detected. Please ensure the card is placed correctly on the device.');
+        throw StateError(
+            'No Tangem card detected. Please ensure the card is placed correctly on the device.');
       } else if (e.toString().contains('access code')) {
-        throw StateError('Invalid access code provided. Please check the access code and try again.');
+        throw StateError(
+            'Invalid access code provided. Please check the access code and try again.');
       } else if (e.toString().contains('wallet already exists')) {
-        throw StateError('Wallet already exists on this card. Use purgeWallet to remove existing wallet first.');
+        throw StateError(
+            'Wallet already exists on this card. Use purgeWallet to remove existing wallet first.');
       } else if (e.toString().contains('user cancelled')) {
         throw StateError('Operation was cancelled by the user.');
       }
@@ -285,35 +309,39 @@ class TangemSdk {
 
   /// Direct method channel implementation of purgeWallet
   /// Bypasses JSON-RPC for improved performance
-  /// 
+  ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if card ID or access code format is invalid
   /// Throws [StateError] if wallet purging fails due to card state
-  /// Throws [RangeError] if wallet index is out of valid range
+  /// Throws [FormatException] if wallet public key format is invalid
   Future<PurgeWalletResult> purgeWalletDirect({
-    required int walletIndex,
+    required String walletPublicKey,
     String? cardId,
     request.Message? initialMessage,
     String? accessCode,
   }) async {
     // Validate required parameters
-    if (walletIndex < 0) {
-      throw RangeError('walletIndex must be non-negative, got $walletIndex');
+    if (walletPublicKey.isEmpty) {
+      throw ArgumentError('walletPublicKey cannot be empty');
     }
 
-    // Validate wallet index range (most cards support 0-9 wallets)
-    if (walletIndex > 9) {
-      throw RangeError('walletIndex must be between 0 and 9, got $walletIndex');
+    // Validate hex format
+    if (!_isValidHex(walletPublicKey)) {
+      throw FormatException('walletPublicKey must be a valid hex string');
     }
 
     // Validate cardId format if provided
     if (cardId != null && cardId.isNotEmpty && !_isValidCardId(cardId)) {
-      throw FormatException('cardId has invalid format. Expected hex string or card identifier');
+      throw FormatException(
+          'cardId has invalid format. Expected hex string or card identifier');
     }
 
     // Validate access code format if provided
-    if (accessCode != null && accessCode.isNotEmpty && !_isValidAccessCode(accessCode)) {
-      throw FormatException('accessCode has invalid format. Expected 4-6 digit code');
+    if (accessCode != null &&
+        accessCode.isNotEmpty &&
+        !_isValidAccessCode(accessCode)) {
+      throw FormatException(
+          'accessCode has invalid format. Expected 4-6 digit code');
     }
 
     // Validate initial message
@@ -327,11 +355,14 @@ class TangemSdk {
     }
 
     try {
-      final res = await TangemSdkPlatform.instance.purgeWalletDirect(
-        walletIndex: walletIndex,
+      final res = await TangemSdkPlatform.instance.purgeWallet(
+        walletPublicKey: walletPublicKey,
         cardId: cardId,
         initialMessage: initialMessage != null
-            ? <String, String>{'header': initialMessage.header, 'body': initialMessage.body}
+            ? <String, String>{
+                'header': initialMessage.header,
+                'body': initialMessage.body
+              }
             : null,
         accessCode: accessCode,
       );
@@ -341,15 +372,19 @@ class TangemSdk {
     } catch (e) {
       // Enhance error handling for common wallet purging failures
       if (e.toString().contains('card not found')) {
-        throw StateError('No Tangem card detected. Please ensure the card is placed correctly on the device.');
+        throw StateError(
+            'No Tangem card detected. Please ensure the card is placed correctly on the device.');
       } else if (e.toString().contains('access code')) {
-        throw StateError('Invalid access code provided. Please check the access code and try again.');
+        throw StateError(
+            'Invalid access code provided. Please check the access code and try again.');
       } else if (e.toString().contains('wallet not found')) {
-        throw StateError('No wallet found at index $walletIndex. The wallet may already be purged or never existed.');
+        throw StateError(
+            'No wallet found with the provided public key. The wallet may already be purged or never existed.');
       } else if (e.toString().contains('user cancelled')) {
         throw StateError('Operation was cancelled by the user.');
       } else if (e.toString().contains('wallet protected')) {
-        throw StateError('Wallet at index $walletIndex is protected and cannot be purged.');
+        throw StateError(
+            'Wallet with the provided public key is protected and cannot be purged.');
       }
       rethrow;
     }

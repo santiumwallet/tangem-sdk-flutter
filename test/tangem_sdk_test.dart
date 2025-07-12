@@ -34,11 +34,55 @@ class MockTangemSdkPlatform
   }
 
   @override
-  Future<String> scanCardDirect(
+  Future<String> scanCard(
       {String? cardId,
       Map<String, String>? initialMessage,
       String? accessCode}) {
-    // TODO: implement scanCardDirect
+    // TODO: implement scanCard
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> signHash({
+    required String walletPublicKey,
+    required String hash,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> signHashes({
+    required String walletPublicKey,
+    required List<String> hashes,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> createWallet({
+    required String curve,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> purgeWallet({
+    required String walletPublicKey,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
     throw UnimplementedError();
   }
 }
