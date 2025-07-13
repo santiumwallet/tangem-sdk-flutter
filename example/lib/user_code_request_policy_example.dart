@@ -441,7 +441,7 @@ class _UserCodeRequestPolicyExampleState
 
     try {
       final stopwatch = Stopwatch()..start();
-      final result = await _sdk.scanCard(ScanCardRequest());
+      final result = await _sdk.scanCard();
       stopwatch.stop();
 
       if (result.result != null) {
@@ -496,7 +496,7 @@ class _UserCodeRequestPolicyExampleState
 
     try {
       final stopwatch = Stopwatch()..start();
-      final result = await _sdk.signHashDirect(
+      final result = await _sdk.signHash(
         walletPublicKey: _walletPublicKey!,
         hash:
             "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",

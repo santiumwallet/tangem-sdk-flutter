@@ -166,7 +166,7 @@ class MockScanCardPlatform
 }
 
 void main() {
-  group('ScanCard Direct Method Tests', () {
+  group('ScanCard Method Tests', () {
     late TangemSdk tangemSdk;
     late MockScanCardPlatform mockPlatform;
 
@@ -176,10 +176,10 @@ void main() {
       TangemSdkPlatform.instance = mockPlatform;
     });
 
-    test('scanCardDirect calls platform with correct parameters', () async {
+    test('scanCard calls platform with correct parameters', () async {
       final testMessage = request.Message('Test Header', 'Test Body');
 
-      final result = await tangemSdk.scanCardDirect(
+      final result = await tangemSdk.scanCard(
         cardId: 'TEST123',
         initialMessage: testMessage,
         accessCode: 'ACCESS123',
@@ -200,8 +200,8 @@ void main() {
       expect(result.error, isNull);
     });
 
-    test('scanCardDirect handles null parameters correctly', () async {
-      final result = await tangemSdk.scanCardDirect();
+    test('scanCard handles null parameters correctly', () async {
+      final result = await tangemSdk.scanCard();
 
       // Verify the platform was called with null parameters
       expect(mockPlatform.lastDirectCallArgs, isNotNull);
@@ -221,10 +221,10 @@ void main() {
         accessCode: 'ACCESS123',
       );
 
-      final jsonRpcResult = await tangemSdk.scanCard(jsonRpcRequest);
+      final jsonRpcResult = await tangemSdk.scanCardWithRequest(jsonRpcRequest);
 
-      // Test with Direct method
-      final directResult = await tangemSdk.scanCardDirect(
+      // Test with method channel method
+      final directResult = await tangemSdk.scanCard(
         cardId: 'TEST123',
         initialMessage: request.Message('Test Header', 'Test Body'),
         accessCode: 'ACCESS123',
@@ -239,7 +239,7 @@ void main() {
       expect(directResult.id, jsonRpcResult.id);
     });
 
-    test('scanCardDirect handles error responses', () async {
+    test('scanCard handles error responses', () async {
       // Set up error response
       mockPlatform.mockResponse = '''
       {
@@ -249,7 +249,7 @@ void main() {
       }
       ''';
 
-      final result = await tangemSdk.scanCardDirect(cardId: 'INVALID');
+      final result = await tangemSdk.scanCard(cardId: 'INVALID');
 
       // Verify error is properly parsed
       expect(result.result, isNull);
@@ -258,8 +258,8 @@ void main() {
     });
 
     test('performance comparison - Direct should not use JSON-RPC', () async {
-      // Call direct method
-      await tangemSdk.scanCardDirect(cardId: 'TEST123');
+      // Call method channel method
+      await tangemSdk.scanCard(cardId: 'TEST123');
 
       // Verify JSON-RPC was NOT called
       expect(mockPlatform.lastJsonRpcRequest, isNull);
@@ -271,7 +271,7 @@ void main() {
       mockPlatform.lastJsonRpcRequest = null;
       mockPlatform.lastDirectCallArgs = null;
 
-      await tangemSdk.scanCard(ScanCardRequest(cardId: 'TEST123'));
+      await tangemSdk.scanCardWithRequest(ScanCardRequest(cardId: 'TEST123'));
 
       // Verify JSON-RPC WAS called
       expect(mockPlatform.lastJsonRpcRequest, isNotNull);
@@ -364,10 +364,10 @@ void main() {
       mockPlatform.mockResponse = complexResponse;
 
       // Test both methods with the same response
-      final jsonRpcResult =
-          await tangemSdk.scanCard(ScanCardRequest(cardId: 'TEST123'));
+      final jsonRpcResult = await tangemSdk
+          .scanCardWithRequest(ScanCardRequest(cardId: 'TEST123'));
 
-      final directResult = await tangemSdk.scanCardDirect(cardId: 'TEST123');
+      final directResult = await tangemSdk.scanCard(cardId: 'TEST123');
 
       // Both should parse identically
       expect(directResult.result?.cardId, jsonRpcResult.result?.cardId);

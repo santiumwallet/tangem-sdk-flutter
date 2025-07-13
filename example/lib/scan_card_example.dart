@@ -3,59 +3,54 @@ import 'package:tangem_sdk/tangem_sdk.dart' hide Message;
 import 'package:tangem_sdk/model/card.dart' as tangem;
 import 'package:tangem_sdk/model/tangem_requests.dart';
 import 'package:tangem_sdk/model/base_tangem_request.dart';
+import 'package:tangem_sdk/model/scan_card_result.dart';
 
-/// Example demonstrating the direct scanCard method implementation
-/// that bypasses JSON-RPC for improved performance
-class ScanCardDirectExample extends StatefulWidget {
-  const ScanCardDirectExample({Key? key}) : super(key: key);
+/// Example demonstrating the scanCard method implementation
+/// Compares performance between JSON-RPC and direct method channel approaches
+class ScanCardExample extends StatefulWidget {
+  const ScanCardExample({Key? key}) : super(key: key);
 
   @override
-  State<ScanCardDirectExample> createState() => _ScanCardDirectExampleState();
+  State<ScanCardExample> createState() => _ScanCardExampleState();
 }
 
-class _ScanCardDirectExampleState extends State<ScanCardDirectExample> {
+class _ScanCardExampleState extends State<ScanCardExample> {
   final TangemSdk _tangemSdk = TangemSdk();
   String _status = 'Ready to scan';
   String _cardInfo = '';
   bool _isScanning = false;
+  ScanCardResult? _jsonRpcResult;
+  ScanCardResult? _directResult;
+  int? _jsonRpcTime;
+  int? _directTime;
 
   Future<void> _scanWithJsonRpc() async {
     setState(() {
       _isScanning = true;
       _status = 'Scanning with JSON-RPC...';
+      _jsonRpcResult = null;
     });
 
     try {
-      final request = ScanCardRequest(
-        // Optionally specify card ID
-        // cardId: 'CB000000000001',
-        message: Message('Scan Card', 'Please tap your Tangem card'),
-      );
-
       final stopwatch = Stopwatch()..start();
-      final result = await _tangemSdk.scanCard(request);
+      final result = await _tangemSdk.scanCardWithRequest(ScanCardRequest());
       stopwatch.stop();
 
-      if (result.result != null) {
-        setState(() {
-          _status =
-              'JSON-RPC scan successful (${stopwatch.elapsedMilliseconds}ms)';
-          _cardInfo = _formatCardInfo(result.result!);
-        });
-      } else {
-        setState(() {
-          _status = 'JSON-RPC scan failed: ${result.error}';
-          _cardInfo = '';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _status = 'JSON-RPC error: ${e.toString()}';
-        _cardInfo = '';
-      });
-    } finally {
       setState(() {
         _isScanning = false;
+        if (result.result != null) {
+          _status =
+              'JSON-RPC scan successful (${stopwatch.elapsedMilliseconds}ms)';
+          _jsonRpcResult = result;
+          _jsonRpcTime = stopwatch.elapsedMilliseconds;
+        } else {
+          _status = 'JSON-RPC scan failed: ${result.error}';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isScanning = false;
+        _status = 'JSON-RPC error: ${e.toString()}';
       });
     }
   }
@@ -63,38 +58,35 @@ class _ScanCardDirectExampleState extends State<ScanCardDirectExample> {
   Future<void> _scanWithDirect() async {
     setState(() {
       _isScanning = true;
-      _status = 'Scanning with Direct method...';
+      _status = 'Scanning with method channel...';
+      _directResult = null;
     });
 
     try {
       final stopwatch = Stopwatch()..start();
-      final result = await _tangemSdk.scanCardDirect(
-        // Optionally specify card ID
-        // cardId: 'CB000000000001',
-        initialMessage: Message('Scan Card', 'Please tap your Tangem card'),
-      );
+      final result = await _tangemSdk.scanCard(
+          // Optional parameters can be added here if needed
+          // cardId: 'specific_card_id',
+          // accessCode: 'access_code',
+          // initialMessage: Message('Header', 'Body'),
+          );
       stopwatch.stop();
 
-      if (result.result != null) {
-        setState(() {
-          _status =
-              'Direct scan successful (${stopwatch.elapsedMilliseconds}ms)';
-          _cardInfo = _formatCardInfo(result.result!);
-        });
-      } else {
-        setState(() {
-          _status = 'Direct scan failed: ${result.error}';
-          _cardInfo = '';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _status = 'Direct error: ${e.toString()}';
-        _cardInfo = '';
-      });
-    } finally {
       setState(() {
         _isScanning = false;
+        if (result.result != null) {
+          _status =
+              'Method channel scan successful (${stopwatch.elapsedMilliseconds}ms)';
+          _directResult = result;
+          _directTime = stopwatch.elapsedMilliseconds;
+        } else {
+          _status = 'Method channel scan failed: ${result.error}';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isScanning = false;
+        _status = 'Method channel error: ${e.toString()}';
       });
     }
   }

@@ -15,7 +15,7 @@ class TangemSdk {
     return TangemSdkPlatform.instance.getPlatformVersion();
   }
 
-  Future<ScanCardResult> scanCard(ScanCardRequest request) async {
+  Future<ScanCardResult> scanCardWithRequest(ScanCardRequest request) async {
     final res =
         await TangemSdkPlatform.instance.runJSONRPCRequest(request.toJson());
 
@@ -24,9 +24,9 @@ class TangemSdk {
     return result;
   }
 
-  /// Direct method channel implementation of scanCard
+  /// Method channel implementation of scanCard
   /// Bypasses JSON-RPC for improved performance
-  Future<ScanCardResult> scanCardDirect({
+  Future<ScanCardResult> scanCard({
     String? cardId,
     request.Message? initialMessage,
     String? accessCode,
@@ -46,7 +46,7 @@ class TangemSdk {
     return result;
   }
 
-  Future<SignHashResult> signHash(SignHashRequest request) async {
+  Future<SignHashResult> signHashWithRequest(SignHashRequest request) async {
     final res =
         await TangemSdkPlatform.instance.runJSONRPCRequest(request.toJson());
 
@@ -55,7 +55,8 @@ class TangemSdk {
     return result;
   }
 
-  Future<SignHashesResult> signHashes(SignHashesRequest request) async {
+  Future<SignHashesResult> signHashesWithRequest(
+      SignHashesRequest request) async {
     final res =
         await TangemSdkPlatform.instance.runJSONRPCRequest(request.toJson());
 
@@ -92,12 +93,12 @@ class TangemSdk {
     return TangemSdkPlatform.instance.setLinkedTerminal(isLinked);
   }
 
-  /// Direct method channel implementation of signHash
+  /// Method channel implementation of signHash
   /// Bypasses JSON-RPC for improved performance and leverages fast signing when linked terminal is enabled
   ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if hex strings are malformed
-  Future<SignHashResult> signHashDirect({
+  Future<SignHashResult> signHash({
     required String walletPublicKey,
     required String hash,
     String? cardId,
@@ -145,12 +146,12 @@ class TangemSdk {
     return result;
   }
 
-  /// Direct method channel implementation of signHashes
+  /// Method channel implementation of signHashes
   /// Bypasses JSON-RPC for improved performance and leverages fast signing when linked terminal is enabled
   ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if hex strings are malformed
-  Future<SignHashesResult> signHashesDirect({
+  Future<SignHashesResult> signHashes({
     required String walletPublicKey,
     required List<String> hashes,
     String? cardId,
@@ -239,13 +240,13 @@ class TangemSdk {
     return RegExp(r'^\d{4,6}$').hasMatch(accessCode);
   }
 
-  /// Direct method channel implementation of createWallet
+  /// Method channel implementation of createWallet
   /// Bypasses JSON-RPC for improved performance
   ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if card ID format is invalid
   /// Throws [StateError] if wallet creation fails due to card state
-  Future<CreateWalletResult> createWalletDirect({
+  Future<CreateWalletResult> createWallet({
     required String curve,
     String? cardId,
     request.Message? initialMessage,
@@ -308,14 +309,14 @@ class TangemSdk {
     }
   }
 
-  /// Direct method channel implementation of purgeWallet
+  /// Method channel implementation of purgeWallet
   /// Bypasses JSON-RPC for improved performance
   ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if card ID or access code format is invalid
   /// Throws [StateError] if wallet purging fails due to card state
   /// Throws [FormatException] if wallet public key format is invalid
-  Future<PurgeWalletResult> purgeWalletDirect({
+  Future<PurgeWalletResult> purgeWallet({
     required String walletPublicKey,
     String? cardId,
     request.Message? initialMessage,

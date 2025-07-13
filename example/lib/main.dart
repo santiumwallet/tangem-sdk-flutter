@@ -9,7 +9,7 @@ import 'package:tangem_sdk/model/user_code_request_policy.dart';
 import 'package:tangem_sdk/tangem_sdk.dart';
 import 'package:tangem_sdk_example/app_widgets.dart';
 import 'package:tangem_sdk_example/source.dart';
-import 'package:tangem_sdk_example/scan_card_direct_example.dart';
+import 'package:tangem_sdk_example/scan_card_example.dart';
 import 'package:tangem_sdk_example/linked_terminal_example.dart';
 import 'package:tangem_sdk_example/user_code_request_policy_example.dart';
 
@@ -75,7 +75,7 @@ class _TangemExampleAppState extends State<TangemExampleApp>
         controller: _tabController,
         children: [
           CommandListWidget(),
-          const ScanCardDirectExample(),
+          const ScanCardExample(),
           const LinkedTerminalExample(),
           const UserCodeRequestPolicyExample(),
           const SettingsTab(),
@@ -294,9 +294,9 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   void _handleScanCard() async {
     try {
-      final res = await _sdk.scanCard(ScanCardRequest(
+      final res = await _sdk.scanCard(
         accessCode: _accesscode,
-      ));
+      );
 
       if (res.result != null) {
         _cardId = res.result!.cardId;
@@ -324,7 +324,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       //derivationPath: "m/44'/60'/0'/0/0",
     );
 
-    final res = await _sdk.signHash(req);
+    final res = await _sdk.signHashWithRequest(req);
 
     _printResponse(res);
   }
@@ -860,7 +860,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     try {
       final stopwatch = Stopwatch()..start();
 
-      final result = await _sdk.signHashDirect(
+      final result = await _sdk.signHash(
         walletPublicKey: _walletPublicKey!,
         hash:
             "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
@@ -911,7 +911,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         accessCode: _accesscode,
       );
 
-      final result = await _sdk.signHash(req);
+      final result = await _sdk.signHashWithRequest(req);
 
       stopwatch.stop();
 

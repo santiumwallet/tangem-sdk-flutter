@@ -129,9 +129,9 @@ void main() {
       TangemSdkPlatform.instance = mockPlatform;
     });
 
-    test('scanCardDirect bypasses JSON-RPC', () async {
-      // Call the direct method
-      await tangemSdk.scanCardDirect(
+    test('scanCard bypasses JSON-RPC', () async {
+      // Call the method channel method
+      await tangemSdk.scanCard(
         cardId: 'TEST123',
         initialMessage: request.Message('Header', 'Body'),
         accessCode: 'ACCESS',
@@ -151,9 +151,9 @@ void main() {
       });
     });
 
-    test('scanCard uses JSON-RPC', () async {
+    test('scanCardWithRequest uses JSON-RPC', () async {
       // Call the traditional method
-      await tangemSdk.scanCard(ScanCardRequest(
+      await tangemSdk.scanCardWithRequest(ScanCardRequest(
         cardId: 'TEST123',
         message: request.Message('Header', 'Body'),
         accessCode: 'ACCESS',
@@ -170,8 +170,8 @@ void main() {
       mockPlatform.jsonRpcCalled = false;
       mockPlatform.directScanCalled = false;
 
-      // Call direct method
-      await tangemSdk.scanCardDirect(cardId: 'DIRECT');
+      // Call method channel method
+      await tangemSdk.scanCard(cardId: 'DIRECT');
       expect(mockPlatform.directScanCalled, true);
       expect(mockPlatform.jsonRpcCalled, false);
 
@@ -179,7 +179,7 @@ void main() {
       mockPlatform.directScanCalled = false;
 
       // Call JSON-RPC method
-      await tangemSdk.scanCard(ScanCardRequest(cardId: 'JSONRPC'));
+      await tangemSdk.scanCardWithRequest(ScanCardRequest(cardId: 'JSONRPC'));
       expect(mockPlatform.jsonRpcCalled, true);
       expect(mockPlatform.directScanCalled, false);
     });
