@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tangem_sdk/model/tangem_requests.dart';
+import 'package:tangem_sdk/model/user_code_request_policy.dart';
 import 'package:tangem_sdk/tangem_sdk.dart';
 import 'package:tangem_sdk_example/app_widgets.dart';
 import 'package:tangem_sdk_example/source.dart';
 import 'package:tangem_sdk_example/scan_card_direct_example.dart';
 import 'package:tangem_sdk_example/linked_terminal_example.dart';
+import 'package:tangem_sdk_example/user_code_request_policy_example.dart';
 
 void main() {
   runApp(MyApp());
@@ -43,7 +45,7 @@ class _TangemExampleAppState extends State<TangemExampleApp>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -59,10 +61,12 @@ class _TangemExampleAppState extends State<TangemExampleApp>
         title: const Text('Tangem SDK Examples'),
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
           tabs: const [
             Tab(icon: Icon(Icons.list), text: 'All Features'),
             Tab(icon: Icon(Icons.flash_on), text: 'Direct Scan'),
             Tab(icon: Icon(Icons.link), text: 'Linked Terminal'),
+            Tab(icon: Icon(Icons.security), text: 'User Code Policy'),
             Tab(icon: Icon(Icons.settings), text: 'Settings'),
           ],
         ),
@@ -73,6 +77,7 @@ class _TangemExampleAppState extends State<TangemExampleApp>
           CommandListWidget(),
           const ScanCardDirectExample(),
           const LinkedTerminalExample(),
+          const UserCodeRequestPolicyExample(),
           const SettingsTab(),
         ],
       ),
@@ -176,6 +181,21 @@ class _CommandListWidgetState extends State<CommandListWidget> {
             [
               ActionButton("Set access code", _handleSetAccessCode),
               ActionButton("Set passcode", _handleSetPasscode),
+            ],
+          ),
+          ActionType("User Code Request Policy"),
+          RowActions(
+            [
+              ActionButton("Default Policy", _handleSetDefaultPolicy),
+              ActionButton("Always Access Code", _handleSetAlwaysAccessCode),
+              ActionButton("Always Passcode", _handleSetAlwaysPasscode),
+            ],
+          ),
+          RowActions(
+            [
+              ActionButton("Biometric Access", _handleSetBiometricAccess),
+              ActionButton("Biometric Passcode", _handleSetBiometricPasscode),
+              ActionButton("Get Current Policy", _handleGetCurrentPolicy),
             ],
           ),
           SizedBox(height: 5),
@@ -909,6 +929,79 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         _signStatus = 'JSON-RPC signing error: ${e.toString()}';
         _isSigningWithJsonRpc = false;
       });
+    }
+  }
+
+  // User Code Request Policy handlers
+  void _handleSetDefaultPolicy() async {
+    try {
+      final result = await _sdk.setUserCodeRequestPolicy(
+        policy: UserCodeRequestPolicy.defaultPolicy,
+      );
+      _printResponse('Default policy set: ${result.message}');
+    } catch (e) {
+      _printResponse('Error setting default policy: ${e.toString()}');
+    }
+  }
+
+  void _handleSetAlwaysAccessCode() async {
+    try {
+      final result = await _sdk.setUserCodeRequestPolicy(
+        policy: UserCodeRequestPolicy.always,
+        codeType: UserCodeType.accessCode,
+      );
+      _printResponse('Always access code policy set: ${result.message}');
+    } catch (e) {
+      _printResponse(
+          'Error setting always access code policy: ${e.toString()}');
+    }
+  }
+
+  void _handleSetAlwaysPasscode() async {
+    try {
+      final result = await _sdk.setUserCodeRequestPolicy(
+        policy: UserCodeRequestPolicy.always,
+        codeType: UserCodeType.passcode,
+      );
+      _printResponse('Always passcode policy set: ${result.message}');
+    } catch (e) {
+      _printResponse('Error setting always passcode policy: ${e.toString()}');
+    }
+  }
+
+  void _handleSetBiometricAccess() async {
+    try {
+      final result = await _sdk.setUserCodeRequestPolicy(
+        policy: UserCodeRequestPolicy.alwaysWithBiometrics,
+        codeType: UserCodeType.accessCode,
+      );
+      _printResponse('Biometric access code policy set: ${result.message}');
+    } catch (e) {
+      _printResponse(
+          'Error setting biometric access code policy: ${e.toString()}');
+    }
+  }
+
+  void _handleSetBiometricPasscode() async {
+    try {
+      final result = await _sdk.setUserCodeRequestPolicy(
+        policy: UserCodeRequestPolicy.alwaysWithBiometrics,
+        codeType: UserCodeType.passcode,
+      );
+      _printResponse('Biometric passcode policy set: ${result.message}');
+    } catch (e) {
+      _printResponse(
+          'Error setting biometric passcode policy: ${e.toString()}');
+    }
+  }
+
+  void _handleGetCurrentPolicy() async {
+    try {
+      final result = await _sdk.getUserCodeRequestPolicy();
+      _printResponse(
+          'Current policy: ${result.policy.name}, Code type: ${result.codeType.name}');
+    } catch (e) {
+      _printResponse('Error getting current policy: ${e.toString()}');
     }
   }
 // describeEnum

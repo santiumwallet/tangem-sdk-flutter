@@ -2,6 +2,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'model/sdk.dart';
 import 'model/derivation_config.dart';
+import 'model/user_code_request_policy.dart';
 import 'tangem_sdk_method_channel.dart';
 
 abstract class TangemSdkPlatform extends PlatformInterface {
@@ -68,4 +69,11 @@ abstract class TangemSdkPlatform extends PlatformInterface {
     Map<String, String>? initialMessage,
     String? accessCode,
   });
+
+  Future<String> setUserCodeRequestPolicy({
+    required UserCodeRequestPolicy policy,
+    UserCodeType? codeType,
+  });
+
+  Future<String> getUserCodeRequestPolicy();
 }

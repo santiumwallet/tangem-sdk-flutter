@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'model/sdk.dart';
 import 'model/derivation_config.dart';
+import 'model/user_code_request_policy.dart';
 import 'tangem_sdk_platform_interface.dart';
 
 /// An implementation of [TangemSdkPlatform] that uses method channels.
@@ -130,5 +131,25 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     if (accessCode != null) args['accessCode'] = accessCode;
 
     return await methodChannel.invokeMethod("purgeWallet", args);
+  }
+
+  @override
+  Future<String> setUserCodeRequestPolicy({
+    required UserCodeRequestPolicy policy,
+    UserCodeType? codeType,
+  }) async {
+    final args = <String, dynamic>{
+      'policy': policy.name == 'defaultPolicy' ? 'default' : policy.name,
+    };
+    if (codeType != null && codeType != UserCodeType.none) {
+      args['codeType'] = codeType.name;
+    }
+
+    return await methodChannel.invokeMethod("setUserCodeRequestPolicy", args);
+  }
+
+  @override
+  Future<String> getUserCodeRequestPolicy() async {
+    return await methodChannel.invokeMethod("getUserCodeRequestPolicy");
   }
 }

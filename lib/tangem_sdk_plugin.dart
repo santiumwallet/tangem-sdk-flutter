@@ -4,6 +4,7 @@ import 'package:tangem_sdk/model/tangem_requests.dart';
 import 'package:tangem_sdk/model/base_tangem_request.dart' as request;
 import 'package:tangem_sdk/model/create_wallet_result.dart';
 import 'package:tangem_sdk/model/purge_wallet_result.dart';
+import 'package:tangem_sdk/model/user_code_request_policy.dart';
 
 import 'model/sdk.dart';
 import 'model/derivation_config.dart';
@@ -385,6 +386,104 @@ class TangemSdk {
       } else if (e.toString().contains('wallet protected')) {
         throw StateError(
             'Wallet with the provided public key is protected and cannot be purged.');
+      }
+      rethrow;
+    }
+  }
+
+  /// Configure user code request policy
+  ///
+  /// This method controls when and how user codes (access codes and passcodes)
+  /// are requested during card operations.
+  ///
+  /// [policy] - The policy type to set:
+  ///   - `UserCodeRequestPolicy.defaultPolicy`: Request code only if set on card (requires two scans)
+  ///   - `UserCodeRequestPolicy.always`: Always request code before scanning
+  ///   - `UserCodeRequestPolicy.alwaysWithBiometrics`: Request code with biometric support if available
+  ///
+  /// [codeType] - The type of code to request (required for `always` and `alwaysWithBiometrics` policies):
+  ///   - `UserCodeType.accessCode`: 6-digit access code
+  ///   - `UserCodeType.passcode`: 3-digit passcode
+  ///
+  /// Returns a [UserCodeRequestPolicyResult] with the configuration status
+  ///
+  /// Throws [ArgumentError] if required parameters are missing or invalid
+  ///
+  /// Example:
+  /// ```dart
+  /// // Set to always request access code
+  /// final result = await TangemSdk.setUserCodeRequestPolicy(
+  ///   policy: UserCodeRequestPolicy.always,
+  ///   codeType: UserCodeType.accessCode,
+  /// );
+  ///
+  /// // Set to always request with biometrics
+  /// final result = await TangemSdk.setUserCodeRequestPolicy(
+  ///   policy: UserCodeRequestPolicy.alwaysWithBiometrics,
+  ///   codeType: UserCodeType.accessCode,
+  /// );
+  ///
+  /// // Set to default policy (no code type needed)
+  /// final result = await TangemSdk.setUserCodeRequestPolicy(
+  ///   policy: UserCodeRequestPolicy.defaultPolicy,
+  /// );
+  /// ```
+  Future<UserCodeRequestPolicyResult> setUserCodeRequestPolicy({
+    required UserCodeRequestPolicy policy,
+    UserCodeType? codeType,
+  }) async {
+    // Validate required parameters
+    if (policy == UserCodeRequestPolicy.always ||
+        policy == UserCodeRequestPolicy.alwaysWithBiometrics) {
+      if (codeType == null || codeType == UserCodeType.none) {
+        throw ArgumentError('codeType is required for ${policy.name} policy. '
+            'Must be either UserCodeType.accessCode or UserCodeType.passcode');
+      }
+    }
+
+    try {
+      final res = await TangemSdkPlatform.instance.setUserCodeRequestPolicy(
+        policy: policy,
+        codeType: codeType,
+      );
+
+      final result = UserCodeRequestPolicyResult.fromResponse(res);
+      return result;
+    } catch (e) {
+      // Enhance error handling for common policy configuration failures
+      if (e.toString().contains('policy')) {
+        throw ArgumentError('Invalid policy configuration: ${e.toString()}. '
+            'Please check the policy and codeType parameters.');
+      } else if (e.toString().contains('biometrics')) {
+        throw StateError('Biometrics not available on this device. '
+            'Use UserCodeRequestPolicy.always instead.');
+      }
+      rethrow;
+    }
+  }
+
+  /// Get current user code request policy configuration
+  ///
+  /// Returns the currently configured user code request policy and code type.
+  ///
+  /// Returns a [UserCodeRequestPolicyStatus] with the current configuration
+  ///
+  /// Example:
+  /// ```dart
+  /// final status = await TangemSdk.getUserCodeRequestPolicy();
+  /// print('Current policy: ${status.policy}');
+  /// print('Code type: ${status.codeType}');
+  /// ```
+  Future<UserCodeRequestPolicyStatus> getUserCodeRequestPolicy() async {
+    try {
+      final res = await TangemSdkPlatform.instance.getUserCodeRequestPolicy();
+      final result = UserCodeRequestPolicyStatus.fromResponse(res);
+      return result;
+    } catch (e) {
+      // Enhance error handling
+      if (e.toString().contains('not supported')) {
+        throw StateError(
+            'User code request policy is not supported on this platform version.');
       }
       rethrow;
     }

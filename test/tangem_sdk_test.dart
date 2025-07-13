@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tangem_sdk/model/sdk.dart';
 import 'package:tangem_sdk/model/derivation_config.dart';
+import 'package:tangem_sdk/model/user_code_request_policy.dart';
 import 'package:tangem_sdk/tangem_sdk_plugin.dart';
 import 'package:tangem_sdk/tangem_sdk_platform_interface.dart';
 import 'package:tangem_sdk/tangem_sdk_method_channel.dart';
@@ -84,6 +85,21 @@ class MockTangemSdkPlatform
     String? accessCode,
   }) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<String> setUserCodeRequestPolicy({
+    required UserCodeRequestPolicy policy,
+    UserCodeType? codeType,
+  }) {
+    return Future.value(
+        '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}');
+  }
+
+  @override
+  Future<String> getUserCodeRequestPolicy() {
+    return Future.value(
+        '{"success": true, "policy": "default", "codeType": "none"}');
   }
 }
 
