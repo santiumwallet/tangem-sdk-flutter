@@ -39,28 +39,75 @@ class MockScanCardPlatform
         "securityDelay": 15000,
         "maxWalletsCount": 1,
         "isSettingAccessCodeAllowed": true,
-        "isSettingPasscodeAllowed": true,
-        "isResettingUserCodesAllowed": true,
-        "isLinkedTerminalEnabled": false,
-        "isBackupAllowed": true,
-        "supportedEncryptionModes": [0, 1],
-        "isFilesAllowed": true,
-        "isHDWalletAllowed": true,
-        "isKeysImportAllowed": false
-      },
-      "userSettings": {
-        "isUserCodeRecoveryAllowed": false
-      },
-      "linkedTerminalStatus": "current",
-      "isAccessCodeSet": false,
-      "isPasscodeSet": false,
+                    "isSettingPasscodeAllowed": true,
+            "isRemovingUserCodesAllowed": true,
+            "isLinkedTerminalEnabled": false,
+            "isBackupAllowed": true,
+            "supportedEncryptionModes": ["none", "fast"],
+            "isFilesAllowed": true,
+            "isHDWalletAllowed": true,
+            "isKeysImportAllowed": false
+          },
+          "userSettings": {
+            "isUserCodeRecoveryAllowed": false
+          },
+          "linkedTerminalStatus": "current",
+          "isAccessCodeSet": false,
+          "isPasscodeSet": false,
+          "supportedCurves": ["secp256k1", "secp256r1"],
+          "backupStatus": {
+            "status": "noBackup",
+            "cardsCount": 0
+          },
+          "attestation": {
+            "cardKeyAttestation": "verified",
+            "walletKeysAttestation": "verified", 
+            "firmwareAttestation": "verified",
+            "cardUniquenessAttestation": "verified"
+          },
+          "wallets": [
+            {
+              "publicKey": "0xabcdef1234567890",
+              "chainCode": "0x1111111111111111",
+              "curve": "secp256k1",
+              "settings": {
+                "isPermanent": false
+              },
+              "totalSignedHashes": 0,
+              "remainingSignatures": null,
+              "index": 0,
+              "isImported": false,
+              "hasBackup": false,
+              "derivedKeys": {}
+            }
+          ],
+      "supportedCurves": ["secp256k1", "secp256r1"],
       "backupStatus": {
         "status": "noBackup",
         "cardsCount": 0
       },
       "attestation": {
-        "status": "verified"
-      }
+        "cardKeyAttestation": "verified",
+        "walletKeysAttestation": "verified", 
+        "firmwareAttestation": "verified",
+        "cardUniquenessAttestation": "verified"
+      },
+      "wallets": [
+        {
+          "publicKey": "0xabcdef1234567890",
+          "chainCode": "0x1111111111111111",
+          "curve": "secp256k1",
+          "settings": {
+            "isPermanent": false
+          },
+          "totalSignedHashes": 0,
+          "remainingSignatures": null,
+          "index": 0,
+          "isImported": false,
+          "hasBackup": false,
+          "derivedKeys": {}
+        }
+      ]
     },
     "error": null,
     "id": 1
@@ -182,7 +229,6 @@ void main() {
       final result = await tangemSdk.scanCard(
         cardId: 'TEST123',
         initialMessage: testMessage,
-        accessCode: 'ACCESS123',
       );
 
       // Verify the platform was called with correct parameters
@@ -227,7 +273,6 @@ void main() {
       final directResult = await tangemSdk.scanCard(
         cardId: 'TEST123',
         initialMessage: request.Message('Test Header', 'Test Body'),
-        accessCode: 'ACCESS123',
       );
 
       // Compare results - they should be identical
@@ -319,10 +364,10 @@ void main() {
             "maxWalletsCount": 1,
             "isSettingAccessCodeAllowed": true,
             "isSettingPasscodeAllowed": true,
-            "isResettingUserCodesAllowed": true,
+            "isRemovingUserCodesAllowed": true,
             "isLinkedTerminalEnabled": false,
             "isBackupAllowed": true,
-            "supportedEncryptionModes": [0, 1],
+            "supportedEncryptionModes": ["none", "fast"],
             "isFilesAllowed": true,
             "isHDWalletAllowed": true,
             "isKeysImportAllowed": false
@@ -333,12 +378,16 @@ void main() {
           "linkedTerminalStatus": "current",
           "isAccessCodeSet": true,
           "isPasscodeSet": false,
+          "supportedCurves": ["secp256k1", "secp256r1"],
           "backupStatus": {
             "status": "noBackup",
             "cardsCount": 0
           },
           "attestation": {
-            "status": "verified"
+            "cardKeyAttestation": "verified",
+            "walletKeysAttestation": "verified", 
+            "firmwareAttestation": "verified",
+            "cardUniquenessAttestation": "verified"
           },
           "wallets": [
             {
@@ -351,6 +400,7 @@ void main() {
               "totalSignedHashes": 0,
               "remainingSignatures": null,
               "index": 0,
+              "isImported": false,
               "hasBackup": false,
               "derivedKeys": {}
             }

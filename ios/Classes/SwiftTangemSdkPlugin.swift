@@ -174,8 +174,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
             case .success(let card):
                 do {
                     // Format the result to match ScanCardResult structure
-                    let encoder = JSONEncoder()
-                    encoder.dateEncodingStrategy = .iso8601
+                    let encoder = self.getHexEncoder()
                     
                     // First encode the card to get JSON data
                     let cardData = try encoder.encode(card)
@@ -465,8 +464,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
             case .success(let createResponse):
                 do {
                     // Format the result to match CreateWalletResult structure
-                    let encoder = JSONEncoder()
-                    encoder.dateEncodingStrategy = .iso8601
+                    let encoder = self.getHexEncoder()
                     
                     // Encode the wallet data
                     let walletData = try encoder.encode(createResponse.wallet)
@@ -724,6 +722,17 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
         }
         
         return nil
+    }
+
+    @available(iOS 13, *)
+    private func getHexEncoder() -> JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.dataEncodingStrategy = .custom({ data, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(data.hexString)
+        })
+        return encoder
     }
 }
 

@@ -35,7 +35,6 @@ abstract class TangemSdkPlatform extends PlatformInterface {
   Future<String> scanCard({
     String? cardId,
     Map<String, String>? initialMessage,
-    String? accessCode,
   });
 
   Future<String> signHash({

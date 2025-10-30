@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,7 +92,6 @@ class CommandListWidget extends StatefulWidget {
 class _CommandListWidgetState extends State<CommandListWidget> {
   final _jsonEncoder = JsonEncoder.withIndent('  ');
 
-  static const int ID_UNDEFINED = -1;
   static const int ID_SCAN = 1;
   static const int ID_CREATE_WALLET = 2;
   static const int ID_PURGE_WALLET = 3;
@@ -103,7 +101,6 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   String? _cardId;
   String? _walletPublicKey;
-  String? _scanImage;
   String _response = "";
 
   String? _accesscode;
@@ -294,9 +291,9 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   void _handleScanCard() async {
     try {
-      final res = await _sdk.scanCard(
-        accessCode: _accesscode,
-      );
+      final res = await _sdk.scanCard();
+
+      print("res: $res");
 
       if (res.result != null) {
         _cardId = res.result!.cardId;
@@ -314,6 +311,10 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       _notify("Scan the card or create a wallet");
       return;
     }
+
+    print("walletPublicKey: $_walletPublicKey");
+    print("cardId: $_cardId");
+    print("accessCode: $_accesscode");
 
     final req = SignHashRequest(
       walletPublicKey: _walletPublicKey!,
@@ -533,7 +534,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   JSONRPCRequest _makeJsonRpc(SdkMethod method,
       [Map<String, dynamic> params = const {}]) {
-    return JSONRPCRequest(describeEnum(method), params, _getMethodId(method));
+    return JSONRPCRequest(method.name, params, _getMethodId(method));
   }
 
   int _getMethodId(SdkMethod method) {
@@ -863,9 +864,10 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       final result = await _sdk.signHash(
         walletPublicKey: _walletPublicKey!,
         hash:
-            "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
+            "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
         cardId: _cardId,
         accessCode: _accesscode,
+        derivationPath: "m/44'/60'/0'/0/0",
       );
 
       stopwatch.stop();
@@ -1004,7 +1006,6 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       _printResponse('Error getting current policy: ${e.toString()}');
     }
   }
-// describeEnum
 }
 
 enum SdkMethod {

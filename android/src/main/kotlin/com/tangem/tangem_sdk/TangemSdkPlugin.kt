@@ -306,9 +306,10 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             ) { scanResult ->
                 when (scanResult) {
                     is CompletionResult.Success -> {
-                        // Format the result to match ScanCardResult structure
+                        // Format the result to match ScanCardResult structure using JSON-RPC approach
+                        val cardJson = converter.toJson(scanResult.data)
                         val resultMap = mapOf(
-                            "result" to scanResult.data,
+                            "result" to converter.fromJson<Any>(cardJson),
                             "error" to null,
                             "id" to 1
                         )
@@ -494,9 +495,10 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             ) { createResult ->
                 when (createResult) {
                     is CompletionResult.Success -> {
-                        // Format the result to match CreateWalletResult structure
+                        // Format the result to match CreateWalletResult structure using JSON-RPC approach
+                        val walletJson = converter.toJson(createResult.data.wallet)
                         val resultData = mapOf(
-                            "wallet" to createResult.data.wallet,
+                            "wallet" to converter.fromJson<Any>(walletJson),
                             "cardId" to createResult.data.cardId,
                             "message" to "Wallet created successfully"
                         )
@@ -664,6 +666,8 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             UserCodeType.Passcode -> "passcode"
         }
     }
+
+
 
     private fun handleResult(methodResul: String, callback: Result) {
         if (replyAlreadySubmit) return

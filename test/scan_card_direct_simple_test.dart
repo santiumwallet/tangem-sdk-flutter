@@ -134,7 +134,6 @@ void main() {
       await tangemSdk.scanCard(
         cardId: 'TEST123',
         initialMessage: request.Message('Header', 'Body'),
-        accessCode: 'ACCESS',
       );
 
       // Verify direct method was called

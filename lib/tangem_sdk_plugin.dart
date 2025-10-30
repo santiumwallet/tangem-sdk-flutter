@@ -29,7 +29,6 @@ class TangemSdk {
   Future<ScanCardResult> scanCard({
     String? cardId,
     request.Message? initialMessage,
-    String? accessCode,
   }) async {
     final res = await TangemSdkPlatform.instance.scanCard(
       cardId: cardId,
@@ -39,7 +38,6 @@ class TangemSdk {
               'body': initialMessage.body
             }
           : null,
-      accessCode: accessCode,
     );
 
     final result = ScanCardResult.fromResponse(res);
@@ -96,6 +94,15 @@ class TangemSdk {
   /// Method channel implementation of signHash
   /// Bypasses JSON-RPC for improved performance and leverages fast signing when linked terminal is enabled
   ///
+  /// When Linked Terminal is enabled via [setLinkedTerminal], this method provides
+  /// an optimized signing experience:
+  /// - First sign operation: Standard flow with user interaction and security delay
+  /// - Subsequent operations: Bypass security delay using established terminal link
+  ///
+  /// The Linked Terminal feature automatically manages Terminal_PublicKey and
+  /// Terminal_Transaction_Signature exchange with the card, significantly improving
+  /// the user experience for applications requiring multiple signatures.
+  ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if hex strings are malformed
   Future<SignHashResult> signHash({
@@ -148,6 +155,15 @@ class TangemSdk {
 
   /// Method channel implementation of signHashes
   /// Bypasses JSON-RPC for improved performance and leverages fast signing when linked terminal is enabled
+  ///
+  /// When Linked Terminal is enabled via [setLinkedTerminal], this method provides
+  /// an optimized signing experience for batch operations:
+  /// - First sign operation: Standard flow with user interaction and security delay
+  /// - Subsequent operations: Bypass security delay using established terminal link
+  ///
+  /// The Linked Terminal feature is particularly beneficial for signing multiple
+  /// hashes, as it eliminates the security delay for all signatures after the first,
+  /// providing a seamless user experience for batch transactions.
   ///
   /// Throws [ArgumentError] if required parameters are missing or invalid
   /// Throws [FormatException] if hex strings are malformed
