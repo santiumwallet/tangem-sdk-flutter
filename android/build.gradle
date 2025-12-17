@@ -51,6 +51,6 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation "com.github.tangem.tangem-sdk-android:android:3.9.2"
-    implementation "com.github.tangem.tangem-sdk-android:core:3.9.2"
+    implementation "com.github.tangem.tangem-sdk-android:android:release-app_5.16-390"
+    implementation "com.github.tangem.tangem-sdk-android:core:release-app_5.16-390"
 }
