@@ -6,7 +6,7 @@ part 'sign_hash_result.freezed.dart';
 part 'sign_hash_result.g.dart';
 
 @freezed
-class SignHashResult with _$SignHashResult {
+sealed class SignHashResult with _$SignHashResult {
   const factory SignHashResult({
     SignSingleHashResult? result,
     Object? error,
@@ -23,7 +23,7 @@ class SignHashResult with _$SignHashResult {
 }
 
 @freezed
-class SignSingleHashResult with _$SignSingleHashResult {
+sealed class SignSingleHashResult with _$SignSingleHashResult {
   const factory SignSingleHashResult({
     required String cardId,
     required String signature,
@@ -35,7 +35,7 @@ class SignSingleHashResult with _$SignSingleHashResult {
 }
 
 @freezed
-class SignHashesResult with _$SignHashesResult {
+sealed class SignHashesResult with _$SignHashesResult {
   const factory SignHashesResult({
     SignMultipleHashesResult? result,
     Object? error,
@@ -52,7 +52,7 @@ class SignHashesResult with _$SignHashesResult {
 }
 
 @freezed
-class SignMultipleHashesResult with _$SignMultipleHashesResult {
+sealed class SignMultipleHashesResult with _$SignMultipleHashesResult {
   const factory SignMultipleHashesResult({
     required String cardId,
     required List<String> signatures,

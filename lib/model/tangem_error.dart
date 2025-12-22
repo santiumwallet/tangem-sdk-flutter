@@ -5,14 +5,17 @@ part 'tangem_error.g.dart';
 
 /// Comprehensive error types for Tangem SDK operations
 @freezed
-class TangemError with _$TangemError {
+sealed class TangemError with _$TangemError {
   const factory TangemError({
     /// Error code for programmatic handling
     required String code,
+
     /// Human-readable error message
     required String message,
+
     /// Additional error details if available
     String? details,
+
     /// Original platform error if available
     Object? originalError,
   }) = _TangemError;
@@ -54,11 +57,12 @@ extension TangemErrorFactory on TangemError {
     details: 'Please provide a valid value for $argumentName',
   );
 
-  static TangemError invalidArgument(String argumentName, String reason) => TangemError(
-    code: TangemErrorCode.invalidArgument,
-    message: 'Invalid argument: $argumentName',
-    details: reason,
-  );
+  static TangemError invalidArgument(String argumentName, String reason) =>
+      TangemError(
+        code: TangemErrorCode.invalidArgument,
+        message: 'Invalid argument: $argumentName',
+        details: reason,
+      );
 
   static TangemError invalidHexFormat(String fieldName) => TangemError(
     code: TangemErrorCode.invalidHexFormat,

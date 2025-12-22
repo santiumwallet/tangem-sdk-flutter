@@ -5,7 +5,7 @@ part 'derivation_config.freezed.dart';
 part 'derivation_config.g.dart';
 
 @freezed
-class DerivationPathConfig with _$DerivationPathConfig {
+sealed class DerivationPathConfig with _$DerivationPathConfig {
   const factory DerivationPathConfig({
     /**
      * Map of elliptic curves to their respective derivation paths
@@ -22,7 +22,7 @@ class DerivationPathConfig with _$DerivationPathConfig {
 }
 
 @freezed
-class DerivationPath with _$DerivationPath {
+sealed class DerivationPath with _$DerivationPath {
   const factory DerivationPath({
     /**
      * The raw derivation path string (e.g., "m/44'/60'/0'/0/0")

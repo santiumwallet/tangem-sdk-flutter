@@ -6,19 +6,19 @@ part of 'user_code_request_policy.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UserCodeRequestPolicyConfigImpl _$$UserCodeRequestPolicyConfigImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UserCodeRequestPolicyConfigImpl(
-      policy: $enumDecode(_$UserCodeRequestPolicyEnumMap, json['policy']),
-      codeType: $enumDecodeNullable(_$UserCodeTypeEnumMap, json['codeType']),
-    );
+_UserCodeRequestPolicyConfig _$UserCodeRequestPolicyConfigFromJson(
+  Map<String, dynamic> json,
+) => _UserCodeRequestPolicyConfig(
+  policy: $enumDecode(_$UserCodeRequestPolicyEnumMap, json['policy']),
+  codeType: $enumDecodeNullable(_$UserCodeTypeEnumMap, json['codeType']),
+);
 
-Map<String, dynamic> _$$UserCodeRequestPolicyConfigImplToJson(
-        _$UserCodeRequestPolicyConfigImpl instance) =>
-    <String, dynamic>{
-      'policy': _$UserCodeRequestPolicyEnumMap[instance.policy]!,
-      'codeType': _$UserCodeTypeEnumMap[instance.codeType],
-    };
+Map<String, dynamic> _$UserCodeRequestPolicyConfigToJson(
+  _UserCodeRequestPolicyConfig instance,
+) => <String, dynamic>{
+  'policy': _$UserCodeRequestPolicyEnumMap[instance.policy]!,
+  'codeType': _$UserCodeTypeEnumMap[instance.codeType],
+};
 
 const _$UserCodeRequestPolicyEnumMap = {
   UserCodeRequestPolicy.defaultPolicy: 'default',
@@ -32,37 +32,36 @@ const _$UserCodeTypeEnumMap = {
   UserCodeType.none: 'none',
 };
 
-_$UserCodeRequestPolicyResultImpl _$$UserCodeRequestPolicyResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UserCodeRequestPolicyResultImpl(
-      success: json['success'] as bool,
-      message: json['message'] as String?,
-      policy:
-          $enumDecodeNullable(_$UserCodeRequestPolicyEnumMap, json['policy']),
-      codeType: $enumDecodeNullable(_$UserCodeTypeEnumMap, json['codeType']),
-    );
+_UserCodeRequestPolicyResult _$UserCodeRequestPolicyResultFromJson(
+  Map<String, dynamic> json,
+) => _UserCodeRequestPolicyResult(
+  success: json['success'] as bool,
+  message: json['message'] as String?,
+  policy: $enumDecodeNullable(_$UserCodeRequestPolicyEnumMap, json['policy']),
+  codeType: $enumDecodeNullable(_$UserCodeTypeEnumMap, json['codeType']),
+);
 
-Map<String, dynamic> _$$UserCodeRequestPolicyResultImplToJson(
-        _$UserCodeRequestPolicyResultImpl instance) =>
-    <String, dynamic>{
-      'success': instance.success,
-      'message': instance.message,
-      'policy': _$UserCodeRequestPolicyEnumMap[instance.policy],
-      'codeType': _$UserCodeTypeEnumMap[instance.codeType],
-    };
+Map<String, dynamic> _$UserCodeRequestPolicyResultToJson(
+  _UserCodeRequestPolicyResult instance,
+) => <String, dynamic>{
+  'success': instance.success,
+  'message': instance.message,
+  'policy': _$UserCodeRequestPolicyEnumMap[instance.policy],
+  'codeType': _$UserCodeTypeEnumMap[instance.codeType],
+};
 
-_$UserCodeRequestPolicyStatusImpl _$$UserCodeRequestPolicyStatusImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UserCodeRequestPolicyStatusImpl(
-      success: json['success'] as bool,
-      policy: $enumDecode(_$UserCodeRequestPolicyEnumMap, json['policy']),
-      codeType: $enumDecode(_$UserCodeTypeEnumMap, json['codeType']),
-    );
+_UserCodeRequestPolicyStatus _$UserCodeRequestPolicyStatusFromJson(
+  Map<String, dynamic> json,
+) => _UserCodeRequestPolicyStatus(
+  success: json['success'] as bool,
+  policy: $enumDecode(_$UserCodeRequestPolicyEnumMap, json['policy']),
+  codeType: $enumDecode(_$UserCodeTypeEnumMap, json['codeType']),
+);
 
-Map<String, dynamic> _$$UserCodeRequestPolicyStatusImplToJson(
-        _$UserCodeRequestPolicyStatusImpl instance) =>
-    <String, dynamic>{
-      'success': instance.success,
-      'policy': _$UserCodeRequestPolicyEnumMap[instance.policy]!,
-      'codeType': _$UserCodeTypeEnumMap[instance.codeType]!,
-    };
+Map<String, dynamic> _$UserCodeRequestPolicyStatusToJson(
+  _UserCodeRequestPolicyStatus instance,
+) => <String, dynamic>{
+  'success': instance.success,
+  'policy': _$UserCodeRequestPolicyEnumMap[instance.policy]!,
+  'codeType': _$UserCodeTypeEnumMap[instance.codeType]!,
+};

@@ -4,7 +4,7 @@ part 'issuer.freezed.dart';
 part 'issuer.g.dart';
 
 @freezed
-class Issuer with _$Issuer {
+sealed class Issuer with _$Issuer {
   const factory Issuer({
     /**
      * Name of the issuer.

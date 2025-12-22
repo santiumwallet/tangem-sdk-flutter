@@ -5,7 +5,7 @@ part 'purge_wallet_result.freezed.dart';
 part 'purge_wallet_result.g.dart';
 
 @freezed
-class PurgeWalletResult with _$PurgeWalletResult {
+sealed class PurgeWalletResult with _$PurgeWalletResult {
   const factory PurgeWalletResult({
     /**
      * Card ID where the wallet was purged
@@ -33,8 +33,7 @@ class PurgeWalletResult with _$PurgeWalletResult {
     // Handle both direct JSON response and JSON-RPC wrapped response
     final Map<String, dynamic> data;
     try {
-      final parsed = Map<String, dynamic>.from(
-          jsonDecode(jsonResponse));
+      final parsed = Map<String, dynamic>.from(jsonDecode(jsonResponse));
       if (parsed.containsKey('result')) {
         data = parsed['result'];
       } else {

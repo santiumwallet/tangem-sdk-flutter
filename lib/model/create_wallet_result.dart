@@ -6,7 +6,7 @@ part 'create_wallet_result.freezed.dart';
 part 'create_wallet_result.g.dart';
 
 @freezed
-class CreateWalletResult with _$CreateWalletResult {
+sealed class CreateWalletResult with _$CreateWalletResult {
   const factory CreateWalletResult({
     /**
      * The newly created wallet information
@@ -30,8 +30,7 @@ class CreateWalletResult with _$CreateWalletResult {
     // Handle both direct JSON response and JSON-RPC wrapped response
     final Map<String, dynamic> data;
     try {
-      final parsed = Map<String, dynamic>.from(
-          jsonDecode(jsonResponse));
+      final parsed = Map<String, dynamic>.from(jsonDecode(jsonResponse));
       if (parsed.containsKey('result')) {
         data = parsed['result'];
       } else {

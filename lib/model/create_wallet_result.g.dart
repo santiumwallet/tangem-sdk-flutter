@@ -6,16 +6,14 @@ part of 'create_wallet_result.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$CreateWalletResultImpl _$$CreateWalletResultImplFromJson(
-        Map<String, dynamic> json) =>
-    _$CreateWalletResultImpl(
+_CreateWalletResult _$CreateWalletResultFromJson(Map<String, dynamic> json) =>
+    _CreateWalletResult(
       wallet: CardWallet.fromJson(json['wallet'] as Map<String, dynamic>),
       cardId: json['cardId'] as String,
       message: json['message'] as String?,
     );
 
-Map<String, dynamic> _$$CreateWalletResultImplToJson(
-        _$CreateWalletResultImpl instance) =>
+Map<String, dynamic> _$CreateWalletResultToJson(_CreateWalletResult instance) =>
     <String, dynamic>{
       'wallet': instance.wallet,
       'cardId': instance.cardId,

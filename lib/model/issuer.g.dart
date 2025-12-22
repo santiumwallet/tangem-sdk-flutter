@@ -6,13 +6,12 @@ part of 'issuer.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$IssuerImpl _$$IssuerImplFromJson(Map<String, dynamic> json) => _$IssuerImpl(
-      name: json['name'] as String,
-      publicKey: json['publicKey'] as String,
-    );
+_Issuer _$IssuerFromJson(Map<String, dynamic> json) => _Issuer(
+  name: json['name'] as String,
+  publicKey: json['publicKey'] as String,
+);
 
-Map<String, dynamic> _$$IssuerImplToJson(_$IssuerImpl instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'publicKey': instance.publicKey,
-    };
+Map<String, dynamic> _$IssuerToJson(_Issuer instance) => <String, dynamic>{
+  'name': instance.name,
+  'publicKey': instance.publicKey,
+};

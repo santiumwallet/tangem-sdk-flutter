@@ -4,7 +4,7 @@ part 'manufacturer.freezed.dart';
 part 'manufacturer.g.dart';
 
 @freezed
-class Manufacturer with _$Manufacturer {
+sealed class Manufacturer with _$Manufacturer {
   const factory Manufacturer({
     /**
      * Card manufacturer name.

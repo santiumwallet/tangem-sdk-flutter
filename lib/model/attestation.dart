@@ -4,7 +4,7 @@ part 'attestation.freezed.dart';
 part 'attestation.g.dart';
 
 @freezed
-class Attestation with _$Attestation {
+sealed class Attestation with _$Attestation {
   const factory Attestation({
     required Status cardKeyAttestation,
     required Status walletKeysAttestation,

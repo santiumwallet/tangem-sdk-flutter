@@ -37,7 +37,7 @@ enum UserCodeType {
 
 /// Configuration for user code request policy
 @freezed
-class UserCodeRequestPolicyConfig with _$UserCodeRequestPolicyConfig {
+sealed class UserCodeRequestPolicyConfig with _$UserCodeRequestPolicyConfig {
   const factory UserCodeRequestPolicyConfig({
     required UserCodeRequestPolicy policy,
     UserCodeType? codeType,
@@ -49,7 +49,7 @@ class UserCodeRequestPolicyConfig with _$UserCodeRequestPolicyConfig {
 
 /// Result of setting user code request policy
 @freezed
-class UserCodeRequestPolicyResult with _$UserCodeRequestPolicyResult {
+sealed class UserCodeRequestPolicyResult with _$UserCodeRequestPolicyResult {
   const factory UserCodeRequestPolicyResult({
     required bool success,
     String? message,
@@ -62,15 +62,16 @@ class UserCodeRequestPolicyResult with _$UserCodeRequestPolicyResult {
 
   /// Create result from raw JSON response string
   factory UserCodeRequestPolicyResult.fromResponse(String response) {
-    final Map<String, dynamic> json =
-        Map<String, dynamic>.from(jsonDecode(response));
+    final Map<String, dynamic> json = Map<String, dynamic>.from(
+      jsonDecode(response),
+    );
     return UserCodeRequestPolicyResult.fromJson(json);
   }
 }
 
 /// Result of getting current user code request policy
 @freezed
-class UserCodeRequestPolicyStatus with _$UserCodeRequestPolicyStatus {
+sealed class UserCodeRequestPolicyStatus with _$UserCodeRequestPolicyStatus {
   const factory UserCodeRequestPolicyStatus({
     required bool success,
     required UserCodeRequestPolicy policy,
@@ -82,8 +83,9 @@ class UserCodeRequestPolicyStatus with _$UserCodeRequestPolicyStatus {
 
   /// Create status from raw JSON response string
   factory UserCodeRequestPolicyStatus.fromResponse(String response) {
-    final Map<String, dynamic> json =
-        Map<String, dynamic>.from(jsonDecode(response));
+    final Map<String, dynamic> json = Map<String, dynamic>.from(
+      jsonDecode(response),
+    );
     return UserCodeRequestPolicyStatus.fromJson(json);
   }
 }

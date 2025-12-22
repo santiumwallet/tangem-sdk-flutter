@@ -6,9 +6,8 @@ part of 'firmware_version.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$FirmwareVersionImpl _$$FirmwareVersionImplFromJson(
-        Map<String, dynamic> json) =>
-    _$FirmwareVersionImpl(
+_FirmwareVersion _$FirmwareVersionFromJson(Map<String, dynamic> json) =>
+    _FirmwareVersion(
       major: (json['major'] as num).toInt(),
       minor: (json['minor'] as num).toInt(),
       patch: (json['patch'] as num).toInt(),
@@ -16,8 +15,7 @@ _$FirmwareVersionImpl _$$FirmwareVersionImplFromJson(
       type: json['type'] as String,
     );
 
-Map<String, dynamic> _$$FirmwareVersionImplToJson(
-        _$FirmwareVersionImpl instance) =>
+Map<String, dynamic> _$FirmwareVersionToJson(_FirmwareVersion instance) =>
     <String, dynamic>{
       'major': instance.major,
       'minor': instance.minor,

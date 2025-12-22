@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,226 +9,272 @@ part of 'attestation.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Attestation _$AttestationFromJson(Map<String, dynamic> json) {
-  return _Attestation.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Attestation {
-  Status get cardKeyAttestation => throw _privateConstructorUsedError;
-  Status get walletKeysAttestation => throw _privateConstructorUsedError;
-  Status get firmwareAttestation => throw _privateConstructorUsedError;
-  Status get cardUniquenessAttestation => throw _privateConstructorUsedError;
+
+ Status get cardKeyAttestation; Status get walletKeysAttestation; Status get firmwareAttestation; Status get cardUniquenessAttestation;
+/// Create a copy of Attestation
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AttestationCopyWith<Attestation> get copyWith => _$AttestationCopyWithImpl<Attestation>(this as Attestation, _$identity);
 
   /// Serializes this Attestation to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of Attestation
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $AttestationCopyWith<Attestation> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Attestation&&(identical(other.cardKeyAttestation, cardKeyAttestation) || other.cardKeyAttestation == cardKeyAttestation)&&(identical(other.walletKeysAttestation, walletKeysAttestation) || other.walletKeysAttestation == walletKeysAttestation)&&(identical(other.firmwareAttestation, firmwareAttestation) || other.firmwareAttestation == firmwareAttestation)&&(identical(other.cardUniquenessAttestation, cardUniquenessAttestation) || other.cardUniquenessAttestation == cardUniquenessAttestation));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,cardKeyAttestation,walletKeysAttestation,firmwareAttestation,cardUniquenessAttestation);
+
+@override
+String toString() {
+  return 'Attestation(cardKeyAttestation: $cardKeyAttestation, walletKeysAttestation: $walletKeysAttestation, firmwareAttestation: $firmwareAttestation, cardUniquenessAttestation: $cardUniquenessAttestation)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $AttestationCopyWith<$Res> {
-  factory $AttestationCopyWith(
-          Attestation value, $Res Function(Attestation) then) =
-      _$AttestationCopyWithImpl<$Res, Attestation>;
-  @useResult
-  $Res call(
-      {Status cardKeyAttestation,
-      Status walletKeysAttestation,
-      Status firmwareAttestation,
-      Status cardUniquenessAttestation});
-}
+abstract mixin class $AttestationCopyWith<$Res>  {
+  factory $AttestationCopyWith(Attestation value, $Res Function(Attestation) _then) = _$AttestationCopyWithImpl;
+@useResult
+$Res call({
+ Status cardKeyAttestation, Status walletKeysAttestation, Status firmwareAttestation, Status cardUniquenessAttestation
+});
 
+
+
+
+}
 /// @nodoc
-class _$AttestationCopyWithImpl<$Res, $Val extends Attestation>
+class _$AttestationCopyWithImpl<$Res>
     implements $AttestationCopyWith<$Res> {
-  _$AttestationCopyWithImpl(this._value, this._then);
+  _$AttestationCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Attestation _self;
+  final $Res Function(Attestation) _then;
 
-  /// Create a copy of Attestation
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? cardKeyAttestation = null,
-    Object? walletKeysAttestation = null,
-    Object? firmwareAttestation = null,
-    Object? cardUniquenessAttestation = null,
-  }) {
-    return _then(_value.copyWith(
-      cardKeyAttestation: null == cardKeyAttestation
-          ? _value.cardKeyAttestation
-          : cardKeyAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-      walletKeysAttestation: null == walletKeysAttestation
-          ? _value.walletKeysAttestation
-          : walletKeysAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-      firmwareAttestation: null == firmwareAttestation
-          ? _value.firmwareAttestation
-          : firmwareAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-      cardUniquenessAttestation: null == cardUniquenessAttestation
-          ? _value.cardUniquenessAttestation
-          : cardUniquenessAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-    ) as $Val);
-  }
+/// Create a copy of Attestation
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? cardKeyAttestation = null,Object? walletKeysAttestation = null,Object? firmwareAttestation = null,Object? cardUniquenessAttestation = null,}) {
+  return _then(_self.copyWith(
+cardKeyAttestation: null == cardKeyAttestation ? _self.cardKeyAttestation : cardKeyAttestation // ignore: cast_nullable_to_non_nullable
+as Status,walletKeysAttestation: null == walletKeysAttestation ? _self.walletKeysAttestation : walletKeysAttestation // ignore: cast_nullable_to_non_nullable
+as Status,firmwareAttestation: null == firmwareAttestation ? _self.firmwareAttestation : firmwareAttestation // ignore: cast_nullable_to_non_nullable
+as Status,cardUniquenessAttestation: null == cardUniquenessAttestation ? _self.cardUniquenessAttestation : cardUniquenessAttestation // ignore: cast_nullable_to_non_nullable
+as Status,
+  ));
 }
 
-/// @nodoc
-abstract class _$$AttestationImplCopyWith<$Res>
-    implements $AttestationCopyWith<$Res> {
-  factory _$$AttestationImplCopyWith(
-          _$AttestationImpl value, $Res Function(_$AttestationImpl) then) =
-      __$$AttestationImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {Status cardKeyAttestation,
-      Status walletKeysAttestation,
-      Status firmwareAttestation,
-      Status cardUniquenessAttestation});
 }
 
-/// @nodoc
-class __$$AttestationImplCopyWithImpl<$Res>
-    extends _$AttestationCopyWithImpl<$Res, _$AttestationImpl>
-    implements _$$AttestationImplCopyWith<$Res> {
-  __$$AttestationImplCopyWithImpl(
-      _$AttestationImpl _value, $Res Function(_$AttestationImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of Attestation
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? cardKeyAttestation = null,
-    Object? walletKeysAttestation = null,
-    Object? firmwareAttestation = null,
-    Object? cardUniquenessAttestation = null,
-  }) {
-    return _then(_$AttestationImpl(
-      cardKeyAttestation: null == cardKeyAttestation
-          ? _value.cardKeyAttestation
-          : cardKeyAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-      walletKeysAttestation: null == walletKeysAttestation
-          ? _value.walletKeysAttestation
-          : walletKeysAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-      firmwareAttestation: null == firmwareAttestation
-          ? _value.firmwareAttestation
-          : firmwareAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-      cardUniquenessAttestation: null == cardUniquenessAttestation
-          ? _value.cardUniquenessAttestation
-          : cardUniquenessAttestation // ignore: cast_nullable_to_non_nullable
-              as Status,
-    ));
-  }
+/// Adds pattern-matching-related methods to [Attestation].
+extension AttestationPatterns on Attestation {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Attestation value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Attestation() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Attestation value)  $default,){
+final _that = this;
+switch (_that) {
+case _Attestation():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Attestation value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Attestation() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Status cardKeyAttestation,  Status walletKeysAttestation,  Status firmwareAttestation,  Status cardUniquenessAttestation)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Attestation() when $default != null:
+return $default(_that.cardKeyAttestation,_that.walletKeysAttestation,_that.firmwareAttestation,_that.cardUniquenessAttestation);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Status cardKeyAttestation,  Status walletKeysAttestation,  Status firmwareAttestation,  Status cardUniquenessAttestation)  $default,) {final _that = this;
+switch (_that) {
+case _Attestation():
+return $default(_that.cardKeyAttestation,_that.walletKeysAttestation,_that.firmwareAttestation,_that.cardUniquenessAttestation);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Status cardKeyAttestation,  Status walletKeysAttestation,  Status firmwareAttestation,  Status cardUniquenessAttestation)?  $default,) {final _that = this;
+switch (_that) {
+case _Attestation() when $default != null:
+return $default(_that.cardKeyAttestation,_that.walletKeysAttestation,_that.firmwareAttestation,_that.cardUniquenessAttestation);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$AttestationImpl implements _Attestation {
-  const _$AttestationImpl(
-      {required this.cardKeyAttestation,
-      required this.walletKeysAttestation,
-      required this.firmwareAttestation,
-      required this.cardUniquenessAttestation});
 
-  factory _$AttestationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AttestationImplFromJson(json);
+class _Attestation implements Attestation {
+  const _Attestation({required this.cardKeyAttestation, required this.walletKeysAttestation, required this.firmwareAttestation, required this.cardUniquenessAttestation});
+  factory _Attestation.fromJson(Map<String, dynamic> json) => _$AttestationFromJson(json);
 
-  @override
-  final Status cardKeyAttestation;
-  @override
-  final Status walletKeysAttestation;
-  @override
-  final Status firmwareAttestation;
-  @override
-  final Status cardUniquenessAttestation;
+@override final  Status cardKeyAttestation;
+@override final  Status walletKeysAttestation;
+@override final  Status firmwareAttestation;
+@override final  Status cardUniquenessAttestation;
 
-  @override
-  String toString() {
-    return 'Attestation(cardKeyAttestation: $cardKeyAttestation, walletKeysAttestation: $walletKeysAttestation, firmwareAttestation: $firmwareAttestation, cardUniquenessAttestation: $cardUniquenessAttestation)';
-  }
+/// Create a copy of Attestation
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AttestationCopyWith<_Attestation> get copyWith => __$AttestationCopyWithImpl<_Attestation>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AttestationImpl &&
-            (identical(other.cardKeyAttestation, cardKeyAttestation) ||
-                other.cardKeyAttestation == cardKeyAttestation) &&
-            (identical(other.walletKeysAttestation, walletKeysAttestation) ||
-                other.walletKeysAttestation == walletKeysAttestation) &&
-            (identical(other.firmwareAttestation, firmwareAttestation) ||
-                other.firmwareAttestation == firmwareAttestation) &&
-            (identical(other.cardUniquenessAttestation,
-                    cardUniquenessAttestation) ||
-                other.cardUniquenessAttestation == cardUniquenessAttestation));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, cardKeyAttestation,
-      walletKeysAttestation, firmwareAttestation, cardUniquenessAttestation);
-
-  /// Create a copy of Attestation
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AttestationImplCopyWith<_$AttestationImpl> get copyWith =>
-      __$$AttestationImplCopyWithImpl<_$AttestationImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AttestationImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$AttestationToJson(this, );
 }
 
-abstract class _Attestation implements Attestation {
-  const factory _Attestation(
-      {required final Status cardKeyAttestation,
-      required final Status walletKeysAttestation,
-      required final Status firmwareAttestation,
-      required final Status cardUniquenessAttestation}) = _$AttestationImpl;
-
-  factory _Attestation.fromJson(Map<String, dynamic> json) =
-      _$AttestationImpl.fromJson;
-
-  @override
-  Status get cardKeyAttestation;
-  @override
-  Status get walletKeysAttestation;
-  @override
-  Status get firmwareAttestation;
-  @override
-  Status get cardUniquenessAttestation;
-
-  /// Create a copy of Attestation
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AttestationImplCopyWith<_$AttestationImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Attestation&&(identical(other.cardKeyAttestation, cardKeyAttestation) || other.cardKeyAttestation == cardKeyAttestation)&&(identical(other.walletKeysAttestation, walletKeysAttestation) || other.walletKeysAttestation == walletKeysAttestation)&&(identical(other.firmwareAttestation, firmwareAttestation) || other.firmwareAttestation == firmwareAttestation)&&(identical(other.cardUniquenessAttestation, cardUniquenessAttestation) || other.cardUniquenessAttestation == cardUniquenessAttestation));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,cardKeyAttestation,walletKeysAttestation,firmwareAttestation,cardUniquenessAttestation);
+
+@override
+String toString() {
+  return 'Attestation(cardKeyAttestation: $cardKeyAttestation, walletKeysAttestation: $walletKeysAttestation, firmwareAttestation: $firmwareAttestation, cardUniquenessAttestation: $cardUniquenessAttestation)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AttestationCopyWith<$Res> implements $AttestationCopyWith<$Res> {
+  factory _$AttestationCopyWith(_Attestation value, $Res Function(_Attestation) _then) = __$AttestationCopyWithImpl;
+@override @useResult
+$Res call({
+ Status cardKeyAttestation, Status walletKeysAttestation, Status firmwareAttestation, Status cardUniquenessAttestation
+});
+
+
+
+
+}
+/// @nodoc
+class __$AttestationCopyWithImpl<$Res>
+    implements _$AttestationCopyWith<$Res> {
+  __$AttestationCopyWithImpl(this._self, this._then);
+
+  final _Attestation _self;
+  final $Res Function(_Attestation) _then;
+
+/// Create a copy of Attestation
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? cardKeyAttestation = null,Object? walletKeysAttestation = null,Object? firmwareAttestation = null,Object? cardUniquenessAttestation = null,}) {
+  return _then(_Attestation(
+cardKeyAttestation: null == cardKeyAttestation ? _self.cardKeyAttestation : cardKeyAttestation // ignore: cast_nullable_to_non_nullable
+as Status,walletKeysAttestation: null == walletKeysAttestation ? _self.walletKeysAttestation : walletKeysAttestation // ignore: cast_nullable_to_non_nullable
+as Status,firmwareAttestation: null == firmwareAttestation ? _self.firmwareAttestation : firmwareAttestation // ignore: cast_nullable_to_non_nullable
+as Status,cardUniquenessAttestation: null == cardUniquenessAttestation ? _self.cardUniquenessAttestation : cardUniquenessAttestation // ignore: cast_nullable_to_non_nullable
+as Status,
+  ));
+}
+
+
+}
+
+// dart format on

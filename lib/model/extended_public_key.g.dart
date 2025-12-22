@@ -6,9 +6,8 @@ part of 'extended_public_key.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ExtendedPublicKeyImpl _$$ExtendedPublicKeyImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ExtendedPublicKeyImpl(
+_ExtendedPublicKey _$ExtendedPublicKeyFromJson(Map<String, dynamic> json) =>
+    _ExtendedPublicKey(
       publicKey: json['publicKey'] as String,
       chainCode: json['chainCode'] as String,
       depth: (json['depth'] as num?)?.toInt() ?? 0,
@@ -16,8 +15,7 @@ _$ExtendedPublicKeyImpl _$$ExtendedPublicKeyImplFromJson(
       childNumber: (json['childNumber'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$$ExtendedPublicKeyImplToJson(
-        _$ExtendedPublicKeyImpl instance) =>
+Map<String, dynamic> _$ExtendedPublicKeyToJson(_ExtendedPublicKey instance) =>
     <String, dynamic>{
       'publicKey': instance.publicKey,
       'chainCode': instance.chainCode,

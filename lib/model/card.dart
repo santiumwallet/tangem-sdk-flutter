@@ -12,7 +12,7 @@ part 'card.freezed.dart';
 part 'card.g.dart';
 
 @freezed
-class Card with _$Card {
+sealed class Card with _$Card {
   const factory Card({
     /**
      * Unique Tangem card ID number.
@@ -98,5 +98,5 @@ enum LinkedTerminalStatus {
   @JsonValue("other")
   Other,
   @JsonValue("none")
-  None;
+  None,
 }

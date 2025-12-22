@@ -6,15 +6,14 @@ part of 'tangem_error.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$TangemErrorImpl _$$TangemErrorImplFromJson(Map<String, dynamic> json) =>
-    _$TangemErrorImpl(
-      code: json['code'] as String,
-      message: json['message'] as String,
-      details: json['details'] as String?,
-      originalError: json['originalError'],
-    );
+_TangemError _$TangemErrorFromJson(Map<String, dynamic> json) => _TangemError(
+  code: json['code'] as String,
+  message: json['message'] as String,
+  details: json['details'] as String?,
+  originalError: json['originalError'],
+);
 
-Map<String, dynamic> _$$TangemErrorImplToJson(_$TangemErrorImpl instance) =>
+Map<String, dynamic> _$TangemErrorToJson(_TangemError instance) =>
     <String, dynamic>{
       'code': instance.code,
       'message': instance.message,

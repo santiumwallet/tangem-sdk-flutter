@@ -4,7 +4,7 @@ part 'settings.freezed.dart';
 part 'settings.g.dart';
 
 @freezed
-class Settings with _$Settings {
+sealed class Settings with _$Settings {
   const factory Settings({
     /**
      * Delay in milliseconds before executing a command that affects any sensitive data or wallets on the card
