@@ -1,0 +1,39 @@
+//
+//  OnlineAttestationResponseMapper.swift
+//  TangemSdk
+//
+//  Created by [REDACTED_AUTHOR]
+//  Copyright © 2025 Tangem AG. All rights reserved.
+//
+
+struct OnlineAttestationResponseMapper {
+    let card: Card
+
+    func mapError(_ error: Error) -> Attestation.Status {
+        if case .cardVerificationFailed = error.toTangemSdkError() {
+            return Attestation.Status.failed
+        }
+
+        if let networkError = error as? NetworkServiceError {
+            switch networkError {
+            case .statusCode(let code, _) where (code == 403 || code == 404):
+                return Attestation.Status.failed
+            case .failedToMakeRequest, .mappingError:
+                return Attestation.Status.failed
+            case .emptyResponse, .emptyResponseData, .urlSessionError, .statusCode:
+                return Attestation.Status.verifiedOffline
+            }
+        }
+
+        return Attestation.Status.failed
+    }
+
+    func mapValue(_ value: OnlineAttestationResponse) -> Attestation.Status {
+        // Dev card cannot be attested online
+        if card.firmwareVersion.type == .sdk {
+            return Attestation.Status.failed
+        }
+
+        return Attestation.Status.verified
+    }
+}

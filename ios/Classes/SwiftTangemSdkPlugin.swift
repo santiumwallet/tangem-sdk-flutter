@@ -11,6 +11,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
     }
 
     private var _sdk: Any?
+    private var networkService: NetworkService?
 
     // Store custom derivation paths configuration
     private var customDerivationPaths: [EllipticCurve: [DerivationPath]]?
@@ -24,6 +25,10 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
 
             let sdk = TangemSdk()
             sdk.config = config
+
+            // Initialize NetworkService for online attestation
+            networkService = NetworkService(session: .shared, additionalHeaders: [:])
+
             _sdk = sdk
         }
         return _sdk as! TangemSdk
@@ -176,7 +181,10 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
 
         // Execute the scan directly using the native SDK
         // Note: iOS SDK doesn't support allowRequestUserCodeFromRepository parameter
-        sdk.scanCard(initialMessage: initialMessage) { result in
+        sdk.scanCard(
+            initialMessage: initialMessage,
+            networkService: networkService ?? NetworkService(session: .shared, additionalHeaders: [:])
+        ) { result in
             switch result {
             case .success(let card):
                 do {

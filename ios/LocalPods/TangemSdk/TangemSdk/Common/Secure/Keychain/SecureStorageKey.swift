@@ -1,0 +1,40 @@
+//
+//  SecureStorageKey.swift
+//  TangemSdk
+//
+//  Created by [REDACTED_AUTHOR]
+//  Copyright © 2022 Tangem AG. All rights reserved.
+//
+
+import Foundation
+
+enum SecureStorageKey: String {
+    //attestation
+    case attestedCards
+    case attestedCardsEncryptionKey
+
+    case onlineAttestationResponses
+    case onlineAttestationResponsesEncryptionKey
+
+    //access codes repo
+    case cardsWithSavedCodes
+    case cardsWithSavedCodesEncryptionKey
+
+    //terminal keys service
+    case terminalPrivateKey //link card to terminal
+    case terminalPublicKey
+    
+    //backup service
+    case backupData
+}
+
+extension SecureStorageKey {
+    // Access codes repo
+    static func accessCode(for cardId: String) -> String {
+        "accessCode_\(cardId)"
+    }
+
+    static func accessCodeEncryptionKey(for cardId: String) -> String {
+        "accessCode_encryption_key_\(cardId)"
+    }
+}
