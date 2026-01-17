@@ -154,7 +154,7 @@ class MyWalletApp {
   }
   
   Future<void> scanCard() async {
-    final result = await sdk.scanCard(ScanCardRequest());
+    final result = await sdk.scanCard();
     // Handle scan result...
   }
 }
@@ -294,7 +294,7 @@ If you're upgrading from a version without custom derivation paths:
 ```dart
 // Before (still works):
 final sdk = TangemSdk();
-final result = await sdk.scanCard(ScanCardRequest());
+final result = await sdk.scanCard();
 
 // After (with custom paths):
 final sdk = TangemSdk();
@@ -307,7 +307,7 @@ await sdk.configureDerivationPaths(DerivationPathConfig(
   mergeWithDefaults: true,
 ));
 
-final result = await sdk.scanCard(ScanCardRequest());
+final result = await sdk.scanCard();
 ```
 
 ## Advanced Usage
