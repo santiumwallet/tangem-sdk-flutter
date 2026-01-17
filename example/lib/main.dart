@@ -785,9 +785,14 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       final result = await _sdk.setUserCodeRequestPolicy(
         policy: UserCodeRequestPolicy.defaultPolicy,
       );
-      _printResponse('Default policy set: ${result.message}');
+      _printResponse({
+        'success': result.success,
+        'message': result.message,
+        'policy': result.policy?.name,
+        'codeType': result.codeType?.name,
+      });
     } catch (e) {
-      _printResponse('Error setting default policy: ${e.toString()}');
+      _notify('Error setting default policy: ${e.toString()}');
     }
   }
 
@@ -797,10 +802,14 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         policy: UserCodeRequestPolicy.always,
         codeType: UserCodeType.accessCode,
       );
-      _printResponse('Always access code policy set: ${result.message}');
+      _printResponse({
+        'success': result.success,
+        'message': result.message,
+        'policy': result.policy?.name,
+        'codeType': result.codeType?.name,
+      });
     } catch (e) {
-      _printResponse(
-          'Error setting always access code policy: ${e.toString()}');
+      _notify('Error setting always access code policy: ${e.toString()}');
     }
   }
 
@@ -810,9 +819,14 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         policy: UserCodeRequestPolicy.always,
         codeType: UserCodeType.passcode,
       );
-      _printResponse('Always passcode policy set: ${result.message}');
+      _printResponse({
+        'success': result.success,
+        'message': result.message,
+        'policy': result.policy?.name,
+        'codeType': result.codeType?.name,
+      });
     } catch (e) {
-      _printResponse('Error setting always passcode policy: ${e.toString()}');
+      _notify('Error setting always passcode policy: ${e.toString()}');
     }
   }
 
@@ -822,10 +836,14 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         policy: UserCodeRequestPolicy.alwaysWithBiometrics,
         codeType: UserCodeType.accessCode,
       );
-      _printResponse('Biometric access code policy set: ${result.message}');
+      _printResponse({
+        'success': result.success,
+        'message': result.message,
+        'policy': result.policy?.name,
+        'codeType': result.codeType?.name,
+      });
     } catch (e) {
-      _printResponse(
-          'Error setting biometric access code policy: ${e.toString()}');
+      _notify('Error setting biometric access code policy: ${e.toString()}');
     }
   }
 
@@ -835,20 +853,27 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         policy: UserCodeRequestPolicy.alwaysWithBiometrics,
         codeType: UserCodeType.passcode,
       );
-      _printResponse('Biometric passcode policy set: ${result.message}');
+      _printResponse({
+        'success': result.success,
+        'message': result.message,
+        'policy': result.policy?.name,
+        'codeType': result.codeType?.name,
+      });
     } catch (e) {
-      _printResponse(
-          'Error setting biometric passcode policy: ${e.toString()}');
+      _notify('Error setting biometric passcode policy: ${e.toString()}');
     }
   }
 
   void _handleGetCurrentPolicy() async {
     try {
       final result = await _sdk.getUserCodeRequestPolicy();
-      _printResponse(
-          'Current policy: ${result.policy.name}, Code type: ${result.codeType.name}');
+      _printResponse({
+        'success': result.success,
+        'policy': result.policy.name,
+        'codeType': result.codeType.name,
+      });
     } catch (e) {
-      _printResponse('Error getting current policy: ${e.toString()}');
+      _notify('Error getting current policy: ${e.toString()}');
     }
   }
 }
