@@ -1,0 +1,200 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.tangem",
+    "module": "tangem-sdk-core",
+    "version": "5.18.409-local",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.5"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.squareup.sqldelight",
+          "module": "runtime-jvm",
+          "version": {
+            "requires": "1.5.5"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "tangem-sdk-core-5.18.409-local.jar",
+          "url": "tangem-sdk-core-5.18.409-local.jar",
+          "size": 3036360,
+          "sha512": "f34026935a05ecf09d559a6f50470c105e44cf7081012545e15c8832ff85d6914b69911e58c7df786021ca9330966e98ccd5dfd68d2ea9a91111efe0f6dae976",
+          "sha256": "3fd1aa0d036874bc0ada2b5bbb90dbbbbb0e4b43eedd7257533e4189dd71fb7b",
+          "sha1": "67e881e425330ce97d016110a07619fc78789933",
+          "md5": "1ac070def65f930220a26c7d099c668a"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.5.30"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-reflect",
+          "version": {
+            "requires": "1.5.30"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.3.9"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-jdk8",
+          "version": {
+            "requires": "1.3.9"
+          }
+        },
+        {
+          "group": "com.madgag.spongycastle",
+          "module": "core",
+          "version": {
+            "requires": "1.58.0.0"
+          }
+        },
+        {
+          "group": "com.madgag.spongycastle",
+          "module": "prov",
+          "version": {
+            "requires": "1.58.0.0"
+          }
+        },
+        {
+          "group": "net.i2p.crypto",
+          "module": "eddsa",
+          "version": {
+            "requires": "0.3.0"
+          }
+        },
+        {
+          "group": "org.chiachat",
+          "module": "kbls",
+          "version": {
+            "requires": "1.0.3"
+          }
+        },
+        {
+          "group": "com.ionspin.kotlin",
+          "module": "bignum",
+          "version": {
+            "requires": "0.3.8"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "retrofit",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "converter-moshi",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.moshi",
+          "module": "moshi",
+          "version": {
+            "requires": "1.15.1"
+          }
+        },
+        {
+          "group": "com.squareup.moshi",
+          "module": "moshi-kotlin",
+          "version": {
+            "requires": "1.15.1"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "logging-interceptor",
+          "version": {
+            "requires": "4.2.2"
+          }
+        },
+        {
+          "group": "com.squareup.sqldelight",
+          "module": "runtime-jvm",
+          "version": {
+            "requires": "1.5.5"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "tangem-sdk-core-5.18.409-local.jar",
+          "url": "tangem-sdk-core-5.18.409-local.jar",
+          "size": 3036360,
+          "sha512": "f34026935a05ecf09d559a6f50470c105e44cf7081012545e15c8832ff85d6914b69911e58c7df786021ca9330966e98ccd5dfd68d2ea9a91111efe0f6dae976",
+          "sha256": "3fd1aa0d036874bc0ada2b5bbb90dbbbbb0e4b43eedd7257533e4189dd71fb7b",
+          "sha1": "67e881e425330ce97d016110a07619fc78789933",
+          "md5": "1ac070def65f930220a26c7d099c668a"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "tangem-sdk-core-5.18.409-local-sources.jar",
+          "url": "tangem-sdk-core-5.18.409-local-sources.jar",
+          "size": 245935,
+          "sha512": "1966ed84366f2d49a494ef59acaf9f53c9ae8ab56c37eccb0cc0160e162052c61969d987081ae493ba2b91b188aef2e8dcf33d6f759ccdbac7b224f999997b5f",
+          "sha256": "288523ed148f798eea983f4e0d3c6f132910481e5adc2ccd302e025cad7061c4",
+          "sha1": "6da5fb776401861570f2530b515f83c90931501c",
+          "md5": "0984384fdcde323305396cd4c3bd8e1a"
+        }
+      ]
+    }
+  ]
+}

@@ -18,7 +18,9 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {url 'https://jitpack.io'}
+        maven { url 'https://jitpack.io' }
+        // Local Maven repository for tangem-sdk built from source (bundled with plugin)
+        maven { url = uri("${project.projectDir}/repo") }
     }
 }
 
@@ -51,6 +53,7 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation "com.github.tangem.tangem-sdk-android:android:release-app_5.16-390"
-    implementation "com.github.tangem.tangem-sdk-android:core:release-app_5.16-390"
+    // Local SDK libraries (built from tangem-sdk-android source, bundled in android/repo/)
+    implementation "com.tangem:tangem-sdk-android:5.18.409-local"
+    implementation "com.tangem:tangem-sdk-core:5.18.409-local"
 }

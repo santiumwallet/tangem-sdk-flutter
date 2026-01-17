@@ -75,6 +75,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         config.apply {
             filter.allowedCardTypes = FirmwareVersion.FirmwareType.values().toList()
             defaultDerivationPaths = buildDerivationPaths()
+            tangemApiBaseUrl = "https://api.tangem.org/"
         }
 
         val nfcAvailabilityProvider = AndroidNfcAvailabilityProvider(activity)
