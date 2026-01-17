@@ -50,7 +50,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private val converter = MoshiJsonConverter.default()
 
     private var replyAlreadySubmit = false
-    
+
     // Store custom derivation paths configuration
     private var customDerivationPaths: MutableMap<EllipticCurve, List<DerivationPath>>? = null
     private var mergeWithDefaults: Boolean = true
@@ -87,7 +87,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             activity
         )
     }
-    
+
     private fun buildDerivationPaths(): MutableMap<EllipticCurve, List<DerivationPath>> {
         val defaultPaths = mutableMapOf(
             EllipticCurve.Secp256k1 to listOf(
@@ -113,7 +113,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 DerivationPath(rawPath = "m/44'/607'/0'"),
             )
         )
-        
+
         if (customDerivationPaths != null) {
             if (mergeWithDefaults) {
                 // Merge custom paths with defaults
@@ -127,7 +127,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 return customDerivationPaths!!
             }
         }
-        
+
         return defaultPaths
     }
 
@@ -226,7 +226,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             handleException(ex, callback)
         }
     }
-    
+
     /**
      * Configure custom derivation paths
      * {
@@ -241,10 +241,10 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         try {
             val derivationPathsMap: Map<String, List<String>>? = call.extractOptional("derivationPaths")
             mergeWithDefaults = call.extractOptional("mergeWithDefaults") ?: true
-            
+
             if (derivationPathsMap != null) {
                 customDerivationPaths = mutableMapOf()
-                
+
                 for ((curveString, pathStrings) in derivationPathsMap) {
                     val curve = when (curveString) {
                         "secp256k1" -> EllipticCurve.Secp256k1
@@ -257,15 +257,15 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         "bip0340" -> EllipticCurve.Bip0340
                         else -> continue // Skip unknown curves
                     }
-                    
+
                     val derivationPaths = pathStrings.map { DerivationPath(rawPath = it) }
                     customDerivationPaths!![curve] = derivationPaths
                 }
-                
+
                 // Update the SDK config with new derivation paths
                 sdk.config.defaultDerivationPaths = buildDerivationPaths()
             }
-            
+
             val successResult = "{ \"success\": true, \"message\": \"Derivation paths configured successfully\" }"
             handleResult(successResult, callback)
         } catch (ex: Exception) {
@@ -288,7 +288,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         try {
             val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
             val allowRequestUserCodeFromRepository: Boolean = call.argument("allowRequestUserCodeFromRepository") ?: false
-            
+
             // Handle initial message
             val initialMessage = if (initialMessageMap != null) {
                 Message(
@@ -298,7 +298,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             } else {
                 null
             }
-            
+
             // Execute the scan directly using the native SDK with correct parameters
             sdk.scanCard(
                 initialMessage = initialMessage,
@@ -340,7 +340,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val cardId: String? = call.argument("cardId")
             val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
             val derivationPath: String? = call.argument("derivationPath")
-            
+
             // Handle initial message
             val initialMessage = if (initialMessageMap != null) {
                 Message(
@@ -350,7 +350,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             } else {
                 null
             }
-            
+
             // Execute the sign directly using the native SDK
             // Note: accessCode is not supported in the native sign method
             sdk.sign(
@@ -400,7 +400,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val cardId: String? = call.argument("cardId")
             val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
             val derivationPath: String? = call.argument("derivationPath")
-            
+
             // Handle initial message
             val initialMessage = if (initialMessageMap != null) {
                 Message(
@@ -410,10 +410,10 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             } else {
                 null
             }
-            
+
             // Convert string hashes to byte arrays
             val hashesBytes = hashes.map { it.hexToBytes() }.toTypedArray()
-            
+
             // Execute the sign directly using the native SDK
             // Note: accessCode is not supported in the native sign method
             sdk.sign(
@@ -462,7 +462,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val cardId: String = call.argument("cardId") ?: throw IllegalArgumentException("cardId is required")
             val curveString: String = call.argument("curve") ?: throw IllegalArgumentException("curve is required")
             val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
-            
+
             // Parse the curve
             val curve = when (curveString) {
                 "secp256k1" -> EllipticCurve.Secp256k1
@@ -475,7 +475,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 "bip0340" -> EllipticCurve.Bip0340
                 else -> throw IllegalArgumentException("Unsupported curve: $curveString")
             }
-            
+
             // Handle initial message
             val initialMessage = if (initialMessageMap != null) {
                 Message(
@@ -485,7 +485,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             } else {
                 null
             }
-            
+
             // Execute the createWallet directly using the native SDK
             // Note: accessCode is not supported in the native createWallet method
             sdk.createWallet(
@@ -532,7 +532,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val walletPublicKey: String = call.argument("walletPublicKey") ?: throw IllegalArgumentException("walletPublicKey is required")
             val cardId: String = call.argument("cardId") ?: throw IllegalArgumentException("cardId is required")
             val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
-            
+
             // Handle initial message
             val initialMessage = if (initialMessageMap != null) {
                 Message(
@@ -542,7 +542,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             } else {
                 null
             }
-            
+
             // Execute the purgeWallet directly using the native SDK
             // Note: accessCode is not supported in the native purgeWallet method
             sdk.purgeWallet(
@@ -595,7 +595,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         try {
             val policyString: String = call.argument("policy") ?: throw IllegalArgumentException("policy is required")
             val codeTypeString: String? = call.argument("codeType")
-            
+
             val policy = when (policyString) {
                 "default" -> {
                     UserCodeRequestPolicy.Default
@@ -612,17 +612,17 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 else -> throw IllegalArgumentException("Invalid policy: $policyString. Must be one of: default, always, alwaysWithBiometrics")
             }
-            
+
             // Update the SDK configuration
             sdk.config.userCodeRequestPolicy = policy
-            
+
             val successResult = "{ \"success\": true, \"message\": \"User code request policy configured successfully\", \"policy\": \"$policyString\", \"codeType\": \"${codeTypeString ?: "none"}\" }"
             handleResult(successResult, callback)
         } catch (ex: Exception) {
             handleException(ex, callback)
         }
     }
-    
+
     /**
      * Parse user code type from string parameter
      */
@@ -656,7 +656,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             handleException(ex, result)
         }
     }
-    
+
     /**
      * Convert UserCodeType enum to string representation
      */
