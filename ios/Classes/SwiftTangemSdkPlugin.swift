@@ -75,8 +75,6 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         do {
             switch call.method {
-            case "runJSONRPCRequest":
-                try runJSONRPCRequest(call.arguments, result)
             case "setScanImage":
                 try setScanImage(call.arguments)
                 result("{\"success\": true}")
@@ -106,27 +104,6 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
             print(error.localizedDescription)
             result(error as? FlutterError ?? .underlyingError(error))
         }
-    }
-
-    private func runJSONRPCRequest(_ args: Any?, _ completion: @escaping FlutterResult) throws {
-        guard #available(iOS 13, *) else {
-            throw FlutterError.iosTooOld
-        }
-
-        guard let request: String = getArg(for: .request, from: args) else {
-            throw FlutterError.missingRequest
-        }
-
-        let cardId: String? = getArg(for: .cardId, from: args)
-        let initialMessage: String? = getArg(for: .initialMessage, from: args)
-        let accessCode: String? = getArg(for: .accessCode, from: args)
-
-        sdk.startSession(
-            with: request,
-            cardId: cardId,
-            initialMessage: initialMessage,
-            accessCode: accessCode
-        ) { completion($0) }
     }
 
     public func setScanImage(_ args: Any?) throws {
@@ -868,7 +845,6 @@ private enum ArgKey: String {
     case cardId
     case initialMessage
     case accessCode
-    case request = "JSONRPCRequest"
     case base64
     case verticalOffset
     case isLinked
@@ -886,10 +862,6 @@ extension FlutterError: Error {}
 
 extension FlutterError {
     fileprivate static let genericCode = "9999"
-
-    fileprivate static var missingRequest: FlutterError {
-        FlutterError(code: genericCode, message: "Missing JSON RPC request", details: nil)
-    }
 
     fileprivate static var missingArguments: FlutterError {
         FlutterError(code: genericCode, message: "Missing arguments", details: nil)

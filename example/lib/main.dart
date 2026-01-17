@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tangem_sdk/model/tangem_requests.dart';
 import 'package:tangem_sdk/model/user_code_request_policy.dart';
 import 'package:tangem_sdk/tangem_sdk.dart';
 import 'package:tangem_sdk_example/app_widgets.dart';
@@ -92,12 +90,7 @@ class CommandListWidget extends StatefulWidget {
 class _CommandListWidgetState extends State<CommandListWidget> {
   final _jsonEncoder = JsonEncoder.withIndent('  ');
 
-  static const int ID_SCAN = 1;
-  static const int ID_CREATE_WALLET = 2;
-  static const int ID_PURGE_WALLET = 3;
-
   late TangemSdk _sdk;
-  int _methodId = 10;
 
   String? _cardId;
   String? _walletPublicKey;
@@ -105,15 +98,14 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   String? _accesscode;
 
-  final _controller = TextEditingController();
   final _accesscodeController = TextEditingController();
 
   // Enhanced signing widget state
   String _signStatus = '';
   bool _isSigningWithDirect = false;
-  bool _isSigningWithJsonRpc = false;
+  bool _isSigningWithAlternate = false;
   int? _lastDirectSignTime;
-  int? _lastJsonRpcSignTime;
+  int? _lastAlternateSignTime;
   bool _isLinkedTerminalEnabled = false;
 
   @override
@@ -121,9 +113,6 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     super.initState();
 
     _sdk = TangemSdk();
-    _controller.addListener(() {
-      setState(() {});
-    });
     _accesscodeController.addListener(() {
       setState(() {});
     });
@@ -171,13 +160,6 @@ class _CommandListWidgetState extends State<CommandListWidget> {
             [
               ActionButton("Create", _handleCreateWallet),
               ActionButton("Purge", _handlePurgeWallet),
-            ],
-          ),
-          ActionType("Pins"),
-          RowActions(
-            [
-              ActionButton("Set access code", _handleSetAccessCode),
-              ActionButton("Set passcode", _handleSetPasscode),
             ],
           ),
           ActionType("User Code Request Policy"),
@@ -237,51 +219,6 @@ class _CommandListWidgetState extends State<CommandListWidget> {
             ),
           ),
           Divider(),
-          ActionType("JSONRRPC"),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SizedBox(height: 5),
-                TextField(
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                    labelText: "Paste the configuration",
-                    isDense: true,
-                  ),
-                  minLines: 1,
-                  maxLines: 25,
-                  controller: _controller,
-                ),
-                SizedBox(height: 15),
-                Row(
-                  children: [
-                    OutlinedButton(
-                        onPressed: () async {
-                          final data =
-                              await Clipboard.getData(Clipboard.kTextPlain);
-                          final textData = data?.text ?? "";
-                          if (textData.isEmpty) return;
-
-                          _controller.value = TextEditingValue(text: textData);
-                        },
-                        child: Icon(Icons.paste)),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton(
-                        child: Text("Launch"),
-                        onPressed: _controller.text.isEmpty
-                            ? null
-                            : () => _handleJsonRpc(_controller.text),
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Divider(),
           ActionType("RESULT"),
           Text(_response),
         ],
@@ -316,7 +253,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     print("cardId: $_cardId");
     print("accessCode: $_accesscode");
 
-    final req = SignHashRequest(
+    final res = await _sdk.signHash(
       walletPublicKey: _walletPublicKey!,
       hash:
           "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
@@ -325,14 +262,11 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       //derivationPath: "m/44'/60'/0'/0/0",
     );
 
-    final res = await _sdk.signHashWithRequest(req);
-
     _printResponse(res);
   }
 
   void _handleSetScanImage() {
     _sdk.setScanImage(ScanTagImage(base64Image, 0)).then((value) {
-      _parseResponse(value);
       _printResponse(value);
     }).onError((error, stackTrace) {
       _printResponse(error);
@@ -341,59 +275,50 @@ class _CommandListWidgetState extends State<CommandListWidget> {
 
   void _handleRemoveScanImage() {
     _sdk.setScanImage(null).then((value) {
-      _parseResponse(value);
       _printResponse(value);
     }).onError((error, stackTrace) {
       _printResponse(error);
     });
   }
 
-  void _handleCreateWallet() {
+  void _handleCreateWallet() async {
     if (_cardId == null) {
       _notify("Scan the card");
       return;
     }
 
-    final request = _makeJsonRpc(SdkMethod.create_wallet, {
-      "curve": "Secp256k1",
-    });
-    _execJsonRPCRequest(request, _cardId);
+    try {
+      final res = await _sdk.createWallet(
+        curve: "Secp256k1",
+        cardId: _cardId,
+      );
+
+      _walletPublicKey = res.wallet.publicKey;
+
+      _printResponse(res);
+    } catch (e) {
+      _notify(e.toString());
+    }
   }
 
-  void _handlePurgeWallet() {
+  void _handlePurgeWallet() async {
     if (_cardId == null || _walletPublicKey == null) {
       _notify("Scan the card or create a wallet");
       return;
     }
 
-    final request = _makeJsonRpc(SdkMethod.purge_wallet, {
-      "walletPublicKey": _walletPublicKey,
-    });
-    _execJsonRPCRequest(request, _cardId);
-  }
+    try {
+      final res = await _sdk.purgeWallet(
+        walletPublicKey: _walletPublicKey!,
+        cardId: _cardId,
+      );
 
-  void _handleSetAccessCode() {
-    if (_cardId == null) {
-      _notify("Scan the card");
-      return;
+      _walletPublicKey = null;
+
+      _printResponse(res);
+    } catch (e) {
+      _notify(e.toString());
     }
-
-    final request = _makeJsonRpc(SdkMethod.set_accesscode, {
-      "accessCode": "ABCDEFGH",
-    });
-    _execJsonRPCRequest(request, _cardId);
-  }
-
-  void _handleSetPasscode() {
-    if (_cardId == null) {
-      _notify("Scan the card");
-      return;
-    }
-
-    final request = _makeJsonRpc(SdkMethod.set_passcode, {
-      "passcode": "ABCDEFGH",
-    });
-    _execJsonRPCRequest(request, _cardId);
   }
 
   void _handleConfigureCustomPaths() async {
@@ -463,91 +388,12 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     }
   }
 
-  void _handleJsonRpc(String text) {
-    try {
-      final jsonMap = jsonDecode(text.trim());
-      final request = JSONRPCRequest.fromJson(jsonMap);
-      _execJsonRPCRequest(request, _cardId);
-    } catch (ex) {
-      _notify(ex.toString());
-    }
-  }
-
-  void _execJsonRPCRequest(JSONRPCRequest request,
-      [String? cardId, Message? message, String? accessCode]) {
-    final completeRequest = {
-      "JSONRPCRequest": jsonEncode(request),
-      "cardId": cardId,
-      "initialMessage": message?.toJson(),
-      "accessCode": accessCode,
-    };
-
-    _sdk.runJSONRPCRequest(completeRequest).then((value) {
-      _parseResponse(value);
-      _printResponse(value);
-    }).onError((error, stackTrace) {
-      _printResponse(error);
-    });
-  }
-
   void _printResponse(Object? decodedResponse) {
     if (decodedResponse == null) return;
 
     setState(() {
       _response = _reEncode(decodedResponse);
     });
-  }
-
-  void _parseResponse(String response) {
-    JSONRPCResponse jsonRpcResponse;
-    try {
-      jsonRpcResponse = JSONRPCResponse.fromJson(jsonDecode(response));
-    } catch (ex) {
-      print(ex.toString());
-      return;
-    }
-
-    if (jsonRpcResponse.result != null) {
-      switch (jsonRpcResponse.id) {
-        case ID_SCAN:
-          {
-            _cardId = jsonRpcResponse.result["cardId"];
-            final wallets = jsonRpcResponse.result["wallets"];
-            if (wallets is List && wallets.isNotEmpty) {
-              _walletPublicKey = wallets[0]["publicKey"];
-            }
-            break;
-          }
-        case ID_CREATE_WALLET:
-          {
-            _walletPublicKey = jsonRpcResponse.result["wallet"]["publicKey"];
-            break;
-          }
-        case ID_PURGE_WALLET:
-          {
-            _walletPublicKey = null;
-            break;
-          }
-      }
-    }
-  }
-
-  JSONRPCRequest _makeJsonRpc(SdkMethod method,
-      [Map<String, dynamic> params = const {}]) {
-    return JSONRPCRequest(method.name, params, _getMethodId(method));
-  }
-
-  int _getMethodId(SdkMethod method) {
-    switch (method) {
-      case SdkMethod.scan:
-        return ID_SCAN;
-      case SdkMethod.create_wallet:
-        return ID_CREATE_WALLET;
-      case SdkMethod.purge_wallet:
-        return ID_PURGE_WALLET;
-      default:
-        return _methodId++;
-    }
   }
 
   void _notify(String message) {
@@ -567,7 +413,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
   Widget _buildEnhancedSigningWidget() {
     final bool hasCard = _cardId != null && _walletPublicKey != null;
     final bool canSign =
-        hasCard && !_isSigningWithDirect && !_isSigningWithJsonRpc;
+        hasCard && !_isSigningWithDirect && !_isSigningWithAlternate;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -580,7 +426,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
-            'Performance Comparison: Direct vs JSON-RPC Signing',
+            'Performance Comparison: With vs Without Derivation Path',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
@@ -620,8 +466,8 @@ class _CommandListWidgetState extends State<CommandListWidget> {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: canSign ? _handleJsonRpcSigning : null,
-                  icon: _isSigningWithJsonRpc
+                  onPressed: canSign ? _handleAlternateSigning : null,
+                  icon: _isSigningWithAlternate
                       ? const SizedBox(
                           width: 16,
                           height: 16,
@@ -629,7 +475,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                         )
                       : const Icon(Icons.code),
                   label: Text(
-                      _isSigningWithJsonRpc ? 'Signing...' : 'Sign JSON-RPC'),
+                      _isSigningWithAlternate ? 'Signing...' : 'Sign w/o Derivation'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
@@ -658,7 +504,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
             ),
             const SizedBox(height: 12),
           ],
-          if (_lastDirectSignTime != null || _lastJsonRpcSignTime != null) ...[
+          if (_lastDirectSignTime != null || _lastAlternateSignTime != null) ...[
             const Text(
               'Performance Results:',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -778,7 +624,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                   children: [
                     Icon(Icons.flash_on, size: 16, color: Colors.green),
                     SizedBox(width: 4),
-                    Text('Direct Method:',
+                    Text('With Derivation:',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
@@ -786,7 +632,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                     style: const TextStyle(color: Colors.green)),
               ],
             ),
-          if (_lastJsonRpcSignTime != null) ...[
+          if (_lastAlternateSignTime != null) ...[
             const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -795,16 +641,16 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                   children: [
                     Icon(Icons.code, size: 16, color: Colors.blue),
                     SizedBox(width: 4),
-                    Text('JSON-RPC:',
+                    Text('Without Derivation:',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
-                Text('${_lastJsonRpcSignTime}ms',
+                Text('${_lastAlternateSignTime}ms',
                     style: const TextStyle(color: Colors.blue)),
               ],
             ),
           ],
-          if (_lastDirectSignTime != null && _lastJsonRpcSignTime != null) ...[
+          if (_lastDirectSignTime != null && _lastAlternateSignTime != null) ...[
             const SizedBox(height: 8),
             const Divider(),
             const SizedBox(height: 4),
@@ -812,14 +658,14 @@ class _CommandListWidgetState extends State<CommandListWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Performance Improvement:',
+                  'Performance Difference:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${((_lastJsonRpcSignTime! - _lastDirectSignTime!) / _lastJsonRpcSignTime! * 100).toStringAsFixed(1)}% faster',
+                      '${(_lastAlternateSignTime! - _lastDirectSignTime!).abs()}ms difference',
                       style: const TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
@@ -828,7 +674,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                     ),
                     if (_isLinkedTerminalEnabled)
                       const Text(
-                        '⚡ With fast signing',
+                        'With fast signing',
                         style: TextStyle(
                           color: Colors.orange,
                           fontSize: 10,
@@ -889,7 +735,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     }
   }
 
-  Future<void> _handleJsonRpcSigning() async {
+  Future<void> _handleAlternateSigning() async {
     if (_cardId == null || _walletPublicKey == null) {
       setState(() {
         _signStatus = 'Error: Please scan a card first';
@@ -898,38 +744,37 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     }
 
     setState(() {
-      _isSigningWithJsonRpc = true;
-      _signStatus = 'Signing with JSON-RPC method...';
+      _isSigningWithAlternate = true;
+      _signStatus = 'Signing without derivation path...';
     });
 
     try {
       final stopwatch = Stopwatch()..start();
 
-      final req = SignHashRequest(
+      final result = await _sdk.signHash(
         walletPublicKey: _walletPublicKey!,
         hash:
-            "f1642bb080e1f320924dde7238c1c5f8f1642bb080e1f320924dde7238c1c5f8ff",
+            "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
         cardId: _cardId,
         accessCode: _accesscode,
+        // No derivation path parameter
       );
-
-      final result = await _sdk.signHashWithRequest(req);
 
       stopwatch.stop();
 
       setState(() {
-        _lastJsonRpcSignTime = stopwatch.elapsedMilliseconds;
+        _lastAlternateSignTime = stopwatch.elapsedMilliseconds;
         if (result.result != null) {
-          _signStatus = 'JSON-RPC signing success! (${_lastJsonRpcSignTime}ms)';
+          _signStatus = 'Signing without derivation success! (${_lastAlternateSignTime}ms)';
         } else {
-          _signStatus = 'JSON-RPC signing failed: ${result.error}';
+          _signStatus = 'Signing without derivation failed: ${result.error}';
         }
-        _isSigningWithJsonRpc = false;
+        _isSigningWithAlternate = false;
       });
     } catch (e) {
       setState(() {
-        _signStatus = 'JSON-RPC signing error: ${e.toString()}';
-        _isSigningWithJsonRpc = false;
+        _signStatus = 'Signing without derivation error: ${e.toString()}';
+        _isSigningWithAlternate = false;
       });
     }
   }
@@ -1006,22 +851,6 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       _printResponse('Error getting current policy: ${e.toString()}');
     }
   }
-}
-
-enum SdkMethod {
-  scan,
-  sign_hash,
-  sign_hashes,
-  create_wallet,
-  purge_wallet,
-  set_accesscode,
-  set_passcode,
-  reset_usercodes,
-  preflight_read,
-  change_file_settings,
-  delete_files,
-  read_files,
-  write_files,
 }
 
 class SettingsTab extends StatefulWidget {
@@ -1230,8 +1059,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       '• Direct method channel implementation\n'
                       '• Linked terminal for fast signing\n'
                       '• Derivation path configuration\n'
-                      '• Access code and passcode management\n'
-                      '• JSON-RPC command execution',
+                      '• User code request policy management',
                       style: TextStyle(fontSize: 14),
                     ),
                   ],

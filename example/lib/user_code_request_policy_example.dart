@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tangem_sdk/tangem_sdk.dart';
 import 'package:tangem_sdk/model/user_code_request_policy.dart';
-import 'package:tangem_sdk/model/tangem_requests.dart';
 
 class UserCodeRequestPolicyExample extends StatefulWidget {
   const UserCodeRequestPolicyExample({Key? key}) : super(key: key);

@@ -24,8 +24,6 @@ abstract class TangemSdkPlatform extends PlatformInterface {
 
   Future<String?> getPlatformVersion();
 
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request);
-
   Future<String> setScanImage(ScanTagImage? scanCardImage);
 
   Future<String> configureDerivationPaths(DerivationPathConfig config);

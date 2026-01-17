@@ -146,9 +146,6 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     override fun onMethodCall(call: MethodCall, result: Result) {
         replyAlreadySubmit = false
         when (call.method) {
-            "runJSONRPCRequest" -> {
-                runJSONRPCRequest(call, result)
-            }
             "setScanImage" -> {
                 setScanImage(call, result)
             }
@@ -180,21 +177,6 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 purgeWallet(call, result)
             }
             else -> result.notImplemented()
-        }
-    }
-
-    private fun runJSONRPCRequest(call: MethodCall, result: Result) {
-        try {
-            sdk.startSessionWithJsonRequest(
-                    call.extract("JSONRPCRequest"),
-                    call.extractOptional("cardId"),
-                    call.extractOptional("initialMessage"),
-                    call.extractOptional("accessCode")
-            ) {
-                handleResult(it, result)
-            }
-        } catch (ex: Exception) {
-            handleException(ex, result)
         }
     }
 

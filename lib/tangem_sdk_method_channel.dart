@@ -18,11 +18,6 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
   }
 
   @override
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request) async {
-    return await methodChannel.invokeMethod("runJSONRPCRequest", request);
-  }
-
-  @override
   Future<String> setScanImage(ScanTagImage? scanCardImage) async {
     Map<String, dynamic> args = {};
     if (scanCardImage != null) {

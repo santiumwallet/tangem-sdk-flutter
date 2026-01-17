@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tangem_sdk/tangem_sdk.dart' hide Message;
 import 'package:tangem_sdk/model/card.dart' as tangem;
-import 'package:tangem_sdk/model/tangem_requests.dart';
-import 'package:tangem_sdk/model/base_tangem_request.dart';
-import 'package:tangem_sdk/model/scan_card_result.dart';
 
 /// Example demonstrating the scanCard method implementation
-/// Compares performance between JSON-RPC and direct method channel approaches
 class ScanCardExample extends StatefulWidget {
   const ScanCardExample({Key? key}) : super(key: key);
 
@@ -19,47 +15,12 @@ class _ScanCardExampleState extends State<ScanCardExample> {
   String _status = 'Ready to scan';
   String _cardInfo = '';
   bool _isScanning = false;
-  ScanCardResult? _jsonRpcResult;
-  ScanCardResult? _directResult;
-  int? _jsonRpcTime;
-  int? _directTime;
 
-  Future<void> _scanWithJsonRpc() async {
+  Future<void> _scanCard() async {
     setState(() {
       _isScanning = true;
-      _status = 'Scanning with JSON-RPC...';
-      _jsonRpcResult = null;
-    });
-
-    try {
-      final stopwatch = Stopwatch()..start();
-      final result = await _tangemSdk.scanCardWithRequest(ScanCardRequest());
-      stopwatch.stop();
-
-      setState(() {
-        _isScanning = false;
-        if (result.result != null) {
-          _status =
-              'JSON-RPC scan successful (${stopwatch.elapsedMilliseconds}ms)';
-          _jsonRpcResult = result;
-          _jsonRpcTime = stopwatch.elapsedMilliseconds;
-        } else {
-          _status = 'JSON-RPC scan failed: ${result.error}';
-        }
-      });
-    } catch (e) {
-      setState(() {
-        _isScanning = false;
-        _status = 'JSON-RPC error: ${e.toString()}';
-      });
-    }
-  }
-
-  Future<void> _scanWithDirect() async {
-    setState(() {
-      _isScanning = true;
-      _status = 'Scanning with method channel...';
-      _directResult = null;
+      _status = 'Scanning card...';
+      _cardInfo = '';
     });
 
     try {
@@ -75,18 +36,16 @@ class _ScanCardExampleState extends State<ScanCardExample> {
       setState(() {
         _isScanning = false;
         if (result.result != null) {
-          _status =
-              'Method channel scan successful (${stopwatch.elapsedMilliseconds}ms)';
-          _directResult = result;
-          _directTime = stopwatch.elapsedMilliseconds;
+          _status = 'Scan successful (${stopwatch.elapsedMilliseconds}ms)';
+          _cardInfo = _formatCardInfo(result.result!);
         } else {
-          _status = 'Method channel scan failed: ${result.error}';
+          _status = 'Scan failed: ${result.error}';
         }
       });
     } catch (e) {
       setState(() {
         _isScanning = false;
-        _status = 'Method channel error: ${e.toString()}';
+        _status = 'Error: ${e.toString()}';
       });
     }
   }
@@ -118,7 +77,7 @@ class _ScanCardExampleState extends State<ScanCardExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Direct ScanCard Example'),
+        title: const Text('ScanCard Example'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -126,42 +85,23 @@ class _ScanCardExampleState extends State<ScanCardExample> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'ScanCard Method Comparison',
+              'Scan Tangem Card',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text(
-              'This example demonstrates the performance difference between '
-              'the traditional JSON-RPC method and the new direct method channel '
-              'implementation for scanning Tangem cards.',
+              'This example demonstrates how to scan a Tangem card using the scanCard method.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _isScanning ? null : _scanWithJsonRpc,
-                    icon: const Icon(Icons.code),
-                    label: const Text('Scan with JSON-RPC'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(16),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _isScanning ? null : _scanWithDirect,
-                    icon: const Icon(Icons.flash_on),
-                    label: const Text('Scan with Direct'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(16),
-                      backgroundColor: Colors.green,
-                    ),
-                  ),
-                ),
-              ],
+            ElevatedButton.icon(
+              onPressed: _isScanning ? null : _scanCard,
+              icon: const Icon(Icons.nfc),
+              label: const Text('Scan Card'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(16),
+                backgroundColor: Colors.blue,
+              ),
             ),
             const SizedBox(height: 32),
             Container(
@@ -169,7 +109,7 @@ class _ScanCardExampleState extends State<ScanCardExample> {
               decoration: BoxDecoration(
                 color: _status.contains('successful')
                     ? Colors.green[100]
-                    : _status.contains('failed') || _status.contains('error')
+                    : _status.contains('failed') || _status.contains('Error')
                         ? Colors.red[100]
                         : Colors.grey[200],
                 borderRadius: BorderRadius.circular(8),
@@ -180,13 +120,13 @@ class _ScanCardExampleState extends State<ScanCardExample> {
                     _status.contains('successful')
                         ? Icons.check_circle
                         : _status.contains('failed') ||
-                                _status.contains('error')
+                                _status.contains('Error')
                             ? Icons.error
                             : Icons.info_outline,
                     color: _status.contains('successful')
                         ? Colors.green
                         : _status.contains('failed') ||
-                                _status.contains('error')
+                                _status.contains('Error')
                             ? Colors.red
                             : null,
                   ),
@@ -203,44 +143,24 @@ class _ScanCardExampleState extends State<ScanCardExample> {
             ),
             if (_cardInfo.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue[200]!),
-                ),
-                child: Text(
-                  _cardInfo,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue[200]!),
+                    ),
+                    child: Text(
+                      _cardInfo,
+                      style: const TextStyle(
+                          fontFamily: 'monospace', fontSize: 14),
+                    ),
+                  ),
                 ),
               ),
             ],
-            const Spacer(),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.amber[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.amber[300]!),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    '💡 Performance Tip',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'The direct method channel implementation bypasses JSON-RPC '
-                    'serialization, resulting in faster scan times and reduced '
-                    'overhead. Use scanCardDirect() for production applications.',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
