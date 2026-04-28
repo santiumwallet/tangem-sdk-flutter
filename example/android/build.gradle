@@ -3,6 +3,9 @@ allprojects {
         google()
         mavenCentral()
         maven {url 'https://jitpack.io'}
+        // Required: Local Maven repository for tangem-sdk (bundled with plugin)
+        // This is needed because the SDK is built from source while JitPack build is unavailable
+        maven { url = uri("${rootProject.projectDir}/../../android/repo") }
     }
 }
 

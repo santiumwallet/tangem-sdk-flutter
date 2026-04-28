@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,222 +9,287 @@ part of 'manufacturer.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Manufacturer _$ManufacturerFromJson(Map<String, dynamic> json) {
-  return _Manufacturer.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Manufacturer {
+
 /**
      * Card manufacturer name.
      */
-  String get name => throw _privateConstructorUsedError;
-  /**
+ String get name;/**
      * Timestamp of manufacturing.
      */
-  DateTime get manufactureDate => throw _privateConstructorUsedError;
-  /**
+ DateTime get manufactureDate;/**
      * Signature of CardId with manufacturer’s private key. COS 1.21+
      */
-  String? get signature => throw _privateConstructorUsedError;
+ String? get signature;
+/// Create a copy of Manufacturer
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ManufacturerCopyWith<Manufacturer> get copyWith => _$ManufacturerCopyWithImpl<Manufacturer>(this as Manufacturer, _$identity);
 
   /// Serializes this Manufacturer to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of Manufacturer
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $ManufacturerCopyWith<Manufacturer> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Manufacturer&&(identical(other.name, name) || other.name == name)&&(identical(other.manufactureDate, manufactureDate) || other.manufactureDate == manufactureDate)&&(identical(other.signature, signature) || other.signature == signature));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,manufactureDate,signature);
+
+@override
+String toString() {
+  return 'Manufacturer(name: $name, manufactureDate: $manufactureDate, signature: $signature)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $ManufacturerCopyWith<$Res> {
-  factory $ManufacturerCopyWith(
-          Manufacturer value, $Res Function(Manufacturer) then) =
-      _$ManufacturerCopyWithImpl<$Res, Manufacturer>;
-  @useResult
-  $Res call({String name, DateTime manufactureDate, String? signature});
-}
+abstract mixin class $ManufacturerCopyWith<$Res>  {
+  factory $ManufacturerCopyWith(Manufacturer value, $Res Function(Manufacturer) _then) = _$ManufacturerCopyWithImpl;
+@useResult
+$Res call({
+ String name, DateTime manufactureDate, String? signature
+});
 
+
+
+
+}
 /// @nodoc
-class _$ManufacturerCopyWithImpl<$Res, $Val extends Manufacturer>
+class _$ManufacturerCopyWithImpl<$Res>
     implements $ManufacturerCopyWith<$Res> {
-  _$ManufacturerCopyWithImpl(this._value, this._then);
+  _$ManufacturerCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Manufacturer _self;
+  final $Res Function(Manufacturer) _then;
 
-  /// Create a copy of Manufacturer
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? manufactureDate = null,
-    Object? signature = freezed,
-  }) {
-    return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      manufactureDate: null == manufactureDate
-          ? _value.manufactureDate
-          : manufactureDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      signature: freezed == signature
-          ? _value.signature
-          : signature // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
+/// Create a copy of Manufacturer
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? manufactureDate = null,Object? signature = freezed,}) {
+  return _then(_self.copyWith(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,manufactureDate: null == manufactureDate ? _self.manufactureDate : manufactureDate // ignore: cast_nullable_to_non_nullable
+as DateTime,signature: freezed == signature ? _self.signature : signature // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$ManufacturerImplCopyWith<$Res>
-    implements $ManufacturerCopyWith<$Res> {
-  factory _$$ManufacturerImplCopyWith(
-          _$ManufacturerImpl value, $Res Function(_$ManufacturerImpl) then) =
-      __$$ManufacturerImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String name, DateTime manufactureDate, String? signature});
 }
 
-/// @nodoc
-class __$$ManufacturerImplCopyWithImpl<$Res>
-    extends _$ManufacturerCopyWithImpl<$Res, _$ManufacturerImpl>
-    implements _$$ManufacturerImplCopyWith<$Res> {
-  __$$ManufacturerImplCopyWithImpl(
-      _$ManufacturerImpl _value, $Res Function(_$ManufacturerImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of Manufacturer
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? manufactureDate = null,
-    Object? signature = freezed,
-  }) {
-    return _then(_$ManufacturerImpl(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      manufactureDate: null == manufactureDate
-          ? _value.manufactureDate
-          : manufactureDate // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      signature: freezed == signature
-          ? _value.signature
-          : signature // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
+/// Adds pattern-matching-related methods to [Manufacturer].
+extension ManufacturerPatterns on Manufacturer {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Manufacturer value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Manufacturer() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Manufacturer value)  $default,){
+final _that = this;
+switch (_that) {
+case _Manufacturer():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Manufacturer value)?  $default,){
+final _that = this;
+switch (_that) {
+case _Manufacturer() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  DateTime manufactureDate,  String? signature)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Manufacturer() when $default != null:
+return $default(_that.name,_that.manufactureDate,_that.signature);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  DateTime manufactureDate,  String? signature)  $default,) {final _that = this;
+switch (_that) {
+case _Manufacturer():
+return $default(_that.name,_that.manufactureDate,_that.signature);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  DateTime manufactureDate,  String? signature)?  $default,) {final _that = this;
+switch (_that) {
+case _Manufacturer() when $default != null:
+return $default(_that.name,_that.manufactureDate,_that.signature);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$ManufacturerImpl implements _Manufacturer {
-  const _$ManufacturerImpl(
-      {required this.name, required this.manufactureDate, this.signature});
 
-  factory _$ManufacturerImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ManufacturerImplFromJson(json);
+class _Manufacturer implements Manufacturer {
+  const _Manufacturer({required this.name, required this.manufactureDate, this.signature});
+  factory _Manufacturer.fromJson(Map<String, dynamic> json) => _$ManufacturerFromJson(json);
 
 /**
      * Card manufacturer name.
      */
-  @override
-  final String name;
+@override final  String name;
 /**
      * Timestamp of manufacturing.
      */
-  @override
-  final DateTime manufactureDate;
+@override final  DateTime manufactureDate;
 /**
      * Signature of CardId with manufacturer’s private key. COS 1.21+
      */
-  @override
-  final String? signature;
+@override final  String? signature;
 
-  @override
-  String toString() {
-    return 'Manufacturer(name: $name, manufactureDate: $manufactureDate, signature: $signature)';
-  }
+/// Create a copy of Manufacturer
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ManufacturerCopyWith<_Manufacturer> get copyWith => __$ManufacturerCopyWithImpl<_Manufacturer>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ManufacturerImpl &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.manufactureDate, manufactureDate) ||
-                other.manufactureDate == manufactureDate) &&
-            (identical(other.signature, signature) ||
-                other.signature == signature));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, manufactureDate, signature);
-
-  /// Create a copy of Manufacturer
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$ManufacturerImplCopyWith<_$ManufacturerImpl> get copyWith =>
-      __$$ManufacturerImplCopyWithImpl<_$ManufacturerImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ManufacturerImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$ManufacturerToJson(this, );
 }
 
-abstract class _Manufacturer implements Manufacturer {
-  const factory _Manufacturer(
-      {required final String name,
-      required final DateTime manufactureDate,
-      final String? signature}) = _$ManufacturerImpl;
-
-  factory _Manufacturer.fromJson(Map<String, dynamic> json) =
-      _$ManufacturerImpl.fromJson;
-
-/**
-     * Card manufacturer name.
-     */
-  @override
-  String get name;
-  /**
-     * Timestamp of manufacturing.
-     */
-  @override
-  DateTime get manufactureDate;
-  /**
-     * Signature of CardId with manufacturer’s private key. COS 1.21+
-     */
-  @override
-  String? get signature;
-
-  /// Create a copy of Manufacturer
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ManufacturerImplCopyWith<_$ManufacturerImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Manufacturer&&(identical(other.name, name) || other.name == name)&&(identical(other.manufactureDate, manufactureDate) || other.manufactureDate == manufactureDate)&&(identical(other.signature, signature) || other.signature == signature));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,manufactureDate,signature);
+
+@override
+String toString() {
+  return 'Manufacturer(name: $name, manufactureDate: $manufactureDate, signature: $signature)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ManufacturerCopyWith<$Res> implements $ManufacturerCopyWith<$Res> {
+  factory _$ManufacturerCopyWith(_Manufacturer value, $Res Function(_Manufacturer) _then) = __$ManufacturerCopyWithImpl;
+@override @useResult
+$Res call({
+ String name, DateTime manufactureDate, String? signature
+});
+
+
+
+
+}
+/// @nodoc
+class __$ManufacturerCopyWithImpl<$Res>
+    implements _$ManufacturerCopyWith<$Res> {
+  __$ManufacturerCopyWithImpl(this._self, this._then);
+
+  final _Manufacturer _self;
+  final $Res Function(_Manufacturer) _then;
+
+/// Create a copy of Manufacturer
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? manufactureDate = null,Object? signature = freezed,}) {
+  return _then(_Manufacturer(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,manufactureDate: null == manufactureDate ? _self.manufactureDate : manufactureDate // ignore: cast_nullable_to_non_nullable
+as DateTime,signature: freezed == signature ? _self.signature : signature // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+// dart format on

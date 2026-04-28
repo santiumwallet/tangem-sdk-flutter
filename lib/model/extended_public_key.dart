@@ -4,7 +4,7 @@ part 'extended_public_key.freezed.dart';
 part 'extended_public_key.g.dart';
 
 @freezed
-class ExtendedPublicKey with _$ExtendedPublicKey {
+sealed class ExtendedPublicKey with _$ExtendedPublicKey {
   const factory ExtendedPublicKey({
     /**
      * The public key bytes

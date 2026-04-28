@@ -6,7 +6,7 @@ part 'card_wallet.freezed.dart';
 part 'card_wallet.g.dart';
 
 @freezed
-class CardWallet with _$CardWallet {
+sealed class CardWallet with _$CardWallet {
   const factory CardWallet({
     /**
      * Wallet's public key.
@@ -59,7 +59,7 @@ class CardWallet with _$CardWallet {
 }
 
 @freezed
-class CardSettings with _$CardSettings {
+sealed class CardSettings with _$CardSettings {
   const factory CardSettings({
     /**
      * If true, erasing the wallet will be prohibited

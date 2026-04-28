@@ -2,6 +2,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'model/sdk.dart';
 import 'model/derivation_config.dart';
+import 'model/user_code_request_policy.dart';
 import 'tangem_sdk_method_channel.dart';
 
 abstract class TangemSdkPlatform extends PlatformInterface {
@@ -23,9 +24,53 @@ abstract class TangemSdkPlatform extends PlatformInterface {
 
   Future<String?> getPlatformVersion();
 
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request);
-
   Future<String> setScanImage(ScanTagImage? scanCardImage);
 
   Future<String> configureDerivationPaths(DerivationPathConfig config);
+
+  Future<String> setLinkedTerminal(bool isLinked);
+
+  Future<String> scanCard({
+    String? cardId,
+    Map<String, String>? initialMessage,
+  });
+
+  Future<String> signHash({
+    required String walletPublicKey,
+    required String hash,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  });
+
+  Future<String> signHashes({
+    required String walletPublicKey,
+    required List<String> hashes,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  });
+
+  Future<String> createWallet({
+    required String curve,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  });
+
+  Future<String> purgeWallet({
+    required String walletPublicKey,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  });
+
+  Future<String> setUserCodeRequestPolicy({
+    required UserCodeRequestPolicy policy,
+    UserCodeType? codeType,
+  });
+
+  Future<String> getUserCodeRequestPolicy();
 }

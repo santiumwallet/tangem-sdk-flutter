@@ -10,7 +10,11 @@ import com.tangem.common.card.FirmwareVersion
 import com.tangem.common.core.Config
 import com.tangem.common.core.ScanTagImage
 import com.tangem.common.core.ScanTagImage.GenericCard
+import com.tangem.common.CompletionResult
+import com.tangem.Message
+import com.tangem.common.core.UserCodeRequestPolicy
 import com.tangem.common.extensions.hexToBytes
+import com.tangem.common.extensions.toHexString
 import com.tangem.common.json.MoshiJsonConverter
 import com.tangem.common.services.secure.SecureStorage
 import com.tangem.crypto.bip39.Wordlist
@@ -32,6 +36,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.lang.ref.WeakReference
+import com.tangem.common.UserCodeType
 
 /** TangemSdkPlugin */
 class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
@@ -45,7 +50,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private val converter = MoshiJsonConverter.default()
 
     private var replyAlreadySubmit = false
-    
+
     // Store custom derivation paths configuration
     private var customDerivationPaths: MutableMap<EllipticCurve, List<DerivationPath>>? = null
     private var mergeWithDefaults: Boolean = true
@@ -70,6 +75,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         config.apply {
             filter.allowedCardTypes = FirmwareVersion.FirmwareType.values().toList()
             defaultDerivationPaths = buildDerivationPaths()
+            tangemApiBaseUrl = "https://api.tangem.org/"
         }
 
         val nfcAvailabilityProvider = AndroidNfcAvailabilityProvider(activity)
@@ -82,7 +88,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             activity
         )
     }
-    
+
     private fun buildDerivationPaths(): MutableMap<EllipticCurve, List<DerivationPath>> {
         val defaultPaths = mutableMapOf(
             EllipticCurve.Secp256k1 to listOf(
@@ -108,7 +114,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 DerivationPath(rawPath = "m/44'/607'/0'"),
             )
         )
-        
+
         if (customDerivationPaths != null) {
             if (mergeWithDefaults) {
                 // Merge custom paths with defaults
@@ -122,7 +128,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 return customDerivationPaths!!
             }
         }
-        
+
         return defaultPaths
     }
 
@@ -140,31 +146,37 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     override fun onMethodCall(call: MethodCall, result: Result) {
         replyAlreadySubmit = false
         when (call.method) {
-            "runJSONRPCRequest" -> {
-                runJSONRPCRequest(call, result)
-            }
             "setScanImage" -> {
                 setScanImage(call, result)
             }
             "configureDerivationPaths" -> {
                 configureDerivationPaths(call, result)
             }
-            else -> result.notImplemented()
-        }
-    }
-
-    private fun runJSONRPCRequest(call: MethodCall, result: Result) {
-        try {
-            sdk.startSessionWithJsonRequest(
-                    call.extract("JSONRPCRequest"),
-                    call.extractOptional("cardId"),
-                    call.extractOptional("initialMessage"),
-                    call.extractOptional("accessCode")
-            ) {
-                handleResult(it, result)
+            "setUserCodeRequestPolicy" -> {
+                setUserCodeRequestPolicy(call, result)
             }
-        } catch (ex: Exception) {
-            handleException(ex, result)
+            "getUserCodeRequestPolicy" -> {
+                getUserCodeRequestPolicy(call, result)
+            }
+            "setLinkedTerminal" -> {
+                setLinkedTerminal(call, result)
+            }
+            "scanCard" -> {
+                scanCard(call, result)
+            }
+            "signHash" -> {
+                signHash(call, result)
+            }
+            "signHashes" -> {
+                signHashes(call, result)
+            }
+            "createWallet" -> {
+                createWallet(call, result)
+            }
+            "purgeWallet" -> {
+                purgeWallet(call, result)
+            }
+            else -> result.notImplemented()
         }
     }
 
@@ -197,7 +209,7 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             handleException(ex, callback)
         }
     }
-    
+
     /**
      * Configure custom derivation paths
      * {
@@ -212,10 +224,10 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         try {
             val derivationPathsMap: Map<String, List<String>>? = call.extractOptional("derivationPaths")
             mergeWithDefaults = call.extractOptional("mergeWithDefaults") ?: true
-            
+
             if (derivationPathsMap != null) {
                 customDerivationPaths = mutableMapOf()
-                
+
                 for ((curveString, pathStrings) in derivationPathsMap) {
                     val curve = when (curveString) {
                         "secp256k1" -> EllipticCurve.Secp256k1
@@ -228,21 +240,417 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         "bip0340" -> EllipticCurve.Bip0340
                         else -> continue // Skip unknown curves
                     }
-                    
+
                     val derivationPaths = pathStrings.map { DerivationPath(rawPath = it) }
                     customDerivationPaths!![curve] = derivationPaths
                 }
-                
+
                 // Update the SDK config with new derivation paths
                 sdk.config.defaultDerivationPaths = buildDerivationPaths()
             }
-            
+
             val successResult = "{ \"success\": true, \"message\": \"Derivation paths configured successfully\" }"
             handleResult(successResult, callback)
         } catch (ex: Exception) {
             handleException(ex, callback)
         }
     }
+
+    private fun setLinkedTerminal(call: MethodCall, result: Result) {
+        try {
+            val isLinked = call.argument<Boolean>("isLinked") ?: false
+            sdk.config.linkedTerminal = isLinked
+            val successResult = "{ \"success\": true, \"message\": \"Linked terminal configured successfully\", \"isLinked\": $isLinked }"
+            handleResult(successResult, result)
+        } catch (ex: Exception) {
+            handleException(ex, result)
+        }
+    }
+
+    private fun scanCard(call: MethodCall, result: Result) {
+        try {
+            val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
+            val allowRequestUserCodeFromRepository: Boolean = call.argument("allowRequestUserCodeFromRepository") ?: false
+
+            // Handle initial message
+            val initialMessage = if (initialMessageMap != null) {
+                Message(
+                    header = initialMessageMap["header"] ?: "",
+                    body = initialMessageMap["body"] ?: ""
+                )
+            } else {
+                null
+            }
+
+            // Execute the scan directly using the native SDK with correct parameters
+            sdk.scanCard(
+                initialMessage = initialMessage,
+                allowRequestUserCodeFromRepository = allowRequestUserCodeFromRepository
+            ) { scanResult ->
+                when (scanResult) {
+                    is CompletionResult.Success -> {
+                        // Format the result to match ScanCardResult structure using JSON-RPC approach
+                        val cardJson = converter.toJson(scanResult.data)
+                        val resultMap = mapOf(
+                            "result" to converter.fromJson<Any>(cardJson),
+                            "error" to null,
+                            "id" to 1
+                        )
+                        val jsonResult = converter.toJson(resultMap)
+                        handleResult(jsonResult, result)
+                    }
+                    is CompletionResult.Failure -> {
+                        // Format the error to match ScanCardResult structure
+                        val errorMap = mapOf(
+                            "result" to null,
+                            "error" to scanResult.error,
+                            "id" to 1
+                        )
+                        val jsonResult = converter.toJson(errorMap)
+                        handleResult(jsonResult, result)
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            handleException(ex, result)
+        }
+    }
+
+    private fun signHash(call: MethodCall, result: Result) {
+        try {
+            val walletPublicKey: String = call.argument("walletPublicKey") ?: throw IllegalArgumentException("walletPublicKey is required")
+            val hash: String = call.argument("hash") ?: throw IllegalArgumentException("hash is required")
+            val cardId: String? = call.argument("cardId")
+            val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
+            val derivationPath: String? = call.argument("derivationPath")
+
+            // Handle initial message
+            val initialMessage = if (initialMessageMap != null) {
+                Message(
+                    header = initialMessageMap["header"] ?: "",
+                    body = initialMessageMap["body"] ?: ""
+                )
+            } else {
+                null
+            }
+
+            // Execute the sign directly using the native SDK
+            // Note: accessCode is not supported in the native sign method
+            sdk.sign(
+                hash = hash.hexToBytes(),
+                walletPublicKey = walletPublicKey.hexToBytes(),
+                cardId = cardId,
+                derivationPath = derivationPath?.let { DerivationPath(rawPath = it) },
+                initialMessage = initialMessage
+            ) { signResult ->
+                when (signResult) {
+                    is CompletionResult.Success -> {
+                        // Format the result to match SignHashResult structure
+                        val resultData = mapOf(
+                            "cardId" to signResult.data.cardId,
+                            "signature" to signResult.data.signature.toHexString(),
+                            "totalSignedHashes" to signResult.data.totalSignedHashes
+                        )
+                        val resultMap = mapOf(
+                            "result" to resultData,
+                            "error" to null,
+                            "id" to 2
+                        )
+                        val jsonResult = converter.toJson(resultMap)
+                        handleResult(jsonResult, result)
+                    }
+                    is CompletionResult.Failure -> {
+                        // Format the error to match SignHashResult structure
+                        val errorMap = mapOf(
+                            "result" to null,
+                            "error" to signResult.error,
+                            "id" to 2
+                        )
+                        val jsonResult = converter.toJson(errorMap)
+                        handleResult(jsonResult, result)
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            handleException(ex, result)
+        }
+    }
+
+    private fun signHashes(call: MethodCall, result: Result) {
+        try {
+            val walletPublicKey: String = call.argument("walletPublicKey") ?: throw IllegalArgumentException("walletPublicKey is required")
+            val hashes: List<String> = call.argument("hashes") ?: throw IllegalArgumentException("hashes is required")
+            val cardId: String? = call.argument("cardId")
+            val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
+            val derivationPath: String? = call.argument("derivationPath")
+
+            // Handle initial message
+            val initialMessage = if (initialMessageMap != null) {
+                Message(
+                    header = initialMessageMap["header"] ?: "",
+                    body = initialMessageMap["body"] ?: ""
+                )
+            } else {
+                null
+            }
+
+            // Convert string hashes to byte arrays
+            val hashesBytes = hashes.map { it.hexToBytes() }.toTypedArray()
+
+            // Execute the sign directly using the native SDK
+            // Note: accessCode is not supported in the native sign method
+            sdk.sign(
+                hashes = hashesBytes,
+                walletPublicKey = walletPublicKey.hexToBytes(),
+                cardId = cardId,
+                derivationPath = derivationPath?.let { DerivationPath(rawPath = it) },
+                initialMessage = initialMessage
+            ) { signResult ->
+                when (signResult) {
+                    is CompletionResult.Success -> {
+                        // Format the result to match SignHashesResult structure
+                        val signatures = signResult.data.signatures.map { it.toHexString() }
+                        val resultData = mapOf(
+                            "cardId" to signResult.data.cardId,
+                            "signatures" to signatures,
+                            "totalSignedHashes" to signResult.data.totalSignedHashes
+                        )
+                        val resultMap = mapOf(
+                            "result" to resultData,
+                            "error" to null,
+                            "id" to 2
+                        )
+                        val jsonResult = converter.toJson(resultMap)
+                        handleResult(jsonResult, result)
+                    }
+                    is CompletionResult.Failure -> {
+                        // Format the error to match SignHashesResult structure
+                        val errorMap = mapOf(
+                            "result" to null,
+                            "error" to signResult.error,
+                            "id" to 2
+                        )
+                        val jsonResult = converter.toJson(errorMap)
+                        handleResult(jsonResult, result)
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            handleException(ex, result)
+        }
+    }
+
+    private fun createWallet(call: MethodCall, result: Result) {
+        try {
+            val cardId: String = call.argument("cardId") ?: throw IllegalArgumentException("cardId is required")
+            val curveString: String = call.argument("curve") ?: throw IllegalArgumentException("curve is required")
+            val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
+
+            // Parse the curve
+            val curve = when (curveString) {
+                "secp256k1" -> EllipticCurve.Secp256k1
+                "secp256r1" -> EllipticCurve.Secp256r1
+                "ed25519" -> EllipticCurve.Ed25519
+                "ed25519Slip0010" -> EllipticCurve.Ed25519Slip0010
+                "bls12381G2" -> EllipticCurve.Bls12381G2
+                "bls12381G2Aug" -> EllipticCurve.Bls12381G2Aug
+                "bls12381G2Pop" -> EllipticCurve.Bls12381G2Pop
+                "bip0340" -> EllipticCurve.Bip0340
+                else -> throw IllegalArgumentException("Unsupported curve: $curveString")
+            }
+
+            // Handle initial message
+            val initialMessage = if (initialMessageMap != null) {
+                Message(
+                    header = initialMessageMap["header"] ?: "",
+                    body = initialMessageMap["body"] ?: ""
+                )
+            } else {
+                null
+            }
+
+            // Execute the createWallet directly using the native SDK
+            // Note: accessCode is not supported in the native createWallet method
+            sdk.createWallet(
+                curve = curve,
+                cardId = cardId,
+                initialMessage = initialMessage
+            ) { createResult ->
+                when (createResult) {
+                    is CompletionResult.Success -> {
+                        // Format the result to match CreateWalletResult structure using JSON-RPC approach
+                        val walletJson = converter.toJson(createResult.data.wallet)
+                        val resultData = mapOf(
+                            "wallet" to converter.fromJson<Any>(walletJson),
+                            "cardId" to createResult.data.cardId,
+                            "message" to "Wallet created successfully"
+                        )
+                        val resultMap = mapOf(
+                            "result" to resultData,
+                            "error" to null,
+                            "id" to 3
+                        )
+                        val jsonResult = converter.toJson(resultMap)
+                        handleResult(jsonResult, result)
+                    }
+                    is CompletionResult.Failure -> {
+                        // Format the error to match CreateWalletResult structure
+                        val errorMap = mapOf(
+                            "result" to null,
+                            "error" to createResult.error,
+                            "id" to 3
+                        )
+                        val jsonResult = converter.toJson(errorMap)
+                        handleResult(jsonResult, result)
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            handleException(ex, result)
+        }
+    }
+
+    private fun purgeWallet(call: MethodCall, result: Result) {
+        try {
+            val walletPublicKey: String = call.argument("walletPublicKey") ?: throw IllegalArgumentException("walletPublicKey is required")
+            val cardId: String = call.argument("cardId") ?: throw IllegalArgumentException("cardId is required")
+            val initialMessageMap: Map<String, String>? = call.argument("initialMessage")
+
+            // Handle initial message
+            val initialMessage = if (initialMessageMap != null) {
+                Message(
+                    header = initialMessageMap["header"] ?: "",
+                    body = initialMessageMap["body"] ?: ""
+                )
+            } else {
+                null
+            }
+
+            // Execute the purgeWallet directly using the native SDK
+            // Note: accessCode is not supported in the native purgeWallet method
+            sdk.purgeWallet(
+                walletPublicKey = walletPublicKey.hexToBytes(),
+                cardId = cardId,
+                initialMessage = initialMessage
+            ) { purgeResult ->
+                when (purgeResult) {
+                    is CompletionResult.Success -> {
+                        // Format the result to match PurgeWalletResult structure
+                        val resultData = mapOf(
+                            "cardId" to purgeResult.data.cardId,
+                            "walletPublicKey" to walletPublicKey,
+                            "message" to "Wallet purged successfully",
+                            "success" to true
+                        )
+                        val resultMap = mapOf(
+                            "result" to resultData,
+                            "error" to null,
+                            "id" to 3
+                        )
+                        val jsonResult = converter.toJson(resultMap)
+                        handleResult(jsonResult, result)
+                    }
+                    is CompletionResult.Failure -> {
+                        // Format the error to match PurgeWalletResult structure
+                        val errorMap = mapOf(
+                            "result" to null,
+                            "error" to purgeResult.error,
+                            "id" to 3
+                        )
+                        val jsonResult = converter.toJson(errorMap)
+                        handleResult(jsonResult, result)
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            handleException(ex, result)
+        }
+    }
+
+    /**
+     * Configure user code request policy
+     * {
+     *    "policy": "default" | "always" | "alwaysWithBiometrics",
+     *    "codeType": "accessCode" | "passcode"  // required for "always" and "alwaysWithBiometrics"
+     * }
+     */
+    private fun setUserCodeRequestPolicy(call: MethodCall, callback: Result) {
+        try {
+            val policyString: String = call.argument("policy") ?: throw IllegalArgumentException("policy is required")
+            val codeTypeString: String? = call.argument("codeType")
+
+            val policy = when (policyString) {
+                "default" -> {
+                    UserCodeRequestPolicy.Default
+                }
+                "always" -> {
+                    val codeType = parseUserCodeType(codeTypeString)
+                        ?: throw IllegalArgumentException("codeType is required for 'always' policy")
+                    UserCodeRequestPolicy.Always(codeType)
+                }
+                "alwaysWithBiometrics" -> {
+                    val codeType = parseUserCodeType(codeTypeString)
+                        ?: throw IllegalArgumentException("codeType is required for 'alwaysWithBiometrics' policy")
+                    UserCodeRequestPolicy.AlwaysWithBiometrics(codeType)
+                }
+                else -> throw IllegalArgumentException("Invalid policy: $policyString. Must be one of: default, always, alwaysWithBiometrics")
+            }
+
+            // Update the SDK configuration
+            sdk.config.userCodeRequestPolicy = policy
+
+            val successResult = "{ \"success\": true, \"message\": \"User code request policy configured successfully\", \"policy\": \"$policyString\", \"codeType\": \"${codeTypeString ?: "none"}\" }"
+            handleResult(successResult, callback)
+        } catch (ex: Exception) {
+            handleException(ex, callback)
+        }
+    }
+
+    /**
+     * Parse user code type from string parameter
+     */
+    private fun parseUserCodeType(codeTypeString: String?): UserCodeType? {
+        return when (codeTypeString) {
+            "accessCode" -> UserCodeType.AccessCode
+            "passcode" -> UserCodeType.Passcode
+            else -> null
+        }
+    }
+
+    /**
+     * Get current user code request policy configuration
+     */
+    private fun getUserCodeRequestPolicy(call: MethodCall, result: Result) {
+        try {
+            val policy = sdk.config.userCodeRequestPolicy
+            val policyString = when (policy) {
+                UserCodeRequestPolicy.Default -> "default"
+                is UserCodeRequestPolicy.Always -> "always"
+                is UserCodeRequestPolicy.AlwaysWithBiometrics -> "alwaysWithBiometrics"
+            }
+            val codeTypeString = when (policy) {
+                is UserCodeRequestPolicy.Always -> userCodeTypeToString(policy.codeType)
+                is UserCodeRequestPolicy.AlwaysWithBiometrics -> userCodeTypeToString(policy.codeType)
+                else -> null
+            }
+            val successResult = "{ \"success\": true, \"policy\": \"$policyString\", \"codeType\": \"${codeTypeString ?: "none"}\" }"
+            handleResult(successResult, result)
+        } catch (ex: Exception) {
+            handleException(ex, result)
+        }
+    }
+
+    /**
+     * Convert UserCodeType enum to string representation
+     */
+    private fun userCodeTypeToString(codeType: UserCodeType): String {
+        return when (codeType) {
+            UserCodeType.AccessCode -> "accessCode"
+            UserCodeType.Passcode -> "passcode"
+        }
+    }
+
+
 
     private fun handleResult(methodResul: String, callback: Result) {
         if (replyAlreadySubmit) return

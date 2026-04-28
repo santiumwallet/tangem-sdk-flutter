@@ -7,12 +7,9 @@ part 'scan_card_result.freezed.dart';
 part 'scan_card_result.g.dart';
 
 @freezed
-class ScanCardResult with _$ScanCardResult {
-  const factory ScanCardResult({
-    Card? result,
-    Object? error,
-    int? id,
-  }) = _ScanCardResult;
+sealed class ScanCardResult with _$ScanCardResult {
+  const factory ScanCardResult({Card? result, Object? error, int? id}) =
+      _ScanCardResult;
 
   factory ScanCardResult.fromJson(Map<String, dynamic> json) =>
       _$ScanCardResultFromJson(json);

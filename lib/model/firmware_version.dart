@@ -8,7 +8,7 @@ part 'firmware_version.g.dart';
  * splitted to `major`, `minor` and `patch` and `FirmwareType`
  */
 @freezed
-class FirmwareVersion with _$FirmwareVersion {
+sealed class FirmwareVersion with _$FirmwareVersion {
   const factory FirmwareVersion({
     required int major,
     required int minor,

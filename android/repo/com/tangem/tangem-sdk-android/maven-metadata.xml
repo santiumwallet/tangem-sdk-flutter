@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.tangem</groupId>
+  <artifactId>tangem-sdk-android</artifactId>
+  <versioning>
+    <latest>5.18.409-local</latest>
+    <release>5.18.409-local</release>
+    <versions>
+      <version>5.18.409-local</version>
+    </versions>
+    <lastUpdated>20260117074325</lastUpdated>
+  </versioning>
+</metadata>

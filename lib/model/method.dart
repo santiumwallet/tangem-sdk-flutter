@@ -9,9 +9,7 @@ enum Method {
 }
 
 extension MethodExt on Method {
-  Map<String, dynamic> requestJson([
-    Map<String, dynamic> params = const {},
-  ]) =>
+  Map<String, dynamic> requestJson([Map<String, dynamic> params = const {}]) =>
       <String, dynamic>{
         'method': name,
         'params': params,

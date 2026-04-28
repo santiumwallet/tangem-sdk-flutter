@@ -6,12 +6,12 @@ part of 'user_settings.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UserSettingsImpl _$$UserSettingsImplFromJson(Map<String, dynamic> json) =>
-    _$UserSettingsImpl(
+_UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) =>
+    _UserSettings(
       isUserCodeRecoveryAllowed: json['isUserCodeRecoveryAllowed'] as bool,
     );
 
-Map<String, dynamic> _$$UserSettingsImplToJson(_$UserSettingsImpl instance) =>
+Map<String, dynamic> _$UserSettingsToJson(_UserSettings instance) =>
     <String, dynamic>{
       'isUserCodeRecoveryAllowed': instance.isUserCodeRecoveryAllowed,
     };

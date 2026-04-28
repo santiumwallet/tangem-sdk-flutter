@@ -6,8 +6,8 @@ part of 'scan_card_result.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ScanCardResultImpl _$$ScanCardResultImplFromJson(Map<String, dynamic> json) =>
-    _$ScanCardResultImpl(
+_ScanCardResult _$ScanCardResultFromJson(Map<String, dynamic> json) =>
+    _ScanCardResult(
       result: json['result'] == null
           ? null
           : Card.fromJson(json['result'] as Map<String, dynamic>),
@@ -15,8 +15,7 @@ _$ScanCardResultImpl _$$ScanCardResultImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$$ScanCardResultImplToJson(
-        _$ScanCardResultImpl instance) =>
+Map<String, dynamic> _$ScanCardResultToJson(_ScanCardResult instance) =>
     <String, dynamic>{
       'result': instance.result,
       'error': instance.error,

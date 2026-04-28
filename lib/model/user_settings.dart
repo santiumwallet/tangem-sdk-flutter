@@ -8,7 +8,7 @@ part 'user_settings.g.dart';
  * splitted to `major`, `minor` and `patch` and `FirmwareType`
  */
 @freezed
-class UserSettings with _$UserSettings {
+sealed class UserSettings with _$UserSettings {
   const factory UserSettings({
     /**
      * Is allowed to recover user codes

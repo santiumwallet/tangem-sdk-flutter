@@ -6,19 +6,23 @@ part of 'attestation.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AttestationImpl _$$AttestationImplFromJson(Map<String, dynamic> json) =>
-    _$AttestationImpl(
-      cardKeyAttestation:
-          $enumDecode(_$StatusEnumMap, json['cardKeyAttestation']),
-      walletKeysAttestation:
-          $enumDecode(_$StatusEnumMap, json['walletKeysAttestation']),
-      firmwareAttestation:
-          $enumDecode(_$StatusEnumMap, json['firmwareAttestation']),
-      cardUniquenessAttestation:
-          $enumDecode(_$StatusEnumMap, json['cardUniquenessAttestation']),
-    );
+_Attestation _$AttestationFromJson(Map<String, dynamic> json) => _Attestation(
+  cardKeyAttestation: $enumDecode(_$StatusEnumMap, json['cardKeyAttestation']),
+  walletKeysAttestation: $enumDecode(
+    _$StatusEnumMap,
+    json['walletKeysAttestation'],
+  ),
+  firmwareAttestation: $enumDecode(
+    _$StatusEnumMap,
+    json['firmwareAttestation'],
+  ),
+  cardUniquenessAttestation: $enumDecode(
+    _$StatusEnumMap,
+    json['cardUniquenessAttestation'],
+  ),
+);
 
-Map<String, dynamic> _$$AttestationImplToJson(_$AttestationImpl instance) =>
+Map<String, dynamic> _$AttestationToJson(_Attestation instance) =>
     <String, dynamic>{
       'cardKeyAttestation': _$StatusEnumMap[instance.cardKeyAttestation]!,
       'walletKeysAttestation': _$StatusEnumMap[instance.walletKeysAttestation]!,
