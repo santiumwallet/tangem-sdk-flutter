@@ -69,7 +69,9 @@ class _UserCodeRequestPolicyExampleState
             const SizedBox(height: 12),
             _buildStatusRow('Policy', _getPolicyDisplayName(_currentPolicy)),
             _buildStatusRow(
-                'Code Type', _getCodeTypeDisplayName(_currentCodeType)),
+              'Code Type',
+              _getCodeTypeDisplayName(_currentCodeType),
+            ),
             if (_statusMessage.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
@@ -182,7 +184,8 @@ class _UserCodeRequestPolicyExampleState
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: isCurrentPolicy ? color.withOpacity(0.3) : color,
+          backgroundColor:
+              isCurrentPolicy ? color.withValues(alpha: 0.3) : color,
           foregroundColor: isCurrentPolicy ? color : Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         ),
@@ -192,15 +195,9 @@ class _UserCodeRequestPolicyExampleState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 12),
-            ),
+            Text(description, style: const TextStyle(fontSize: 12)),
           ],
         ),
       ),
@@ -278,10 +275,7 @@ class _UserCodeRequestPolicyExampleState
               ),
               child: Text(
                 _scanResult.isEmpty ? 'No test results yet' : _scanResult,
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                ),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
               ),
             ),
             const SizedBox(height: 8),
@@ -358,7 +352,9 @@ class _UserCodeRequestPolicyExampleState
   }
 
   Future<void> _setPolicyWithConfirmation(
-      UserCodeRequestPolicy policy, UserCodeType? codeType) async {
+    UserCodeRequestPolicy policy,
+    UserCodeType? codeType,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -404,7 +400,9 @@ class _UserCodeRequestPolicyExampleState
   }
 
   Future<void> _setPolicy(
-      UserCodeRequestPolicy policy, UserCodeType? codeType) async {
+    UserCodeRequestPolicy policy,
+    UserCodeType? codeType,
+  ) async {
     setState(() {
       _isLoading = true;
       _statusMessage = '';

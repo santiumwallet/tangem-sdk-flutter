@@ -14,12 +14,6 @@ class MockTangemSdkPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request,
-      [String? cardId, Message? initialMessage, String? accessCode]) {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<String> setScanImage(ScanTagImage? scanCardImage) {
     throw UnimplementedError();
   }
@@ -35,10 +29,11 @@ class MockTangemSdkPlatform
   }
 
   @override
-  Future<String> scanCard(
-      {String? cardId,
-      Map<String, String>? initialMessage,
-      String? accessCode}) {
+  Future<String> scanCard({
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
     // TODO: implement scanCard
     throw UnimplementedError();
   }
@@ -93,13 +88,15 @@ class MockTangemSdkPlatform
     UserCodeType? codeType,
   }) {
     return Future.value(
-        '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}');
+      '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}',
+    );
   }
 
   @override
   Future<String> getUserCodeRequestPolicy() {
     return Future.value(
-        '{"success": true, "policy": "default", "codeType": "none"}');
+      '{"success": true, "policy": "default", "codeType": "none"}',
+    );
   }
 }
 

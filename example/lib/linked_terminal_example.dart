@@ -41,9 +41,7 @@ class _LinkedTerminalExampleState extends State<LinkedTerminalExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Linked Terminal Example'),
-      ),
+      appBar: AppBar(title: const Text('Linked Terminal Example')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -65,8 +63,10 @@ class _LinkedTerminalExampleState extends State<LinkedTerminalExample> {
                 const SizedBox(height: 32),
                 Row(
                   children: [
-                    const Text('Linked Terminal: ',
-                        style: TextStyle(fontSize: 18)),
+                    const Text(
+                      'Linked Terminal: ',
+                      style: TextStyle(fontSize: 18),
+                    ),
                     Switch(
                       value: _isLinkedTerminal,
                       onChanged: (_) => _toggleLinkedTerminal(),

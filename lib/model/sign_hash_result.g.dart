@@ -28,6 +28,9 @@ _SignResult _$SignResultFromJson(Map<String, dynamic> json) => _SignResult(
   cardId: json['cardId'] as String,
   signature: json['signature'] as String,
   totalSignedHashes: (json['totalSignedHashes'] as num).toInt(),
+  card: json['card'] == null
+      ? null
+      : Card.fromJson(json['card'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$SignResultToJson(_SignResult instance) =>
@@ -35,6 +38,7 @@ Map<String, dynamic> _$SignResultToJson(_SignResult instance) =>
       'cardId': instance.cardId,
       'signature': instance.signature,
       'totalSignedHashes': instance.totalSignedHashes,
+      'card': instance.card,
     };
 
 _SignHashesResult _$SignHashesResultFromJson(Map<String, dynamic> json) =>

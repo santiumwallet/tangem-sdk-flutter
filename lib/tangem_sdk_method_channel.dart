@@ -29,13 +29,16 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
   @override
   Future<String> configureDerivationPaths(DerivationPathConfig config) async {
     return await methodChannel.invokeMethod(
-        "configureDerivationPaths", config.toJson());
+      "configureDerivationPaths",
+      config.toJson(),
+    );
   }
 
   @override
   Future<String> setLinkedTerminal(bool isLinked) async {
-    return await methodChannel
-        .invokeMethod("setLinkedTerminal", {"isLinked": isLinked});
+    return await methodChannel.invokeMethod("setLinkedTerminal", {
+      "isLinked": isLinked,
+    });
   }
 
   @override
@@ -101,9 +104,7 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     Map<String, String>? initialMessage,
     String? accessCode,
   }) async {
-    final args = <String, dynamic>{
-      'curve': curve,
-    };
+    final args = <String, dynamic>{'curve': curve};
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
     if (accessCode != null) args['accessCode'] = accessCode;
@@ -118,9 +119,7 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     Map<String, String>? initialMessage,
     String? accessCode,
   }) async {
-    final args = <String, dynamic>{
-      'walletPublicKey': walletPublicKey,
-    };
+    final args = <String, dynamic>{'walletPublicKey': walletPublicKey};
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
     if (accessCode != null) args['accessCode'] = accessCode;

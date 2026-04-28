@@ -16,7 +16,8 @@ class MockLinkedTerminalPlatform
   int signOperationCount = 0;
 
   // Mock responses for different scenarios
-  String get scanCardResponse => '''
+  String get scanCardResponse =>
+      '''
   {
     "result": {
       "cardId": "CB000000000001",
@@ -90,7 +91,8 @@ class MockLinkedTerminalPlatform
   }
   ''';
 
-  String get signHashResponse => '''
+  String get signHashResponse =>
+      '''
   {
     "result": {
       "cardId": "CB000000000001",
@@ -102,7 +104,8 @@ class MockLinkedTerminalPlatform
   }
   ''';
 
-  String get signHashesResponse => '''
+  String get signHashesResponse =>
+      '''
   {
     "result": {
       "cardId": "CB000000000001",
@@ -115,8 +118,7 @@ class MockLinkedTerminalPlatform
   ''';
 
   String _generateMockSignature() {
-    return DateTime.now()
-        .millisecondsSinceEpoch
+    return DateTime.now().millisecondsSinceEpoch
         .toRadixString(16)
         .padLeft(128, '0');
   }
@@ -156,12 +158,6 @@ class MockLinkedTerminalPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request) {
-    methodCalls.add({'method': 'runJSONRPCRequest', 'args': request});
-    return Future.value(scanCardResponse);
-  }
-
-  @override
   Future<String> setScanImage(ScanTagImage? scanCardImage) {
     methodCalls.add({'method': 'setScanImage', 'args': scanCardImage});
     return Future.value('{"success": true}');
@@ -177,11 +173,12 @@ class MockLinkedTerminalPlatform
   Future<String> setLinkedTerminal(bool isLinked) {
     methodCalls.add({
       'method': 'setLinkedTerminal',
-      'args': {'isLinked': isLinked}
+      'args': {'isLinked': isLinked},
     });
     linkedTerminalEnabled = isLinked;
     return Future.value(
-        '{"success": true, "message": "Linked terminal configured successfully", "isLinked": $isLinked}');
+      '{"success": true, "message": "Linked terminal configured successfully", "isLinked": $isLinked}',
+    );
   }
 
   @override
@@ -196,7 +193,7 @@ class MockLinkedTerminalPlatform
         'cardId': cardId,
         'initialMessage': initialMessage,
         'accessCode': accessCode,
-      }
+      },
     });
     return Future.value(scanCardResponse);
   }
@@ -229,7 +226,8 @@ class MockLinkedTerminalPlatform
     // Validate derivation path format if provided
     if (derivationPath != null && !_isValidDerivationPath(derivationPath)) {
       throw FormatException(
-          'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
+        'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0',
+      );
     }
 
     methodCalls.add({
@@ -241,7 +239,7 @@ class MockLinkedTerminalPlatform
         'initialMessage': initialMessage,
         'accessCode': accessCode,
         'derivationPath': derivationPath,
-      }
+      },
     });
     return Future.value(signHashResponse);
   }
@@ -277,7 +275,8 @@ class MockLinkedTerminalPlatform
     // Validate derivation path format if provided
     if (derivationPath != null && !_isValidDerivationPath(derivationPath)) {
       throw FormatException(
-          'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
+        'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0',
+      );
     }
 
     methodCalls.add({
@@ -289,14 +288,17 @@ class MockLinkedTerminalPlatform
         'initialMessage': initialMessage,
         'accessCode': accessCode,
         'derivationPath': derivationPath,
-      }
+      },
     });
 
     // Generate dynamic response based on number of hashes
     signOperationCount += hashes.length;
-    final signatures =
-        List.generate(hashes.length, (i) => '0x${_generateMockSignature()}');
-    final dynamicResponse = '''
+    final signatures = List.generate(
+      hashes.length,
+      (i) => '0x${_generateMockSignature()}',
+    );
+    final dynamicResponse =
+        '''
     {
       "result": {
         "cardId": "CB000000000001",
@@ -325,10 +327,11 @@ class MockLinkedTerminalPlatform
         'cardId': cardId,
         'initialMessage': initialMessage,
         'accessCode': accessCode,
-      }
+      },
     });
     return Future.value(
-        '{"result": {"wallet": {}, "cardId": "CB000000000001"}, "error": null, "id": 3}');
+      '{"result": {"wallet": {}, "cardId": "CB000000000001"}, "error": null, "id": 3}',
+    );
   }
 
   @override
@@ -345,10 +348,11 @@ class MockLinkedTerminalPlatform
         'cardId': cardId,
         'initialMessage': initialMessage,
         'accessCode': accessCode,
-      }
+      },
     });
     return Future.value(
-        '{"result": {"success": true}, "error": null, "id": 3}');
+      '{"result": {"success": true}, "error": null, "id": 3}',
+    );
   }
 
   @override
@@ -358,10 +362,7 @@ class MockLinkedTerminalPlatform
   }) {
     methodCalls.add({
       'method': 'setUserCodeRequestPolicy',
-      'args': {
-        'policy': policy,
-        'codeType': codeType,
-      }
+      'args': {'policy': policy, 'codeType': codeType},
     });
     return Future.value('{"success": true}');
   }
@@ -370,7 +371,8 @@ class MockLinkedTerminalPlatform
   Future<String> getUserCodeRequestPolicy() {
     methodCalls.add({'method': 'getUserCodeRequestPolicy', 'args': {}});
     return Future.value(
-        '{"success": true, "policy": "default", "codeType": "none"}');
+      '{"success": true, "policy": "default", "codeType": "none"}',
+    );
   }
 }
 
@@ -539,22 +541,24 @@ void main() {
         // Test that all expected methods are available
         expect(() => tangemSdk.setLinkedTerminal(true), returnsNormally);
         expect(
-            () => tangemSdk.signHash(
-                  walletPublicKey:
-                      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-                  hash:
-                      '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-                ),
-            returnsNormally);
+          () => tangemSdk.signHash(
+            walletPublicKey:
+                '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            hash:
+                '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+          ),
+          returnsNormally,
+        );
         expect(
-            () => tangemSdk.signHashes(
-                  walletPublicKey:
-                      '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-                  hashes: [
-                    '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
-                  ],
-                ),
-            returnsNormally);
+          () => tangemSdk.signHashes(
+            walletPublicKey:
+                '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+            hashes: [
+              '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+            ],
+          ),
+          returnsNormally,
+        );
         expect(() => tangemSdk.scanCard(), returnsNormally);
       });
 
@@ -564,14 +568,18 @@ void main() {
         var scanResult = await tangemSdk.scanCard();
         expect(scanResult.result!.settings.isLinkedTerminalEnabled, false);
         expect(
-            scanResult.result!.linkedTerminalStatus, LinkedTerminalStatus.None);
+          scanResult.result!.linkedTerminalStatus,
+          LinkedTerminalStatus.None,
+        );
 
         // Test with linked terminal enabled
         await tangemSdk.setLinkedTerminal(true);
         scanResult = await tangemSdk.scanCard();
         expect(scanResult.result!.settings.isLinkedTerminalEnabled, true);
-        expect(scanResult.result!.linkedTerminalStatus,
-            LinkedTerminalStatus.Current);
+        expect(
+          scanResult.result!.linkedTerminalStatus,
+          LinkedTerminalStatus.Current,
+        );
       });
 
       test('parameter validation is consistent', () async {
@@ -598,7 +606,7 @@ void main() {
           () => tangemSdk.signHashes(
             walletPublicKey: '',
             hashes: [
-              '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+              '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
             ],
           ),
           throwsA(isA<ArgumentError>()),
@@ -616,12 +624,14 @@ void main() {
     });
 
     group('Edge Cases and Error Handling', () {
-      test('setLinkedTerminal handles null/invalid inputs gracefully',
-          () async {
-        // Test with boolean values - should work normally
-        expect(() => tangemSdk.setLinkedTerminal(true), returnsNormally);
-        expect(() => tangemSdk.setLinkedTerminal(false), returnsNormally);
-      });
+      test(
+        'setLinkedTerminal handles null/invalid inputs gracefully',
+        () async {
+          // Test with boolean values - should work normally
+          expect(() => tangemSdk.setLinkedTerminal(true), returnsNormally);
+          expect(() => tangemSdk.setLinkedTerminal(false), returnsNormally);
+        },
+      );
 
       test('sign operations handle optional parameters correctly', () async {
         // Enable linked terminal
@@ -718,8 +728,10 @@ void main() {
         await tangemSdk.signHashes(
           walletPublicKey:
               '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-          hashes:
-              List.generate(10, (i) => '0x${i.toString().padLeft(64, '0')}'),
+          hashes: List.generate(
+            10,
+            (i) => '0x${i.toString().padLeft(64, '0')}',
+          ),
         );
         final batchEnd = DateTime.now();
         final batchDuration = batchEnd.difference(batchStart);

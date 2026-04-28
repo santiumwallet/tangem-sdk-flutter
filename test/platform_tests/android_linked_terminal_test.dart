@@ -51,14 +51,22 @@ void main() {
             .last;
 
         // Verify Android native layer receives correct parameters
-        expect(methodCall['args']['walletPublicKey'],
-            LinkedTerminalTestUtils.testWalletPublicKey);
         expect(
-            methodCall['args']['hash'], LinkedTerminalTestUtils.testHashes[0]);
+          methodCall['args']['walletPublicKey'],
+          LinkedTerminalTestUtils.testWalletPublicKey,
+        );
         expect(
-            methodCall['args']['cardId'], LinkedTerminalTestUtils.testCardId);
-        expect(methodCall['args']['derivationPath'],
-            LinkedTerminalTestUtils.testDerivationPaths[0]);
+          methodCall['args']['hash'],
+          LinkedTerminalTestUtils.testHashes[0],
+        );
+        expect(
+          methodCall['args']['cardId'],
+          LinkedTerminalTestUtils.testCardId,
+        );
+        expect(
+          methodCall['args']['derivationPath'],
+          LinkedTerminalTestUtils.testDerivationPaths[0],
+        );
         expect(methodCall['args']['initialMessage'], isNull);
         expect(methodCall['args']['accessCode'], isNull);
       });
@@ -78,11 +86,15 @@ void main() {
             .last;
 
         // Verify Android native layer receives correct parameters
-        expect(methodCall['args']['walletPublicKey'],
-            LinkedTerminalTestUtils.testWalletPublicKey);
+        expect(
+          methodCall['args']['walletPublicKey'],
+          LinkedTerminalTestUtils.testWalletPublicKey,
+        );
         expect(methodCall['args']['hashes'], testHashes);
         expect(
-            methodCall['args']['cardId'], LinkedTerminalTestUtils.testCardId);
+          methodCall['args']['cardId'],
+          LinkedTerminalTestUtils.testCardId,
+        );
         expect(methodCall['args']['derivationPath'], isNull);
       });
 
@@ -195,17 +207,19 @@ void main() {
         for (int batchSize in batchSizes) {
           final hashes = List.generate(
             batchSize,
-            (i) => LinkedTerminalTestUtils
-                .testHashes[i % LinkedTerminalTestUtils.testHashes.length],
+            (i) =>
+                LinkedTerminalTestUtils.testHashes[i %
+                    LinkedTerminalTestUtils.testHashes.length],
           );
 
-          final time =
-              await LinkedTerminalTestUtils.measureOperationTime(() async {
-            await tangemSdk.signHashes(
-              walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
-              hashes: hashes,
-            );
-          });
+          final time = await LinkedTerminalTestUtils.measureOperationTime(
+            () async {
+              await tangemSdk.signHashes(
+                walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
+                hashes: hashes,
+              );
+            },
+          );
 
           times.add(time);
         }
@@ -213,8 +227,11 @@ void main() {
         // Verify that time doesn't grow exponentially with batch size
         for (int i = 1; i < times.length; i++) {
           final ratio = times[i].inMicroseconds / times[i - 1].inMicroseconds;
-          expect(ratio, lessThan(5.0),
-              reason: 'Batch operation time grew too much');
+          expect(
+            ratio,
+            lessThan(5.0),
+            reason: 'Batch operation time grew too much',
+          );
         }
       });
     });
@@ -272,8 +289,9 @@ void main() {
         expect(methodsAfter, greaterThan(methodsBefore));
 
         // Verify specific method calls were made
-        final methodNames =
-            mockPlatform.methodCalls.map((call) => call['method']).toList();
+        final methodNames = mockPlatform.methodCalls
+            .map((call) => call['method'])
+            .toList();
         expect(methodNames, contains('setLinkedTerminal'));
         expect(methodNames, contains('scanCard'));
         expect(methodNames, contains('signHash'));
@@ -289,11 +307,13 @@ void main() {
         final futures = <Future>[];
 
         for (int i = 0; i < 5; i++) {
-          futures.add(tangemSdk.signHash(
-            walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
-            hash: LinkedTerminalTestUtils
-                .testHashes[i % LinkedTerminalTestUtils.testHashes.length],
-          ));
+          futures.add(
+            tangemSdk.signHash(
+              walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
+              hash: LinkedTerminalTestUtils
+                  .testHashes[i % LinkedTerminalTestUtils.testHashes.length],
+            ),
+          );
         }
 
         final results = await Future.wait(futures);

@@ -15,11 +15,6 @@ class MockTangemSdkIntegrationPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request) {
-    return Future.value('{"success": true}');
-  }
-
-  @override
   Future<String> setScanImage(ScanTagImage? scanCardImage) {
     return Future.value('{"success": true}');
   }
@@ -27,65 +22,72 @@ class MockTangemSdkIntegrationPlatform
   @override
   Future<String> configureDerivationPaths(DerivationPathConfig config) {
     return Future.value(
-        '{"success": true, "message": "Derivation paths configured successfully"}');
+      '{"success": true, "message": "Derivation paths configured successfully"}',
+    );
   }
 
   @override
   Future<String> setLinkedTerminal(bool isLinked) {
     lastLinkedTerminalValue = isLinked;
     return Future.value(
-        '{"success": true, "message": "Linked terminal configured successfully", "isLinked": $isLinked}');
+      '{"success": true, "message": "Linked terminal configured successfully", "isLinked": $isLinked}',
+    );
   }
 
   @override
-  Future<String> createWallet(
-      {required String curve,
-      String? cardId,
-      Map<String, String>? initialMessage,
-      String? accessCode}) {
+  Future<String> createWallet({
+    required String curve,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
     // TODO: implement createWallet
     throw UnimplementedError();
   }
 
   @override
-  Future<String> purgeWallet(
-      {required String walletPublicKey,
-      String? cardId,
-      Map<String, String>? initialMessage,
-      String? accessCode}) {
+  Future<String> purgeWallet({
+    required String walletPublicKey,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
     // TODO: implement purgeWallet
     throw UnimplementedError();
   }
 
   @override
-  Future<String> scanCard(
-      {String? cardId,
-      Map<String, String>? initialMessage,
-      String? accessCode}) {
+  Future<String> scanCard({
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+  }) {
     // TODO: implement scanCard
     throw UnimplementedError();
   }
 
   @override
-  Future<String> signHash(
-      {required String walletPublicKey,
-      required String hash,
-      String? cardId,
-      Map<String, String>? initialMessage,
-      String? accessCode,
-      String? derivationPath}) {
+  Future<String> signHash({
+    required String walletPublicKey,
+    required String hash,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  }) {
     // TODO: implement signHash
     throw UnimplementedError();
   }
 
   @override
-  Future<String> signHashes(
-      {required String walletPublicKey,
-      required List<String> hashes,
-      String? cardId,
-      Map<String, String>? initialMessage,
-      String? accessCode,
-      String? derivationPath}) {
+  Future<String> signHashes({
+    required String walletPublicKey,
+    required List<String> hashes,
+    String? cardId,
+    Map<String, String>? initialMessage,
+    String? accessCode,
+    String? derivationPath,
+  }) {
     // TODO: implement signHashes
     throw UnimplementedError();
   }
@@ -96,13 +98,15 @@ class MockTangemSdkIntegrationPlatform
     UserCodeType? codeType,
   }) {
     return Future.value(
-        '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}');
+      '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}',
+    );
   }
 
   @override
   Future<String> getUserCodeRequestPolicy() {
     return Future.value(
-        '{"success": true, "policy": "default", "codeType": "none"}');
+      '{"success": true, "policy": "default", "codeType": "none"}',
+    );
   }
 }
 
@@ -125,7 +129,9 @@ void main() {
       expect(resultEnabled, contains('"success": true'));
       expect(resultEnabled, contains('"isLinked": true'));
       expect(
-          resultEnabled, contains('Linked terminal configured successfully'));
+        resultEnabled,
+        contains('Linked terminal configured successfully'),
+      );
     });
 
     test('setLinkedTerminal disables linked terminal mode', () async {
@@ -136,7 +142,9 @@ void main() {
       expect(resultDisabled, contains('"success": true'));
       expect(resultDisabled, contains('"isLinked": false'));
       expect(
-          resultDisabled, contains('Linked terminal configured successfully'));
+        resultDisabled,
+        contains('Linked terminal configured successfully'),
+      );
     });
 
     test('setLinkedTerminal called multiple times', () async {

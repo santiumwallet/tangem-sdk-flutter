@@ -54,20 +54,16 @@ class _ScanCardExampleState extends State<ScanCardExample> {
     final buffer = StringBuffer();
     buffer.writeln('Card ID: ${card.cardId}');
     buffer.writeln('Batch ID: ${card.batchId}');
-    buffer
-        .writeln('Firmware: ${card.firmwareVersion?.toString() ?? "Unknown"}');
+    buffer.writeln('Firmware: ${card.firmwareVersion}');
     buffer.writeln('Access Code Set: ${card.isAccessCodeSet}');
     buffer.writeln('Passcode Set: ${card.isPasscodeSet}');
 
-    if (card.wallets != null) {
-      buffer.writeln('\nWallets: ${card.wallets!.length}');
-      for (var i = 0; i < card.wallets!.length; i++) {
-        final wallet = card.wallets![i];
-        buffer.writeln('  Wallet $i:');
-        buffer.writeln('    Curve: ${wallet.curve}');
-        buffer.writeln(
-            '    Public Key: ${wallet.publicKey?.substring(0, 20)}...');
-      }
+    buffer.writeln('\nWallets: ${card.wallets.length}');
+    for (var i = 0; i < card.wallets.length; i++) {
+      final wallet = card.wallets[i];
+      buffer.writeln('  Wallet $i:');
+      buffer.writeln('    Curve: ${wallet.curve}');
+      buffer.writeln('    Public Key: ${wallet.publicKey.substring(0, 20)}...');
     }
 
     return buffer.toString();
@@ -76,9 +72,7 @@ class _ScanCardExampleState extends State<ScanCardExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ScanCard Example'),
-      ),
+      appBar: AppBar(title: const Text('ScanCard Example')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -135,7 +129,9 @@ class _ScanCardExampleState extends State<ScanCardExample> {
                     child: Text(
                       'Status: $_status',
                       style: const TextStyle(
-                          fontSize: 14, fontWeight: FontWeight.bold),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -155,7 +151,9 @@ class _ScanCardExampleState extends State<ScanCardExample> {
                     child: Text(
                       _cardInfo,
                       style: const TextStyle(
-                          fontFamily: 'monospace', fontSize: 14),
+                        fontFamily: 'monospace',
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),

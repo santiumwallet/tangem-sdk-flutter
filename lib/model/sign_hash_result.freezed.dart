@@ -307,7 +307,7 @@ SignSingleHashResult _$SignSingleHashResultFromJson(
 /// @nodoc
 mixin _$SignSingleHashResult {
 
- String get cardId; String get signature; int get totalSignedHashes;
+ String get cardId; String get signature; int get totalSignedHashes; Card? get card;
 /// Create a copy of SignSingleHashResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -320,16 +320,16 @@ $SignSingleHashResultCopyWith<SignSingleHashResult> get copyWith => _$SignSingle
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignSingleHashResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.signature, signature) || other.signature == signature)&&(identical(other.totalSignedHashes, totalSignedHashes) || other.totalSignedHashes == totalSignedHashes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignSingleHashResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.signature, signature) || other.signature == signature)&&(identical(other.totalSignedHashes, totalSignedHashes) || other.totalSignedHashes == totalSignedHashes)&&(identical(other.card, card) || other.card == card));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cardId,signature,totalSignedHashes);
+int get hashCode => Object.hash(runtimeType,cardId,signature,totalSignedHashes,card);
 
 @override
 String toString() {
-  return 'SignSingleHashResult(cardId: $cardId, signature: $signature, totalSignedHashes: $totalSignedHashes)';
+  return 'SignSingleHashResult(cardId: $cardId, signature: $signature, totalSignedHashes: $totalSignedHashes, card: $card)';
 }
 
 
@@ -340,11 +340,11 @@ abstract mixin class $SignSingleHashResultCopyWith<$Res>  {
   factory $SignSingleHashResultCopyWith(SignSingleHashResult value, $Res Function(SignSingleHashResult) _then) = _$SignSingleHashResultCopyWithImpl;
 @useResult
 $Res call({
- String cardId, String signature, int totalSignedHashes
+ String cardId, String signature, int totalSignedHashes, Card? card
 });
 
 
-
+$CardCopyWith<$Res>? get card;
 
 }
 /// @nodoc
@@ -357,15 +357,28 @@ class _$SignSingleHashResultCopyWithImpl<$Res>
 
 /// Create a copy of SignSingleHashResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? cardId = null,Object? signature = null,Object? totalSignedHashes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? cardId = null,Object? signature = null,Object? totalSignedHashes = null,Object? card = freezed,}) {
   return _then(_self.copyWith(
 cardId: null == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
 as String,signature: null == signature ? _self.signature : signature // ignore: cast_nullable_to_non_nullable
 as String,totalSignedHashes: null == totalSignedHashes ? _self.totalSignedHashes : totalSignedHashes // ignore: cast_nullable_to_non_nullable
-as int,
+as int,card: freezed == card ? _self.card : card // ignore: cast_nullable_to_non_nullable
+as Card?,
   ));
 }
+/// Create a copy of SignSingleHashResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CardCopyWith<$Res>? get card {
+    if (_self.card == null) {
+    return null;
+  }
 
+  return $CardCopyWith<$Res>(_self.card!, (value) {
+    return _then(_self.copyWith(card: value));
+  });
+}
 }
 
 
@@ -444,10 +457,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String cardId,  String signature,  int totalSignedHashes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String cardId,  String signature,  int totalSignedHashes,  Card? card)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SignResult() when $default != null:
-return $default(_that.cardId,_that.signature,_that.totalSignedHashes);case _:
+return $default(_that.cardId,_that.signature,_that.totalSignedHashes,_that.card);case _:
   return orElse();
 
 }
@@ -465,10 +478,10 @@ return $default(_that.cardId,_that.signature,_that.totalSignedHashes);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String cardId,  String signature,  int totalSignedHashes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String cardId,  String signature,  int totalSignedHashes,  Card? card)  $default,) {final _that = this;
 switch (_that) {
 case _SignResult():
-return $default(_that.cardId,_that.signature,_that.totalSignedHashes);}
+return $default(_that.cardId,_that.signature,_that.totalSignedHashes,_that.card);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -482,10 +495,10 @@ return $default(_that.cardId,_that.signature,_that.totalSignedHashes);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String cardId,  String signature,  int totalSignedHashes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String cardId,  String signature,  int totalSignedHashes,  Card? card)?  $default,) {final _that = this;
 switch (_that) {
 case _SignResult() when $default != null:
-return $default(_that.cardId,_that.signature,_that.totalSignedHashes);case _:
+return $default(_that.cardId,_that.signature,_that.totalSignedHashes,_that.card);case _:
   return null;
 
 }
@@ -497,12 +510,13 @@ return $default(_that.cardId,_that.signature,_that.totalSignedHashes);case _:
 @JsonSerializable()
 
 class _SignResult implements SignSingleHashResult {
-  const _SignResult({required this.cardId, required this.signature, required this.totalSignedHashes});
+  const _SignResult({required this.cardId, required this.signature, required this.totalSignedHashes, this.card});
   factory _SignResult.fromJson(Map<String, dynamic> json) => _$SignResultFromJson(json);
 
 @override final  String cardId;
 @override final  String signature;
 @override final  int totalSignedHashes;
+@override final  Card? card;
 
 /// Create a copy of SignSingleHashResult
 /// with the given fields replaced by the non-null parameter values.
@@ -517,16 +531,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.signature, signature) || other.signature == signature)&&(identical(other.totalSignedHashes, totalSignedHashes) || other.totalSignedHashes == totalSignedHashes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.signature, signature) || other.signature == signature)&&(identical(other.totalSignedHashes, totalSignedHashes) || other.totalSignedHashes == totalSignedHashes)&&(identical(other.card, card) || other.card == card));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cardId,signature,totalSignedHashes);
+int get hashCode => Object.hash(runtimeType,cardId,signature,totalSignedHashes,card);
 
 @override
 String toString() {
-  return 'SignSingleHashResult(cardId: $cardId, signature: $signature, totalSignedHashes: $totalSignedHashes)';
+  return 'SignSingleHashResult(cardId: $cardId, signature: $signature, totalSignedHashes: $totalSignedHashes, card: $card)';
 }
 
 
@@ -537,11 +551,11 @@ abstract mixin class _$SignResultCopyWith<$Res> implements $SignSingleHashResult
   factory _$SignResultCopyWith(_SignResult value, $Res Function(_SignResult) _then) = __$SignResultCopyWithImpl;
 @override @useResult
 $Res call({
- String cardId, String signature, int totalSignedHashes
+ String cardId, String signature, int totalSignedHashes, Card? card
 });
 
 
-
+@override $CardCopyWith<$Res>? get card;
 
 }
 /// @nodoc
@@ -554,16 +568,29 @@ class __$SignResultCopyWithImpl<$Res>
 
 /// Create a copy of SignSingleHashResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? cardId = null,Object? signature = null,Object? totalSignedHashes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? cardId = null,Object? signature = null,Object? totalSignedHashes = null,Object? card = freezed,}) {
   return _then(_SignResult(
 cardId: null == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
 as String,signature: null == signature ? _self.signature : signature // ignore: cast_nullable_to_non_nullable
 as String,totalSignedHashes: null == totalSignedHashes ? _self.totalSignedHashes : totalSignedHashes // ignore: cast_nullable_to_non_nullable
-as int,
+as int,card: freezed == card ? _self.card : card // ignore: cast_nullable_to_non_nullable
+as Card?,
   ));
 }
 
+/// Create a copy of SignSingleHashResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CardCopyWith<$Res>? get card {
+    if (_self.card == null) {
+    return null;
+  }
 
+  return $CardCopyWith<$Res>(_self.card!, (value) {
+    return _then(_self.copyWith(card: value));
+  });
+}
 }
 
 

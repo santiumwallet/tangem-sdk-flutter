@@ -21,11 +21,6 @@ class SimpleMockPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request) {
-    return Future.value(mockResponse);
-  }
-
-  @override
   Future<String> setScanImage(ScanTagImage? scanCardImage) {
     return Future.value('{"success": true}');
   }
@@ -105,13 +100,15 @@ class SimpleMockPlatform
     UserCodeType? codeType,
   }) {
     return Future.value(
-        '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}');
+      '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}',
+    );
   }
 
   @override
   Future<String> getUserCodeRequestPolicy() {
     return Future.value(
-        '{"success": true, "policy": "default", "codeType": "none"}');
+      '{"success": true, "policy": "default", "codeType": "none"}',
+    );
   }
 }
 

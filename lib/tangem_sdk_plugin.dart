@@ -25,7 +25,7 @@ class TangemSdk {
       initialMessage: initialMessage != null
           ? <String, String>{
               'header': initialMessage.header,
-              'body': initialMessage.body
+              'body': initialMessage.body,
             }
           : null,
     );
@@ -99,7 +99,8 @@ class TangemSdk {
     // Validate derivation path format if provided
     if (derivationPath != null && !_isValidDerivationPath(derivationPath)) {
       throw FormatException(
-          'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
+        'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0',
+      );
     }
 
     final res = await TangemSdkPlatform.instance.signHash(
@@ -109,7 +110,7 @@ class TangemSdk {
       initialMessage: initialMessage != null
           ? <String, String>{
               'header': initialMessage.header,
-              'body': initialMessage.body
+              'body': initialMessage.body,
             }
           : null,
       accessCode: accessCode,
@@ -164,7 +165,8 @@ class TangemSdk {
     // Validate derivation path format if provided
     if (derivationPath != null && !_isValidDerivationPath(derivationPath)) {
       throw FormatException(
-          'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0');
+        'derivationPath has invalid format. Expected: m/44\'/60\'/0\'/0/0',
+      );
     }
 
     final res = await TangemSdkPlatform.instance.signHashes(
@@ -174,7 +176,7 @@ class TangemSdk {
       initialMessage: initialMessage != null
           ? <String, String>{
               'header': initialMessage.header,
-              'body': initialMessage.body
+              'body': initialMessage.body,
             }
           : null,
       accessCode: accessCode,
@@ -238,7 +240,8 @@ class TangemSdk {
     // Validate cardId format if provided
     if (cardId != null && cardId.isNotEmpty && !_isValidCardId(cardId)) {
       throw FormatException(
-          'cardId has invalid format. Expected hex string or card identifier');
+        'cardId has invalid format. Expected hex string or card identifier',
+      );
     }
 
     // Validate access code format if provided
@@ -246,7 +249,8 @@ class TangemSdk {
         accessCode.isNotEmpty &&
         !_isValidAccessCode(accessCode)) {
       throw FormatException(
-          'accessCode has invalid format. Expected 4-6 digit code');
+        'accessCode has invalid format. Expected 4-6 digit code',
+      );
     }
 
     // Validate initial message
@@ -266,7 +270,7 @@ class TangemSdk {
         initialMessage: initialMessage != null
             ? <String, String>{
                 'header': initialMessage.header,
-                'body': initialMessage.body
+                'body': initialMessage.body,
               }
             : null,
         accessCode: accessCode,
@@ -278,13 +282,16 @@ class TangemSdk {
       // Enhance error handling for common wallet creation failures
       if (e.toString().contains('card not found')) {
         throw StateError(
-            'No Tangem card detected. Please ensure the card is placed correctly on the device.');
+          'No Tangem card detected. Please ensure the card is placed correctly on the device.',
+        );
       } else if (e.toString().contains('access code')) {
         throw StateError(
-            'Invalid access code provided. Please check the access code and try again.');
+          'Invalid access code provided. Please check the access code and try again.',
+        );
       } else if (e.toString().contains('wallet already exists')) {
         throw StateError(
-            'Wallet already exists on this card. Use purgeWallet to remove existing wallet first.');
+          'Wallet already exists on this card. Use purgeWallet to remove existing wallet first.',
+        );
       } else if (e.toString().contains('user cancelled')) {
         throw StateError('Operation was cancelled by the user.');
       }
@@ -318,7 +325,8 @@ class TangemSdk {
     // Validate cardId format if provided
     if (cardId != null && cardId.isNotEmpty && !_isValidCardId(cardId)) {
       throw FormatException(
-          'cardId has invalid format. Expected hex string or card identifier');
+        'cardId has invalid format. Expected hex string or card identifier',
+      );
     }
 
     // Validate access code format if provided
@@ -326,7 +334,8 @@ class TangemSdk {
         accessCode.isNotEmpty &&
         !_isValidAccessCode(accessCode)) {
       throw FormatException(
-          'accessCode has invalid format. Expected 4-6 digit code');
+        'accessCode has invalid format. Expected 4-6 digit code',
+      );
     }
 
     // Validate initial message
@@ -346,7 +355,7 @@ class TangemSdk {
         initialMessage: initialMessage != null
             ? <String, String>{
                 'header': initialMessage.header,
-                'body': initialMessage.body
+                'body': initialMessage.body,
               }
             : null,
         accessCode: accessCode,
@@ -358,18 +367,22 @@ class TangemSdk {
       // Enhance error handling for common wallet purging failures
       if (e.toString().contains('card not found')) {
         throw StateError(
-            'No Tangem card detected. Please ensure the card is placed correctly on the device.');
+          'No Tangem card detected. Please ensure the card is placed correctly on the device.',
+        );
       } else if (e.toString().contains('access code')) {
         throw StateError(
-            'Invalid access code provided. Please check the access code and try again.');
+          'Invalid access code provided. Please check the access code and try again.',
+        );
       } else if (e.toString().contains('wallet not found')) {
         throw StateError(
-            'No wallet found with the provided public key. The wallet may already be purged or never existed.');
+          'No wallet found with the provided public key. The wallet may already be purged or never existed.',
+        );
       } else if (e.toString().contains('user cancelled')) {
         throw StateError('Operation was cancelled by the user.');
       } else if (e.toString().contains('wallet protected')) {
         throw StateError(
-            'Wallet with the provided public key is protected and cannot be purged.');
+          'Wallet with the provided public key is protected and cannot be purged.',
+        );
       }
       rethrow;
     }
@@ -420,8 +433,10 @@ class TangemSdk {
     if (policy == UserCodeRequestPolicy.always ||
         policy == UserCodeRequestPolicy.alwaysWithBiometrics) {
       if (codeType == null || codeType == UserCodeType.none) {
-        throw ArgumentError('codeType is required for ${policy.name} policy. '
-            'Must be either UserCodeType.accessCode or UserCodeType.passcode');
+        throw ArgumentError(
+          'codeType is required for ${policy.name} policy. '
+          'Must be either UserCodeType.accessCode or UserCodeType.passcode',
+        );
       }
     }
 
@@ -436,11 +451,15 @@ class TangemSdk {
     } catch (e) {
       // Enhance error handling for common policy configuration failures
       if (e.toString().contains('policy')) {
-        throw ArgumentError('Invalid policy configuration: ${e.toString()}. '
-            'Please check the policy and codeType parameters.');
+        throw ArgumentError(
+          'Invalid policy configuration: ${e.toString()}. '
+          'Please check the policy and codeType parameters.',
+        );
       } else if (e.toString().contains('biometrics')) {
-        throw StateError('Biometrics not available on this device. '
-            'Use UserCodeRequestPolicy.always instead.');
+        throw StateError(
+          'Biometrics not available on this device. '
+          'Use UserCodeRequestPolicy.always instead.',
+        );
       }
       rethrow;
     }
@@ -467,7 +486,8 @@ class TangemSdk {
       // Enhance error handling
       if (e.toString().contains('not supported')) {
         throw StateError(
-            'User code request policy is not supported on this platform version.');
+          'User code request policy is not supported on this platform version.',
+        );
       }
       rethrow;
     }

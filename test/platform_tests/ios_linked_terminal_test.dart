@@ -38,7 +38,7 @@ void main() {
 
       test('iOS signHash method call structure', () async {
         await tangemSdk.setLinkedTerminal(true);
-        
+
         await tangemSdk.signHash(
           walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
           hash: LinkedTerminalTestUtils.testHashes[0],
@@ -51,17 +51,29 @@ void main() {
             .last;
 
         // Verify iOS native layer receives correct parameters
-        expect(methodCall['args']['walletPublicKey'], LinkedTerminalTestUtils.testWalletPublicKey);
-        expect(methodCall['args']['hash'], LinkedTerminalTestUtils.testHashes[0]);
-        expect(methodCall['args']['cardId'], LinkedTerminalTestUtils.testCardId);
-        expect(methodCall['args']['derivationPath'], LinkedTerminalTestUtils.testDerivationPaths[0]);
+        expect(
+          methodCall['args']['walletPublicKey'],
+          LinkedTerminalTestUtils.testWalletPublicKey,
+        );
+        expect(
+          methodCall['args']['hash'],
+          LinkedTerminalTestUtils.testHashes[0],
+        );
+        expect(
+          methodCall['args']['cardId'],
+          LinkedTerminalTestUtils.testCardId,
+        );
+        expect(
+          methodCall['args']['derivationPath'],
+          LinkedTerminalTestUtils.testDerivationPaths[0],
+        );
         expect(methodCall['args']['initialMessage'], isNull);
         expect(methodCall['args']['accessCode'], isNull);
       });
 
       test('iOS signHashes method call structure', () async {
         await tangemSdk.setLinkedTerminal(true);
-        
+
         final testHashes = LinkedTerminalTestUtils.testHashes.take(3).toList();
         await tangemSdk.signHashes(
           walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
@@ -74,15 +86,21 @@ void main() {
             .last;
 
         // Verify iOS native layer receives correct parameters
-        expect(methodCall['args']['walletPublicKey'], LinkedTerminalTestUtils.testWalletPublicKey);
+        expect(
+          methodCall['args']['walletPublicKey'],
+          LinkedTerminalTestUtils.testWalletPublicKey,
+        );
         expect(methodCall['args']['hashes'], testHashes);
-        expect(methodCall['args']['cardId'], LinkedTerminalTestUtils.testCardId);
+        expect(
+          methodCall['args']['cardId'],
+          LinkedTerminalTestUtils.testCardId,
+        );
         expect(methodCall['args']['derivationPath'], isNull);
       });
 
       test('iOS response format validation', () async {
         await tangemSdk.setLinkedTerminal(true);
-        
+
         final result = await tangemSdk.signHash(
           walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
           hash: LinkedTerminalTestUtils.testHashes[0],
@@ -101,13 +119,13 @@ void main() {
         // Test that iOS 13+ availability is properly handled
         // In real implementation, this would test the @available(iOS 13, *) guard
         await tangemSdk.setLinkedTerminal(true);
-        
+
         // These operations should work on iOS 13+
         final result = await tangemSdk.signHash(
           walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
           hash: LinkedTerminalTestUtils.testHashes[0],
         );
-        
+
         expect(result.result, isNotNull);
       });
     });
@@ -153,12 +171,12 @@ void main() {
 
         // Test various derivation path formats that iOS should handle
         final validPaths = [
-          "m/44'/60'/0'/0/0",   // Standard Ethereum
-          "m/44'/1'/0'/0/0",    // Ethereum testnet
-          "m/84'/0'/0'/0/0",    // Bitcoin
-          "m/44'/501'/0'",      // Solana
+          "m/44'/60'/0'/0/0", // Standard Ethereum
+          "m/44'/1'/0'/0/0", // Ethereum testnet
+          "m/84'/0'/0'/0/0", // Bitcoin
+          "m/44'/501'/0'", // Solana
           "m/1852'/1815'/0'/0/0", // Cardano
-          "m/0'/1",             // Simple path
+          "m/0'/1", // Simple path
         ];
 
         for (String path in validPaths) {
@@ -174,7 +192,7 @@ void main() {
         final invalidPaths = [
           'invalid_path',
           'm/invalid',
-          'm/44/60/0/0/0',  // Missing apostrophes
+          'm/44/60/0/0/0', // Missing apostrophes
           '',
           'not_starting_with_m',
         ];
@@ -224,7 +242,8 @@ void main() {
         for (int i = 0; i < 20; i++) {
           await tangemSdk.signHash(
             walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
-            hash: LinkedTerminalTestUtils.testHashes[i % LinkedTerminalTestUtils.testHashes.length],
+            hash: LinkedTerminalTestUtils
+                .testHashes[i % LinkedTerminalTestUtils.testHashes.length],
           );
         }
 
@@ -239,10 +258,12 @@ void main() {
         final futures = <Future>[];
 
         for (int i = 0; i < 3; i++) {
-          futures.add(tangemSdk.signHash(
-            walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
-            hash: LinkedTerminalTestUtils.testHashes[i],
-          ));
+          futures.add(
+            tangemSdk.signHash(
+              walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
+              hash: LinkedTerminalTestUtils.testHashes[i],
+            ),
+          );
         }
 
         final results = await Future.wait(futures);
@@ -265,7 +286,8 @@ void main() {
         for (int i = 0; i < 5; i++) {
           await tangemSdk.signHash(
             walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
-            hash: LinkedTerminalTestUtils.testHashes[i % LinkedTerminalTestUtils.testHashes.length],
+            hash: LinkedTerminalTestUtils
+                .testHashes[i % LinkedTerminalTestUtils.testHashes.length],
           );
         }
 
@@ -297,7 +319,10 @@ void main() {
         expect(result.result!.signatures.length, 2);
         for (String signature in result.result!.signatures) {
           expect(signature, startsWith('0x'));
-          expect(signature.length, greaterThan(10)); // Should be a proper hex string
+          expect(
+            signature.length,
+            greaterThan(10),
+          ); // Should be a proper hex string
         }
       });
 
@@ -324,7 +349,9 @@ void main() {
         expect(methodsAfter, greaterThan(methodsBefore));
 
         // Verify specific method calls were made
-        final methodNames = mockPlatform.methodCalls.map((call) => call['method']).toList();
+        final methodNames = mockPlatform.methodCalls
+            .map((call) => call['method'])
+            .toList();
         expect(methodNames, contains('setLinkedTerminal'));
         expect(methodNames, contains('scanCard'));
         expect(methodNames, contains('signHash'));
@@ -373,7 +400,8 @@ void main() {
         for (int i = 0; i < 30; i++) {
           await tangemSdk.signHash(
             walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
-            hash: LinkedTerminalTestUtils.testHashes[i % LinkedTerminalTestUtils.testHashes.length],
+            hash: LinkedTerminalTestUtils
+                .testHashes[i % LinkedTerminalTestUtils.testHashes.length],
           );
 
           // Occasionally toggle to test state management under pressure
@@ -419,7 +447,7 @@ void main() {
 
       test('iOS platform-specific integration flow', () async {
         // Test a complete iOS-specific workflow
-        
+
         // 1. Initial configuration
         await tangemSdk.setLinkedTerminal(false);
         expect(mockPlatform.linkedTerminalEnabled, false);

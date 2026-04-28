@@ -6,10 +6,7 @@ class Message {
 
   Message(this.header, this.body);
 
-  Map<String, dynamic> toJson() => {
-        "header": header,
-        "body": body,
-      };
+  Map<String, dynamic> toJson() => {"header": header, "body": body};
 }
 
 abstract class BaseTangemRequest {
@@ -20,9 +17,9 @@ abstract class BaseTangemRequest {
   BaseTangemRequest([this.cardId, this.message, this.accessCode]);
 
   Map<String, dynamic> baseToJson(Map<String, dynamic> request) => {
-        "JSONRPCRequest": jsonEncode(request),
-        "cardId": cardId,
-        "initialMessage": message?.toJson(),
-        "accessCode": accessCode,
-      };
+    "JSONRPCRequest": jsonEncode(request),
+    "cardId": cardId,
+    "initialMessage": message?.toJson(),
+    "accessCode": accessCode,
+  };
 }

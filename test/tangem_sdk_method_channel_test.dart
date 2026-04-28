@@ -9,13 +9,15 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
-    });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          return '42';
+        });
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('getPlatformVersion', () async {
@@ -24,36 +26,40 @@ void main() {
 
   test('setLinkedTerminal', () async {
     bool? capturedIsLinked;
-    String expectedResponse = '{"success": true, "message": "Linked terminal configured successfully", "isLinked": true}';
-    
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      if (methodCall.method == 'setLinkedTerminal') {
-        capturedIsLinked = methodCall.arguments['isLinked'] as bool?;
-        return expectedResponse;
-      }
-      return null;
-    });
+    String expectedResponse =
+        '{"success": true, "message": "Linked terminal configured successfully", "isLinked": true}';
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          if (methodCall.method == 'setLinkedTerminal') {
+            capturedIsLinked = methodCall.arguments['isLinked'] as bool?;
+            return expectedResponse;
+          }
+          return null;
+        });
 
     final result = await platform.setLinkedTerminal(true);
-    
+
     expect(capturedIsLinked, true);
     expect(result, expectedResponse);
   });
 
   test('setLinkedTerminal with false value', () async {
     bool? capturedIsLinked;
-    String expectedResponse = '{"success": true, "message": "Linked terminal configured successfully", "isLinked": false}';
-    
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      if (methodCall.method == 'setLinkedTerminal') {
-        capturedIsLinked = methodCall.arguments['isLinked'] as bool?;
-        return expectedResponse;
-      }
-      return null;
-    });
+    String expectedResponse =
+        '{"success": true, "message": "Linked terminal configured successfully", "isLinked": false}';
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          if (methodCall.method == 'setLinkedTerminal') {
+            capturedIsLinked = methodCall.arguments['isLinked'] as bool?;
+            return expectedResponse;
+          }
+          return null;
+        });
 
     final result = await platform.setLinkedTerminal(false);
-    
+
     expect(capturedIsLinked, false);
     expect(result, expectedResponse);
   });

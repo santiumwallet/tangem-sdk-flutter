@@ -16,12 +16,10 @@ class SignHashRequest extends BaseTangemRequest {
   }) : super(cardId, message, accessCode);
 
   Map<String, dynamic> toJson() {
-    final req = Method.Sign.requestJson(
-      {
-        'walletPublicKey': walletPublicKey,
-        'hash': hash,
-      },
-    );
+    final req = Method.Sign.requestJson({
+      'walletPublicKey': walletPublicKey,
+      'hash': hash,
+    });
 
     if (derivationPath != null) {
       req['hdPath'] = derivationPath;
@@ -46,12 +44,10 @@ class SignHashesRequest extends BaseTangemRequest {
   }) : super(cardId, message, accessCode);
 
   Map<String, dynamic> toJson() {
-    final req = Method.Sign.requestJson(
-      {
-        'walletPublicKey': walletPublicKey,
-        'hashes': hashes,
-      },
-    );
+    final req = Method.Sign.requestJson({
+      'walletPublicKey': walletPublicKey,
+      'hashes': hashes,
+    });
 
     if (derivationPath != null) {
       req['hdPath'] = derivationPath;
@@ -62,11 +58,8 @@ class SignHashesRequest extends BaseTangemRequest {
 }
 
 class ScanCardRequest extends BaseTangemRequest {
-  ScanCardRequest({
-    String? cardId,
-    Message? message,
-    String? accessCode,
-  }) : super(cardId, message, accessCode);
+  ScanCardRequest({String? cardId, Message? message, String? accessCode})
+    : super(cardId, message, accessCode);
 
   Map<String, dynamic> toJson() {
     final req = Method.Scan.requestJson();

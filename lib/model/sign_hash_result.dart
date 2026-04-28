@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:tangem_sdk/model/card.dart';
 
 part 'sign_hash_result.freezed.dart';
 part 'sign_hash_result.g.dart';
@@ -28,6 +29,7 @@ sealed class SignSingleHashResult with _$SignSingleHashResult {
     required String cardId,
     required String signature,
     required int totalSignedHashes,
+    Card? card,
   }) = _SignResult;
 
   factory SignSingleHashResult.fromJson(Map<String, dynamic> json) =>

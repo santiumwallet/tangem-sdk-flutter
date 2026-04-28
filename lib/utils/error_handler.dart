@@ -7,17 +7,17 @@ class TangemErrorHandler {
   static TangemError? parseErrorFromResponse(String response) {
     try {
       final Map<String, dynamic> data = jsonDecode(response);
-      
+
       if (data.containsKey('error') && data['error'] != null) {
         final errorData = data['error'];
-        
+
         if (errorData is String) {
           return _mapStringErrorToTangemError(errorData);
         } else if (errorData is Map<String, dynamic>) {
           return TangemError.fromJson(errorData);
         }
       }
-      
+
       return null;
     } catch (e) {
       return TangemError(
@@ -31,18 +31,21 @@ class TangemErrorHandler {
   /// Map common string errors to structured TangemError
   static TangemError _mapStringErrorToTangemError(String errorMessage) {
     final lowerMessage = errorMessage.toLowerCase();
-    
+
     if (lowerMessage.contains('user') && lowerMessage.contains('cancel')) {
       return TangemErrorFactory.userCancelled();
-    } else if (lowerMessage.contains('card') && lowerMessage.contains('not found')) {
+    } else if (lowerMessage.contains('card') &&
+        lowerMessage.contains('not found')) {
       return TangemErrorFactory.cardNotFound();
-    } else if (lowerMessage.contains('nfc') && lowerMessage.contains('disabled')) {
+    } else if (lowerMessage.contains('nfc') &&
+        lowerMessage.contains('disabled')) {
       return TangemErrorFactory.nfcDisabled();
     } else if (lowerMessage.contains('timeout')) {
       return TangemErrorFactory.timeout();
     } else if (lowerMessage.contains('communication')) {
       return TangemErrorFactory.communicationError();
-    } else if (lowerMessage.contains('linked terminal') || lowerMessage.contains('fast signing')) {
+    } else if (lowerMessage.contains('linked terminal') ||
+        lowerMessage.contains('fast signing')) {
       return TangemErrorFactory.fastSigningNotAvailable();
     } else {
       return TangemError(
@@ -73,23 +76,23 @@ class TangemErrorHandler {
       for (int i = 0; i < hashOrHashes.length; i++) {
         if (!_isValidHex(hashOrHashes[i])) {
           return TangemErrorFactory.invalidArgument(
-            'hashes[$i]', 
-            'Invalid hex format at index $i'
+            'hashes[$i]',
+            'Invalid hex format at index $i',
           );
         }
       }
     } else {
       return TangemErrorFactory.invalidArgument(
-        'hash/hashes', 
-        'Must be a hex string or array of hex strings'
+        'hash/hashes',
+        'Must be a hex string or array of hex strings',
       );
     }
 
     // Validate derivation path format if provided
     if (derivationPath != null && !_isValidDerivationPath(derivationPath)) {
       return TangemErrorFactory.invalidArgument(
-        'derivationPath', 
-        'Invalid derivation path format. Expected format: m/44\'/60\'/0\'/0/0'
+        'derivationPath',
+        'Invalid derivation path format. Expected format: m/44\'/60\'/0\'/0/0',
       );
     }
 
@@ -99,18 +102,19 @@ class TangemErrorHandler {
   /// Check if string is valid hexadecimal
   static bool _isValidHex(String value) {
     if (value.isEmpty) return false;
-    
+
     // Remove 0x prefix if present
     final cleanValue = value.startsWith('0x') ? value.substring(2) : value;
-    
+
     // Check if all characters are valid hex
-    return RegExp(r'^[0-9a-fA-F]+$').hasMatch(cleanValue) && cleanValue.length % 2 == 0;
+    return RegExp(r'^[0-9a-fA-F]+$').hasMatch(cleanValue) &&
+        cleanValue.length % 2 == 0;
   }
 
   /// Validate derivation path format
   static bool _isValidDerivationPath(String path) {
     if (path.isEmpty) return false;
-    
+
     // Basic validation for derivation path format
     return RegExp(r"^m(/\d+'?)+$").hasMatch(path);
   }
@@ -120,11 +124,7 @@ class TangemErrorHandler {
     required TangemError error,
     int id = 1,
   }) {
-    return {
-      'result': null,
-      'error': error.toJson(),
-      'id': id,
-    };
+    return {'result': null, 'error': error.toJson(), 'id': id};
   }
 
   /// Create a standardized success response for method channel
@@ -132,10 +132,6 @@ class TangemErrorHandler {
     required Map<String, dynamic> result,
     int id = 1,
   }) {
-    return {
-      'result': result,
-      'error': null,
-      'id': id,
-    };
+    return {'result': result, 'error': null, 'id': id};
   }
 }

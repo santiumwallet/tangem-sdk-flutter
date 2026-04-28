@@ -116,11 +116,6 @@ class MockScanCardPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<String> runJSONRPCRequest(Map<String, dynamic> request) {
-    throw UnimplementedError('JSONRPC is deprecated');
-  }
-
-  @override
   Future<String> setScanImage(ScanTagImage? scanCardImage) {
     return Future.value('{"success": true}');
   }
@@ -140,10 +135,7 @@ class MockScanCardPlatform
     String? cardId,
     Map<String, String>? initialMessage,
   }) {
-    lastDirectCallArgs = {
-      'cardId': cardId,
-      'initialMessage': initialMessage,
-    };
+    lastDirectCallArgs = {'cardId': cardId, 'initialMessage': initialMessage};
     return Future.value(mockResponse);
   }
 
@@ -197,13 +189,15 @@ class MockScanCardPlatform
     UserCodeType? codeType,
   }) {
     return Future.value(
-        '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}');
+      '{"success": true, "policy": "${policy.name}", "codeType": "${codeType?.name ?? "none"}"}',
+    );
   }
 
   @override
   Future<String> getUserCodeRequestPolicy() {
     return Future.value(
-        '{"success": true, "policy": "default", "codeType": "none"}');
+      '{"success": true, "policy": "default", "codeType": "none"}',
+    );
   }
 }
 

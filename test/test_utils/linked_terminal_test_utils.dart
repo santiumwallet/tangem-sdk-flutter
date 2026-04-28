@@ -91,27 +91,18 @@ class LinkedTerminalTestUtils {
   static Future<void> testSignParameterValidation(TangemSdk sdk) async {
     // Test invalid wallet public key
     expect(
-      () => sdk.signHash(
-        walletPublicKey: '',
-        hash: testHashes[0],
-      ),
+      () => sdk.signHash(walletPublicKey: '', hash: testHashes[0]),
       throwsA(isA<ArgumentError>()),
     );
 
     expect(
-      () => sdk.signHash(
-        walletPublicKey: 'invalid_hex',
-        hash: testHashes[0],
-      ),
+      () => sdk.signHash(walletPublicKey: 'invalid_hex', hash: testHashes[0]),
       throwsA(isA<FormatException>()),
     );
 
     // Test invalid hash
     expect(
-      () => sdk.signHash(
-        walletPublicKey: testWalletPublicKey,
-        hash: '',
-      ),
+      () => sdk.signHash(walletPublicKey: testWalletPublicKey, hash: ''),
       throwsA(isA<ArgumentError>()),
     );
 
@@ -125,10 +116,7 @@ class LinkedTerminalTestUtils {
 
     // Test empty hashes array
     expect(
-      () => sdk.signHashes(
-        walletPublicKey: testWalletPublicKey,
-        hashes: [],
-      ),
+      () => sdk.signHashes(walletPublicKey: testWalletPublicKey, hashes: []),
       throwsA(isA<ArgumentError>()),
     );
 
@@ -180,7 +168,8 @@ class LinkedTerminalTestUtils {
 
   /// Performance testing utility
   static Future<Duration> measureOperationTime(
-      Future<void> Function() operation) async {
+    Future<void> Function() operation,
+  ) async {
     final stopwatch = Stopwatch()..start();
     await operation();
     stopwatch.stop();
@@ -274,8 +263,10 @@ class LinkedTerminalTestUtils {
     }
 
     // Test large batch operations
-    final largeHashList =
-        List.generate(10, (i) => testHashes[i % testHashes.length]);
+    final largeHashList = List.generate(
+      10,
+      (i) => testHashes[i % testHashes.length],
+    );
     final batchResult = await sdk.signHashes(
       walletPublicKey: testWalletPublicKey,
       hashes: largeHashList,
@@ -304,13 +295,18 @@ class LinkedTerminalTestUtils {
     await verifyScanCardLinkedTerminalStatus(sdk, false);
 
     // Phase 2: Enable linked terminal
-    await testLinkedTerminalConfiguration(sdk,
-        initialState: false, targetState: true);
+    await testLinkedTerminalConfiguration(
+      sdk,
+      initialState: false,
+      targetState: true,
+    );
     await verifyScanCardLinkedTerminalStatus(sdk, true);
 
     // Phase 3: Perform signing operations
-    final operationCounts =
-        await testSignOperationSequence(sdk, linkedTerminalEnabled: true);
+    final operationCounts = await testSignOperationSequence(
+      sdk,
+      linkedTerminalEnabled: true,
+    );
 
     // Verify progressive counter increments
     for (int i = 1; i < operationCounts.length; i++) {
@@ -324,8 +320,11 @@ class LinkedTerminalTestUtils {
     await testOperationPerformance(sdk);
 
     // Phase 6: Disable linked terminal
-    await testLinkedTerminalConfiguration(sdk,
-        initialState: true, targetState: false);
+    await testLinkedTerminalConfiguration(
+      sdk,
+      initialState: true,
+      targetState: false,
+    );
     await verifyScanCardLinkedTerminalStatus(sdk, false);
 
     // Phase 7: Edge case validation
@@ -350,9 +349,7 @@ extension LinkedTerminalTestExtensions on TangemSdk {
   }
 
   /// Quick helper for basic sign operation
-  Future<void> performBasicSignAndVerify({
-    String? derivationPath,
-  }) async {
+  Future<void> performBasicSignAndVerify({String? derivationPath}) async {
     final result = await signHash(
       walletPublicKey: LinkedTerminalTestUtils.testWalletPublicKey,
       hash: LinkedTerminalTestUtils.testHashes[0],

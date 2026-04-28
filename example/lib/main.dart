@@ -130,57 +130,44 @@ class _CommandListWidgetState extends State<CommandListWidget> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(height: 25),
-          RowActions(
-            [
-              ActionButton("Scan card", _handleScanCard),
-              ActionButton("Sign hash", _handleSign),
-            ],
-          ),
+          RowActions([
+            ActionButton("Scan card", _handleScanCard),
+            ActionButton("Sign hash", _handleSign),
+          ]),
           ActionType("Enhanced Signing Demo"),
           _buildEnhancedSigningWidget(),
           ActionType("Set scan image"),
-          RowActions(
-            [
-              ActionButton("Set", _handleSetScanImage),
-              ActionButton("Remove", _handleRemoveScanImage),
-            ],
-          ),
+          RowActions([
+            ActionButton("Set", _handleSetScanImage),
+            ActionButton("Remove", _handleRemoveScanImage),
+          ]),
           ActionType("Derivation Paths Configuration"),
-          RowActions(
-            [
-              ActionButton(
-                  "Configure Custom Paths", _handleConfigureCustomPaths),
-              ActionButton(
-                  "Configure Merged Paths", _handleConfigureMergedPaths),
-              ActionButton("Reset to Defaults", _handleResetToDefaults),
-            ],
-          ),
+          RowActions([
+            ActionButton("Configure Custom Paths", _handleConfigureCustomPaths),
+            ActionButton("Configure Merged Paths", _handleConfigureMergedPaths),
+            ActionButton("Reset to Defaults", _handleResetToDefaults),
+          ]),
           ActionType("Wallet"),
-          RowActions(
-            [
-              ActionButton("Create", _handleCreateWallet),
-              ActionButton("Purge", _handlePurgeWallet),
-            ],
-          ),
+          RowActions([
+            ActionButton("Create", _handleCreateWallet),
+            ActionButton("Purge", _handlePurgeWallet),
+          ]),
           ActionType("User Code Request Policy"),
-          RowActions(
-            [
-              ActionButton("Default Policy", _handleSetDefaultPolicy),
-              ActionButton("Always Access Code", _handleSetAlwaysAccessCode),
-              ActionButton("Always Passcode", _handleSetAlwaysPasscode),
-            ],
-          ),
-          RowActions(
-            [
-              ActionButton("Biometric Access", _handleSetBiometricAccess),
-              ActionButton("Biometric Passcode", _handleSetBiometricPasscode),
-              ActionButton("Get Current Policy", _handleGetCurrentPolicy),
-            ],
-          ),
+          RowActions([
+            ActionButton("Default Policy", _handleSetDefaultPolicy),
+            ActionButton("Always Access Code", _handleSetAlwaysAccessCode),
+            ActionButton("Always Passcode", _handleSetAlwaysPasscode),
+          ]),
+          RowActions([
+            ActionButton("Biometric Access", _handleSetBiometricAccess),
+            ActionButton("Biometric Passcode", _handleSetBiometricPasscode),
+            ActionButton("Get Current Policy", _handleGetCurrentPolicy),
+          ]),
           SizedBox(height: 5),
           Divider(),
           ActionType(
-              "Load AccessCode into memory (to avoid requiring AccessCode on every scan)"),
+            "Load AccessCode into memory (to avoid requiring AccessCode on every scan)",
+          ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -201,18 +188,19 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                          child: Text("Load"),
-                          onPressed: _accesscodeController.text.isEmpty
-                              ? null
-                              : () {
-                                  setState(() {
-                                    _accesscode = _accesscodeController.text;
-                                  });
+                        child: Text("Load"),
+                        onPressed: _accesscodeController.text.isEmpty
+                            ? null
+                            : () {
+                                setState(() {
+                                  _accesscode = _accesscodeController.text;
+                                });
 
-                                  _accesscodeController.clear();
-                                  FocusScope.of(context).unfocus();
-                                }),
-                    )
+                                _accesscodeController.clear();
+                                FocusScope.of(context).unfocus();
+                              },
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -288,10 +276,7 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     }
 
     try {
-      final res = await _sdk.createWallet(
-        curve: "Secp256k1",
-        cardId: _cardId,
-      );
+      final res = await _sdk.createWallet(curve: "Secp256k1", cardId: _cardId);
 
       _walletPublicKey = res.wallet.publicKey;
 
@@ -454,8 +439,9 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.flash_on),
-                  label:
-                      Text(_isSigningWithDirect ? 'Signing...' : 'Sign Direct'),
+                  label: Text(
+                    _isSigningWithDirect ? 'Signing...' : 'Sign Direct',
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
@@ -475,7 +461,10 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                         )
                       : const Icon(Icons.code),
                   label: Text(
-                      _isSigningWithAlternate ? 'Signing...' : 'Sign w/o Derivation'),
+                    _isSigningWithAlternate
+                        ? 'Signing...'
+                        : 'Sign w/o Derivation',
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
@@ -497,14 +486,12 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                         : Colors.blue[50],
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Text(
-                _signStatus,
-                style: const TextStyle(fontSize: 12),
-              ),
+              child: Text(_signStatus, style: const TextStyle(fontSize: 12)),
             ),
             const SizedBox(height: 12),
           ],
-          if (_lastDirectSignTime != null || _lastAlternateSignTime != null) ...[
+          if (_lastDirectSignTime != null ||
+              _lastAlternateSignTime != null) ...[
             const Text(
               'Performance Results:',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -624,12 +611,16 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                   children: [
                     Icon(Icons.flash_on, size: 16, color: Colors.green),
                     SizedBox(width: 4),
-                    Text('With Derivation:',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      'With Derivation:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
-                Text('${_lastDirectSignTime}ms',
-                    style: const TextStyle(color: Colors.green)),
+                Text(
+                  '${_lastDirectSignTime}ms',
+                  style: const TextStyle(color: Colors.green),
+                ),
               ],
             ),
           if (_lastAlternateSignTime != null) ...[
@@ -641,16 +632,21 @@ class _CommandListWidgetState extends State<CommandListWidget> {
                   children: [
                     Icon(Icons.code, size: 16, color: Colors.blue),
                     SizedBox(width: 4),
-                    Text('Without Derivation:',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Without Derivation:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
-                Text('${_lastAlternateSignTime}ms',
-                    style: const TextStyle(color: Colors.blue)),
+                Text(
+                  '${_lastAlternateSignTime}ms',
+                  style: const TextStyle(color: Colors.blue),
+                ),
               ],
             ),
           ],
-          if (_lastDirectSignTime != null && _lastAlternateSignTime != null) ...[
+          if (_lastDirectSignTime != null &&
+              _lastAlternateSignTime != null) ...[
             const SizedBox(height: 8),
             const Divider(),
             const SizedBox(height: 4),
@@ -765,7 +761,8 @@ class _CommandListWidgetState extends State<CommandListWidget> {
       setState(() {
         _lastAlternateSignTime = stopwatch.elapsedMilliseconds;
         if (result.result != null) {
-          _signStatus = 'Signing without derivation success! (${_lastAlternateSignTime}ms)';
+          _signStatus =
+              'Signing without derivation success! (${_lastAlternateSignTime}ms)';
         } else {
           _signStatus = 'Signing without derivation failed: ${result.error}';
         }
@@ -982,7 +979,9 @@ class _SettingsTabState extends State<SettingsTab> {
                         const Text(
                           'Linked Terminal',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -997,8 +996,10 @@ class _SettingsTabState extends State<SettingsTab> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Enable Linked Terminal',
-                            style: TextStyle(fontSize: 16)),
+                        const Text(
+                          'Enable Linked Terminal',
+                          style: TextStyle(fontSize: 16),
+                        ),
                         Switch(
                           value: _isLinkedTerminal,
                           onChanged: _isLoading
@@ -1061,7 +1062,9 @@ class _SettingsTabState extends State<SettingsTab> {
                         const Text(
                           'About This App',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -1075,8 +1078,10 @@ class _SettingsTabState extends State<SettingsTab> {
                     const SizedBox(height: 16),
                     const Text(
                       'Features Demonstrated:',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
