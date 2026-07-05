@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tangem_sdk/model/card.dart';
+import 'package:tangem_sdk/model/tangem_error.dart';
 
 part 'sign_hash_result.freezed.dart';
 part 'sign_hash_result.g.dart';
@@ -10,16 +11,26 @@ part 'sign_hash_result.g.dart';
 sealed class SignHashResult with _$SignHashResult {
   const factory SignHashResult({
     SignSingleHashResult? result,
-    Object? error,
+    @TangemErrorEnvelopeConverter() TangemError? error,
     int? id,
   }) = _SignHashResult;
 
   factory SignHashResult.fromJson(Map<String, dynamic> json) =>
       _$SignHashResultFromJson(json);
 
+  /// Throws [TangemResponseParseException] if the native payload cannot be
+  /// decoded — never lets raw [TypeError]/[FormatException] escape from an
+  /// NFC operation.
   factory SignHashResult.fromResponse(dynamic res) {
-    final decode = json.decode(res) as Map<String, dynamic>;
-    return SignHashResult.fromJson(decode);
+    try {
+      final decode = json.decode(res as String) as Map<String, dynamic>;
+      return SignHashResult.fromJson(decode);
+    } catch (e, st) {
+      Error.throwWithStackTrace(
+        TangemResponseParseException.from('signHash', e, res),
+        st,
+      );
+    }
   }
 }
 
@@ -40,16 +51,26 @@ sealed class SignSingleHashResult with _$SignSingleHashResult {
 sealed class SignHashesResult with _$SignHashesResult {
   const factory SignHashesResult({
     SignMultipleHashesResult? result,
-    Object? error,
+    @TangemErrorEnvelopeConverter() TangemError? error,
     int? id,
   }) = _SignHashesResult;
 
   factory SignHashesResult.fromJson(Map<String, dynamic> json) =>
       _$SignHashesResultFromJson(json);
 
+  /// Throws [TangemResponseParseException] if the native payload cannot be
+  /// decoded — never lets raw [TypeError]/[FormatException] escape from an
+  /// NFC operation.
   factory SignHashesResult.fromResponse(dynamic res) {
-    final decode = json.decode(res) as Map<String, dynamic>;
-    return SignHashesResult.fromJson(decode);
+    try {
+      final decode = json.decode(res as String) as Map<String, dynamic>;
+      return SignHashesResult.fromJson(decode);
+    } catch (e, st) {
+      Error.throwWithStackTrace(
+        TangemResponseParseException.from('signHashes', e, res),
+        st,
+      );
+    }
   }
 }
 

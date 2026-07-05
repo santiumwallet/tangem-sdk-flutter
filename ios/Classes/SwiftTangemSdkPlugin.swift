@@ -17,6 +17,19 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
     private var customDerivationPaths: [EllipticCurve: [DerivationPath]]?
     private var mergeWithDefaults: Bool = true
 
+    /// Structured error envelope shared by every operation's failure path.
+    ///
+    /// `code` is the numeric `TangemSdkError.code`, which uses the same
+    /// numbering on Android — the Dart layer classifies errors by this code
+    /// instead of matching localized message strings.
+    @available(iOS 13, *)
+    private static func errorEnvelope(_ error: TangemSdkError) -> [String: Any] {
+        return [
+            "code": error.code,
+            "message": error.localizedDescription,
+        ]
+    }
+
     @available(iOS 13, *)
     private var sdk: TangemSdk {
         if _sdk == nil {
@@ -198,7 +211,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
                     // Format the error to match ScanCardResult structure
                     let errorMap: [String: Any?] = [
                         "result": nil,
-                        "error": error.localizedDescription,
+                        "error": Self.errorEnvelope(error),
                         "id": 1,
                     ]
 
@@ -263,10 +276,22 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
             initialMessage = nil
         }
 
-        // Build derivation path if provided
+        // Build derivation path if provided.
+        //
+        // A malformed path MUST fail loudly: silently falling back to nil
+        // makes the card sign with the wallet's default/master key — a
+        // wrong-key signing hazard. (Android already surfaces this as an
+        // error; keep the platforms in parity.)
         let derivationPath: DerivationPath?
         if let pathString = derivationPathString {
-            derivationPath = try? DerivationPath(rawPath: pathString)
+            do {
+                derivationPath = try DerivationPath(rawPath: pathString)
+            } catch {
+                throw FlutterError(
+                    code: "INVALID_ARGUMENT",
+                    message: "Invalid derivationPath '\(pathString)': \(error)",
+                    details: nil)
+            }
         } else {
             derivationPath = nil
         }
@@ -317,7 +342,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
                     // Format the error to match SignHashResult structure
                     let errorMap: [String: Any?] = [
                         "result": nil,
-                        "error": error.localizedDescription,
+                        "error": Self.errorEnvelope(error),
                         "id": 2,
                     ]
 
@@ -385,10 +410,22 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
             initialMessage = nil
         }
 
-        // Build derivation path if provided
+        // Build derivation path if provided.
+        //
+        // A malformed path MUST fail loudly: silently falling back to nil
+        // makes the card sign with the wallet's default/master key — a
+        // wrong-key signing hazard. (Android already surfaces this as an
+        // error; keep the platforms in parity.)
         let derivationPath: DerivationPath?
         if let pathString = derivationPathString {
-            derivationPath = try? DerivationPath(rawPath: pathString)
+            do {
+                derivationPath = try DerivationPath(rawPath: pathString)
+            } catch {
+                throw FlutterError(
+                    code: "INVALID_ARGUMENT",
+                    message: "Invalid derivationPath '\(pathString)': \(error)",
+                    details: nil)
+            }
         } else {
             derivationPath = nil
         }
@@ -440,7 +477,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
                     // Format the error to match SignHashesResult structure
                     let errorMap: [String: Any?] = [
                         "result": nil,
-                        "error": error.localizedDescription,
+                        "error": Self.errorEnvelope(error),
                         "id": 2,
                     ]
 
@@ -558,7 +595,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
                     // Format the error to match CreateWalletResult structure
                     let errorMap: [String: Any?] = [
                         "result": nil,
-                        "error": error.localizedDescription,
+                        "error": Self.errorEnvelope(error),
                         "id": 3,
                     ]
 
@@ -662,7 +699,7 @@ public class SwiftTangemSdkPlugin: NSObject, FlutterPlugin {
                     // Format the error to match PurgeWalletResult structure
                     let errorMap: [String: Any?] = [
                         "result": nil,
-                        "error": error.localizedDescription,
+                        "error": Self.errorEnvelope(error),
                         "id": 3,
                     ]
 

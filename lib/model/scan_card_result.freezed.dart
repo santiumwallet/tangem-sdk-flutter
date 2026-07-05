@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ScanCardResult {
 
- Card? get result; Object? get error; int? get id;
+ Card? get result;@TangemErrorEnvelopeConverter() TangemError? get error; int? get id;
 /// Create a copy of ScanCardResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,12 +28,12 @@ $ScanCardResultCopyWith<ScanCardResult> get copyWith => _$ScanCardResultCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScanCardResult&&(identical(other.result, result) || other.result == result)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScanCardResult&&(identical(other.result, result) || other.result == result)&&(identical(other.error, error) || other.error == error)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,result,const DeepCollectionEquality().hash(error),id);
+int get hashCode => Object.hash(runtimeType,result,error,id);
 
 @override
 String toString() {
@@ -48,11 +48,11 @@ abstract mixin class $ScanCardResultCopyWith<$Res>  {
   factory $ScanCardResultCopyWith(ScanCardResult value, $Res Function(ScanCardResult) _then) = _$ScanCardResultCopyWithImpl;
 @useResult
 $Res call({
- Card? result, Object? error, int? id
+ Card? result,@TangemErrorEnvelopeConverter() TangemError? error, int? id
 });
 
 
-$CardCopyWith<$Res>? get result;
+$CardCopyWith<$Res>? get result;$TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -68,7 +68,8 @@ class _$ScanCardResultCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? result = freezed,Object? error = freezed,Object? id = freezed,}) {
   return _then(_self.copyWith(
 result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as Card?,error: freezed == error ? _self.error : error ,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as Card?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -83,6 +84,18 @@ $CardCopyWith<$Res>? get result {
 
   return $CardCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of ScanCardResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }
@@ -163,7 +176,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Card? result,  Object? error,  int? id)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Card? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ScanCardResult() when $default != null:
 return $default(_that.result,_that.error,_that.id);case _:
@@ -184,7 +197,7 @@ return $default(_that.result,_that.error,_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Card? result,  Object? error,  int? id)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Card? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)  $default,) {final _that = this;
 switch (_that) {
 case _ScanCardResult():
 return $default(_that.result,_that.error,_that.id);}
@@ -201,7 +214,7 @@ return $default(_that.result,_that.error,_that.id);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Card? result,  Object? error,  int? id)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Card? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)?  $default,) {final _that = this;
 switch (_that) {
 case _ScanCardResult() when $default != null:
 return $default(_that.result,_that.error,_that.id);case _:
@@ -216,11 +229,11 @@ return $default(_that.result,_that.error,_that.id);case _:
 @JsonSerializable()
 
 class _ScanCardResult implements ScanCardResult {
-  const _ScanCardResult({this.result, this.error, this.id});
+  const _ScanCardResult({this.result, @TangemErrorEnvelopeConverter() this.error, this.id});
   factory _ScanCardResult.fromJson(Map<String, dynamic> json) => _$ScanCardResultFromJson(json);
 
 @override final  Card? result;
-@override final  Object? error;
+@override@TangemErrorEnvelopeConverter() final  TangemError? error;
 @override final  int? id;
 
 /// Create a copy of ScanCardResult
@@ -236,12 +249,12 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScanCardResult&&(identical(other.result, result) || other.result == result)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScanCardResult&&(identical(other.result, result) || other.result == result)&&(identical(other.error, error) || other.error == error)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,result,const DeepCollectionEquality().hash(error),id);
+int get hashCode => Object.hash(runtimeType,result,error,id);
 
 @override
 String toString() {
@@ -256,11 +269,11 @@ abstract mixin class _$ScanCardResultCopyWith<$Res> implements $ScanCardResultCo
   factory _$ScanCardResultCopyWith(_ScanCardResult value, $Res Function(_ScanCardResult) _then) = __$ScanCardResultCopyWithImpl;
 @override @useResult
 $Res call({
- Card? result, Object? error, int? id
+ Card? result,@TangemErrorEnvelopeConverter() TangemError? error, int? id
 });
 
 
-@override $CardCopyWith<$Res>? get result;
+@override $CardCopyWith<$Res>? get result;@override $TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -276,7 +289,8 @@ class __$ScanCardResultCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? result = freezed,Object? error = freezed,Object? id = freezed,}) {
   return _then(_ScanCardResult(
 result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as Card?,error: freezed == error ? _self.error : error ,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as Card?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -292,6 +306,18 @@ $CardCopyWith<$Res>? get result {
 
   return $CardCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of ScanCardResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }

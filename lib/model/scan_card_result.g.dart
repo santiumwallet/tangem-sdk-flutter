@@ -11,13 +11,13 @@ _ScanCardResult _$ScanCardResultFromJson(Map<String, dynamic> json) =>
       result: json['result'] == null
           ? null
           : Card.fromJson(json['result'] as Map<String, dynamic>),
-      error: json['error'],
+      error: const TangemErrorEnvelopeConverter().fromJson(json['error']),
       id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ScanCardResultToJson(_ScanCardResult instance) =>
     <String, dynamic>{
       'result': instance.result,
-      'error': instance.error,
+      'error': const TangemErrorEnvelopeConverter().toJson(instance.error),
       'id': instance.id,
     };

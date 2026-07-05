@@ -17,9 +17,12 @@ mixin _$TangemError {
 
 /// Error code for programmatic handling
  String get code;/// Human-readable error message
- String get message;/// Additional error details if available
+ String get message;/// Numeric TangemSdkError code from the native SDK (identical numbering
+/// on iOS and Android, e.g. 50002 = user cancelled). Null when the error
+/// did not originate from the native Tangem SDK.
+ int? get nativeCode;/// Additional error details if available
  String? get details;/// Original platform error if available
- Object? get originalError;
+@JsonKey(includeFromJson: false, includeToJson: false) Object? get originalError;
 /// Create a copy of TangemError
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -32,16 +35,16 @@ $TangemErrorCopyWith<TangemError> get copyWith => _$TangemErrorCopyWithImpl<Tang
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TangemError&&(identical(other.code, code) || other.code == code)&&(identical(other.message, message) || other.message == message)&&(identical(other.details, details) || other.details == details)&&const DeepCollectionEquality().equals(other.originalError, originalError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TangemError&&(identical(other.code, code) || other.code == code)&&(identical(other.message, message) || other.message == message)&&(identical(other.nativeCode, nativeCode) || other.nativeCode == nativeCode)&&(identical(other.details, details) || other.details == details)&&const DeepCollectionEquality().equals(other.originalError, originalError));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,code,message,details,const DeepCollectionEquality().hash(originalError));
+int get hashCode => Object.hash(runtimeType,code,message,nativeCode,details,const DeepCollectionEquality().hash(originalError));
 
 @override
 String toString() {
-  return 'TangemError(code: $code, message: $message, details: $details, originalError: $originalError)';
+  return 'TangemError(code: $code, message: $message, nativeCode: $nativeCode, details: $details, originalError: $originalError)';
 }
 
 
@@ -52,7 +55,7 @@ abstract mixin class $TangemErrorCopyWith<$Res>  {
   factory $TangemErrorCopyWith(TangemError value, $Res Function(TangemError) _then) = _$TangemErrorCopyWithImpl;
 @useResult
 $Res call({
- String code, String message, String? details, Object? originalError
+ String code, String message, int? nativeCode, String? details,@JsonKey(includeFromJson: false, includeToJson: false) Object? originalError
 });
 
 
@@ -69,11 +72,12 @@ class _$TangemErrorCopyWithImpl<$Res>
 
 /// Create a copy of TangemError
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? message = null,Object? details = freezed,Object? originalError = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? message = null,Object? nativeCode = freezed,Object? details = freezed,Object? originalError = freezed,}) {
   return _then(_self.copyWith(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
+as String,nativeCode: freezed == nativeCode ? _self.nativeCode : nativeCode // ignore: cast_nullable_to_non_nullable
+as int?,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
 as String?,originalError: freezed == originalError ? _self.originalError : originalError ,
   ));
 }
@@ -156,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  String message,  String? details,  Object? originalError)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  String message,  int? nativeCode,  String? details, @JsonKey(includeFromJson: false, includeToJson: false)  Object? originalError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TangemError() when $default != null:
-return $default(_that.code,_that.message,_that.details,_that.originalError);case _:
+return $default(_that.code,_that.message,_that.nativeCode,_that.details,_that.originalError);case _:
   return orElse();
 
 }
@@ -177,10 +181,10 @@ return $default(_that.code,_that.message,_that.details,_that.originalError);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  String message,  String? details,  Object? originalError)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  String message,  int? nativeCode,  String? details, @JsonKey(includeFromJson: false, includeToJson: false)  Object? originalError)  $default,) {final _that = this;
 switch (_that) {
 case _TangemError():
-return $default(_that.code,_that.message,_that.details,_that.originalError);}
+return $default(_that.code,_that.message,_that.nativeCode,_that.details,_that.originalError);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -194,10 +198,10 @@ return $default(_that.code,_that.message,_that.details,_that.originalError);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  String message,  String? details,  Object? originalError)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  String message,  int? nativeCode,  String? details, @JsonKey(includeFromJson: false, includeToJson: false)  Object? originalError)?  $default,) {final _that = this;
 switch (_that) {
 case _TangemError() when $default != null:
-return $default(_that.code,_that.message,_that.details,_that.originalError);case _:
+return $default(_that.code,_that.message,_that.nativeCode,_that.details,_that.originalError);case _:
   return null;
 
 }
@@ -209,17 +213,21 @@ return $default(_that.code,_that.message,_that.details,_that.originalError);case
 @JsonSerializable()
 
 class _TangemError implements TangemError {
-  const _TangemError({required this.code, required this.message, this.details, this.originalError});
+  const _TangemError({required this.code, required this.message, this.nativeCode, this.details, @JsonKey(includeFromJson: false, includeToJson: false) this.originalError});
   factory _TangemError.fromJson(Map<String, dynamic> json) => _$TangemErrorFromJson(json);
 
 /// Error code for programmatic handling
 @override final  String code;
 /// Human-readable error message
 @override final  String message;
+/// Numeric TangemSdkError code from the native SDK (identical numbering
+/// on iOS and Android, e.g. 50002 = user cancelled). Null when the error
+/// did not originate from the native Tangem SDK.
+@override final  int? nativeCode;
 /// Additional error details if available
 @override final  String? details;
 /// Original platform error if available
-@override final  Object? originalError;
+@override@JsonKey(includeFromJson: false, includeToJson: false) final  Object? originalError;
 
 /// Create a copy of TangemError
 /// with the given fields replaced by the non-null parameter values.
@@ -234,16 +242,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TangemError&&(identical(other.code, code) || other.code == code)&&(identical(other.message, message) || other.message == message)&&(identical(other.details, details) || other.details == details)&&const DeepCollectionEquality().equals(other.originalError, originalError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TangemError&&(identical(other.code, code) || other.code == code)&&(identical(other.message, message) || other.message == message)&&(identical(other.nativeCode, nativeCode) || other.nativeCode == nativeCode)&&(identical(other.details, details) || other.details == details)&&const DeepCollectionEquality().equals(other.originalError, originalError));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,code,message,details,const DeepCollectionEquality().hash(originalError));
+int get hashCode => Object.hash(runtimeType,code,message,nativeCode,details,const DeepCollectionEquality().hash(originalError));
 
 @override
 String toString() {
-  return 'TangemError(code: $code, message: $message, details: $details, originalError: $originalError)';
+  return 'TangemError(code: $code, message: $message, nativeCode: $nativeCode, details: $details, originalError: $originalError)';
 }
 
 
@@ -254,7 +262,7 @@ abstract mixin class _$TangemErrorCopyWith<$Res> implements $TangemErrorCopyWith
   factory _$TangemErrorCopyWith(_TangemError value, $Res Function(_TangemError) _then) = __$TangemErrorCopyWithImpl;
 @override @useResult
 $Res call({
- String code, String message, String? details, Object? originalError
+ String code, String message, int? nativeCode, String? details,@JsonKey(includeFromJson: false, includeToJson: false) Object? originalError
 });
 
 
@@ -271,11 +279,12 @@ class __$TangemErrorCopyWithImpl<$Res>
 
 /// Create a copy of TangemError
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? message = null,Object? details = freezed,Object? originalError = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? message = null,Object? nativeCode = freezed,Object? details = freezed,Object? originalError = freezed,}) {
   return _then(_TangemError(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
+as String,nativeCode: freezed == nativeCode ? _self.nativeCode : nativeCode // ignore: cast_nullable_to_non_nullable
+as int?,details: freezed == details ? _self.details : details // ignore: cast_nullable_to_non_nullable
 as String?,originalError: freezed == originalError ? _self.originalError : originalError ,
   ));
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'tangem_error.freezed.dart';
@@ -13,15 +15,110 @@ sealed class TangemError with _$TangemError {
     /// Human-readable error message
     required String message,
 
+    /// Numeric TangemSdkError code from the native SDK (identical numbering
+    /// on iOS and Android, e.g. 50002 = user cancelled). Null when the error
+    /// did not originate from the native Tangem SDK.
+    int? nativeCode,
+
     /// Additional error details if available
     String? details,
 
     /// Original platform error if available
+    @JsonKey(includeFromJson: false, includeToJson: false)
     Object? originalError,
   }) = _TangemError;
 
   factory TangemError.fromJson(Map<String, dynamic> json) =>
       _$TangemErrorFromJson(json);
+}
+
+/// Decodes the `error` field of a native response envelope into a typed
+/// [TangemError].
+///
+/// Both native plugins emit `{"code": <int>, "message": <string>}`; older
+/// payloads (or non-SDK failures) may carry a bare string. Anything else is
+/// preserved on [TangemError.originalError] so no information is lost.
+class TangemErrorEnvelopeConverter
+    implements JsonConverter<TangemError?, Object?> {
+  const TangemErrorEnvelopeConverter();
+
+  @override
+  TangemError? fromJson(Object? json) {
+    if (json == null) return null;
+    if (json is Map) {
+      final map = Map<String, dynamic>.from(json);
+      final rawCode = map['code'];
+      final nativeCode =
+          rawCode is int ? rawCode : int.tryParse(rawCode?.toString() ?? '');
+      final message = (map['message'] ?? map['localizedMessage'])?.toString();
+      return TangemError(
+        code: rawCode?.toString() ?? TangemErrorCode.unknownError,
+        message: message ?? json.toString(),
+        nativeCode: nativeCode,
+        details: map['details']?.toString(),
+        originalError: json,
+      );
+    }
+    return TangemError(
+      code: TangemErrorCode.unknownError,
+      message: json.toString(),
+      originalError: json,
+    );
+  }
+
+  @override
+  Object? toJson(TangemError? error) => error == null
+      ? null
+      : {
+          'code': error.nativeCode ?? error.code,
+          'message': error.message,
+          if (error.details != null) 'details': error.details,
+        };
+}
+
+/// Thrown when a native response cannot be decoded into its result model.
+///
+/// NFC responses cross the method channel as JSON strings; a malformed
+/// payload, a missing required field, or an unknown enum value used to escape
+/// as a raw [TypeError]/[FormatException] mid-operation. This exception makes
+/// that failure typed and carries enough context to diagnose it.
+class TangemResponseParseException implements Exception {
+  const TangemResponseParseException({
+    required this.operation,
+    required this.cause,
+    required this.responseSnippet,
+  });
+
+  /// The SDK operation whose response failed to parse (e.g. 'scanCard').
+  final String operation;
+
+  /// The original decoding error.
+  final Object cause;
+
+  /// Truncated raw response for diagnostics.
+  final String responseSnippet;
+
+  static const _snippetLength = 300;
+
+  /// Builds an exception from a raw channel response, truncating it for
+  /// safe logging.
+  factory TangemResponseParseException.from(
+    String operation,
+    Object cause,
+    dynamic rawResponse,
+  ) {
+    final raw = rawResponse?.toString() ?? 'null';
+    return TangemResponseParseException(
+      operation: operation,
+      cause: cause,
+      responseSnippet:
+          raw.length <= _snippetLength ? raw : raw.substring(0, _snippetLength),
+    );
+  }
+
+  @override
+  String toString() =>
+      'TangemResponseParseException($operation): $cause — response: $responseSnippet';
 }
 
 /// Standard error codes for Tangem SDK operations

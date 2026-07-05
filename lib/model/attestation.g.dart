@@ -35,6 +35,6 @@ const _$StatusEnumMap = {
   Status.Failed: 'failed',
   Status.Warning: 'warning',
   Status.Skipped: 'skipped',
-  Status.VerifiedOffline: 'verifiedOnline',
+  Status.VerifiedOffline: 'verifiedOffline',
   Status.Verified: 'verified',
 };

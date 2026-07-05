@@ -10,6 +10,7 @@ import com.tangem.common.card.FirmwareVersion
 import com.tangem.common.core.Config
 import com.tangem.common.core.ScanTagImage
 import com.tangem.common.core.ScanTagImage.GenericCard
+import com.tangem.common.core.TangemError
 import com.tangem.common.CompletionResult
 import com.tangem.Message
 import com.tangem.common.core.UserCodeRequestPolicy
@@ -36,6 +37,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.lang.ref.WeakReference
+import java.util.concurrent.atomic.AtomicBoolean
 import com.tangem.common.UserCodeType
 
 /** TangemSdkPlugin */
@@ -48,8 +50,6 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var sdk: TangemSdk
     private lateinit var nfcManager: NfcManager
     private val converter = MoshiJsonConverter.default()
-
-    private var replyAlreadySubmit = false
 
     // Store custom derivation paths configuration
     private var customDerivationPaths: MutableMap<EllipticCurve, List<DerivationPath>>? = null
@@ -143,8 +143,11 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         wActivity = WeakReference(null)
     }
 
-    override fun onMethodCall(call: MethodCall, result: Result) {
-        replyAlreadySubmit = false
+    override fun onMethodCall(call: MethodCall, rawResult: Result) {
+        // Each invocation gets its own idempotent, main-thread-posting reply so
+        // a late NFC callback from one call can never consume another call's
+        // reply slot (the old shared flag dropped replies under overlap).
+        val result = SafeResult(rawResult)
         when (call.method) {
             "setScanImage" -> {
                 setScanImage(call, result)
@@ -287,28 +290,35 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 initialMessage = initialMessage,
                 allowRequestUserCodeFromRepository = allowRequestUserCodeFromRepository
             ) { scanResult ->
-                when (scanResult) {
-                    is CompletionResult.Success -> {
-                        // Format the result to match ScanCardResult structure using JSON-RPC approach
-                        val cardJson = converter.toJson(scanResult.data)
-                        val resultMap = mapOf(
-                            "result" to converter.fromJson<Any>(cardJson),
-                            "error" to null,
-                            "id" to 1
-                        )
-                        val jsonResult = converter.toJson(resultMap)
-                        handleResult(jsonResult, result)
+                // The enclosing try only covers the synchronous setup; this
+                // callback runs later on the NFC thread and needs its own
+                // guard or a serialization failure crashes uncaught.
+                try {
+                    when (scanResult) {
+                        is CompletionResult.Success -> {
+                            // Format the result to match ScanCardResult structure using JSON-RPC approach
+                            val cardJson = converter.toJson(scanResult.data)
+                            val resultMap = mapOf(
+                                "result" to converter.fromJson<Any>(cardJson),
+                                "error" to null,
+                                "id" to 1
+                            )
+                            val jsonResult = converter.toJson(resultMap)
+                            handleResult(jsonResult, result)
+                        }
+                        is CompletionResult.Failure -> {
+                            // Format the error to match ScanCardResult structure
+                            val errorMap = mapOf(
+                                "result" to null,
+                                "error" to errorEnvelope(scanResult.error),
+                                "id" to 1
+                            )
+                            val jsonResult = converter.toJson(errorMap)
+                            handleResult(jsonResult, result)
+                        }
                     }
-                    is CompletionResult.Failure -> {
-                        // Format the error to match ScanCardResult structure
-                        val errorMap = mapOf(
-                            "result" to null,
-                            "error" to scanResult.error,
-                            "id" to 1
-                        )
-                        val jsonResult = converter.toJson(errorMap)
-                        handleResult(jsonResult, result)
-                    }
+                } catch (ex: Exception) {
+                    handleException(ex, result)
                 }
             }
         } catch (ex: Exception) {
@@ -343,32 +353,36 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 derivationPath = derivationPath?.let { DerivationPath(rawPath = it) },
                 initialMessage = initialMessage
             ) { signResult ->
-                when (signResult) {
-                    is CompletionResult.Success -> {
-                        // Format the result to match SignHashResult structure
-                        val resultData = mapOf(
-                            "cardId" to signResult.data.cardId,
-                            "signature" to signResult.data.signature.toHexString(),
-                            "totalSignedHashes" to signResult.data.totalSignedHashes
-                        )
-                        val resultMap = mapOf(
-                            "result" to resultData,
-                            "error" to null,
-                            "id" to 2
-                        )
-                        val jsonResult = converter.toJson(resultMap)
-                        handleResult(jsonResult, result)
+                try {
+                    when (signResult) {
+                        is CompletionResult.Success -> {
+                            // Format the result to match SignHashResult structure
+                            val resultData = mapOf(
+                                "cardId" to signResult.data.cardId,
+                                "signature" to signResult.data.signature.toHexString(),
+                                "totalSignedHashes" to signResult.data.totalSignedHashes
+                            )
+                            val resultMap = mapOf(
+                                "result" to resultData,
+                                "error" to null,
+                                "id" to 2
+                            )
+                            val jsonResult = converter.toJson(resultMap)
+                            handleResult(jsonResult, result)
+                        }
+                        is CompletionResult.Failure -> {
+                            // Format the error to match SignHashResult structure
+                            val errorMap = mapOf(
+                                "result" to null,
+                                "error" to errorEnvelope(signResult.error),
+                                "id" to 2
+                            )
+                            val jsonResult = converter.toJson(errorMap)
+                            handleResult(jsonResult, result)
+                        }
                     }
-                    is CompletionResult.Failure -> {
-                        // Format the error to match SignHashResult structure
-                        val errorMap = mapOf(
-                            "result" to null,
-                            "error" to signResult.error,
-                            "id" to 2
-                        )
-                        val jsonResult = converter.toJson(errorMap)
-                        handleResult(jsonResult, result)
-                    }
+                } catch (ex: Exception) {
+                    handleException(ex, result)
                 }
             }
         } catch (ex: Exception) {
@@ -406,33 +420,37 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 derivationPath = derivationPath?.let { DerivationPath(rawPath = it) },
                 initialMessage = initialMessage
             ) { signResult ->
-                when (signResult) {
-                    is CompletionResult.Success -> {
-                        // Format the result to match SignHashesResult structure
-                        val signatures = signResult.data.signatures.map { it.toHexString() }
-                        val resultData = mapOf(
-                            "cardId" to signResult.data.cardId,
-                            "signatures" to signatures,
-                            "totalSignedHashes" to signResult.data.totalSignedHashes
-                        )
-                        val resultMap = mapOf(
-                            "result" to resultData,
-                            "error" to null,
-                            "id" to 2
-                        )
-                        val jsonResult = converter.toJson(resultMap)
-                        handleResult(jsonResult, result)
+                try {
+                    when (signResult) {
+                        is CompletionResult.Success -> {
+                            // Format the result to match SignHashesResult structure
+                            val signatures = signResult.data.signatures.map { it.toHexString() }
+                            val resultData = mapOf(
+                                "cardId" to signResult.data.cardId,
+                                "signatures" to signatures,
+                                "totalSignedHashes" to signResult.data.totalSignedHashes
+                            )
+                            val resultMap = mapOf(
+                                "result" to resultData,
+                                "error" to null,
+                                "id" to 2
+                            )
+                            val jsonResult = converter.toJson(resultMap)
+                            handleResult(jsonResult, result)
+                        }
+                        is CompletionResult.Failure -> {
+                            // Format the error to match SignHashesResult structure
+                            val errorMap = mapOf(
+                                "result" to null,
+                                "error" to errorEnvelope(signResult.error),
+                                "id" to 2
+                            )
+                            val jsonResult = converter.toJson(errorMap)
+                            handleResult(jsonResult, result)
+                        }
                     }
-                    is CompletionResult.Failure -> {
-                        // Format the error to match SignHashesResult structure
-                        val errorMap = mapOf(
-                            "result" to null,
-                            "error" to signResult.error,
-                            "id" to 2
-                        )
-                        val jsonResult = converter.toJson(errorMap)
-                        handleResult(jsonResult, result)
-                    }
+                } catch (ex: Exception) {
+                    handleException(ex, result)
                 }
             }
         } catch (ex: Exception) {
@@ -476,33 +494,37 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 cardId = cardId,
                 initialMessage = initialMessage
             ) { createResult ->
-                when (createResult) {
-                    is CompletionResult.Success -> {
-                        // Format the result to match CreateWalletResult structure using JSON-RPC approach
-                        val walletJson = converter.toJson(createResult.data.wallet)
-                        val resultData = mapOf(
-                            "wallet" to converter.fromJson<Any>(walletJson),
-                            "cardId" to createResult.data.cardId,
-                            "message" to "Wallet created successfully"
-                        )
-                        val resultMap = mapOf(
-                            "result" to resultData,
-                            "error" to null,
-                            "id" to 3
-                        )
-                        val jsonResult = converter.toJson(resultMap)
-                        handleResult(jsonResult, result)
+                try {
+                    when (createResult) {
+                        is CompletionResult.Success -> {
+                            // Format the result to match CreateWalletResult structure using JSON-RPC approach
+                            val walletJson = converter.toJson(createResult.data.wallet)
+                            val resultData = mapOf(
+                                "wallet" to converter.fromJson<Any>(walletJson),
+                                "cardId" to createResult.data.cardId,
+                                "message" to "Wallet created successfully"
+                            )
+                            val resultMap = mapOf(
+                                "result" to resultData,
+                                "error" to null,
+                                "id" to 3
+                            )
+                            val jsonResult = converter.toJson(resultMap)
+                            handleResult(jsonResult, result)
+                        }
+                        is CompletionResult.Failure -> {
+                            // Format the error to match CreateWalletResult structure
+                            val errorMap = mapOf(
+                                "result" to null,
+                                "error" to errorEnvelope(createResult.error),
+                                "id" to 3
+                            )
+                            val jsonResult = converter.toJson(errorMap)
+                            handleResult(jsonResult, result)
+                        }
                     }
-                    is CompletionResult.Failure -> {
-                        // Format the error to match CreateWalletResult structure
-                        val errorMap = mapOf(
-                            "result" to null,
-                            "error" to createResult.error,
-                            "id" to 3
-                        )
-                        val jsonResult = converter.toJson(errorMap)
-                        handleResult(jsonResult, result)
-                    }
+                } catch (ex: Exception) {
+                    handleException(ex, result)
                 }
             }
         } catch (ex: Exception) {
@@ -533,33 +555,37 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 cardId = cardId,
                 initialMessage = initialMessage
             ) { purgeResult ->
-                when (purgeResult) {
-                    is CompletionResult.Success -> {
-                        // Format the result to match PurgeWalletResult structure
-                        val resultData = mapOf(
-                            "cardId" to purgeResult.data.cardId,
-                            "walletPublicKey" to walletPublicKey,
-                            "message" to "Wallet purged successfully",
-                            "success" to true
-                        )
-                        val resultMap = mapOf(
-                            "result" to resultData,
-                            "error" to null,
-                            "id" to 3
-                        )
-                        val jsonResult = converter.toJson(resultMap)
-                        handleResult(jsonResult, result)
+                try {
+                    when (purgeResult) {
+                        is CompletionResult.Success -> {
+                            // Format the result to match PurgeWalletResult structure
+                            val resultData = mapOf(
+                                "cardId" to purgeResult.data.cardId,
+                                "walletPublicKey" to walletPublicKey,
+                                "message" to "Wallet purged successfully",
+                                "success" to true
+                            )
+                            val resultMap = mapOf(
+                                "result" to resultData,
+                                "error" to null,
+                                "id" to 3
+                            )
+                            val jsonResult = converter.toJson(resultMap)
+                            handleResult(jsonResult, result)
+                        }
+                        is CompletionResult.Failure -> {
+                            // Format the error to match PurgeWalletResult structure
+                            val errorMap = mapOf(
+                                "result" to null,
+                                "error" to errorEnvelope(purgeResult.error),
+                                "id" to 3
+                            )
+                            val jsonResult = converter.toJson(errorMap)
+                            handleResult(jsonResult, result)
+                        }
                     }
-                    is CompletionResult.Failure -> {
-                        // Format the error to match PurgeWalletResult structure
-                        val errorMap = mapOf(
-                            "result" to null,
-                            "error" to purgeResult.error,
-                            "id" to 3
-                        )
-                        val jsonResult = converter.toJson(errorMap)
-                        handleResult(jsonResult, result)
-                    }
+                } catch (ex: Exception) {
+                    handleException(ex, result)
                 }
             }
         } catch (ex: Exception) {
@@ -652,22 +678,51 @@ class TangemSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
 
-    private fun handleResult(methodResul: String, callback: Result) {
-        if (replyAlreadySubmit) return
-        replyAlreadySubmit = true
+    /**
+     * Idempotent [Result] wrapper: guarantees exactly one reply per method
+     * call and always delivers it on the main thread.
+     */
+    private inner class SafeResult(private val delegate: Result) : Result {
+        private val submitted = AtomicBoolean(false)
 
-        handler.post {
-            callback.success(methodResul)
+        override fun success(result: Any?) {
+            if (submitted.compareAndSet(false, true)) {
+                handler.post { delegate.success(result) }
+            }
+        }
+
+        override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+            if (submitted.compareAndSet(false, true)) {
+                handler.post { delegate.error(errorCode, errorMessage, errorDetails) }
+            }
+        }
+
+        override fun notImplemented() {
+            if (submitted.compareAndSet(false, true)) {
+                handler.post { delegate.notImplemented() }
+            }
         }
     }
 
-    private fun handleException(ex: Exception, result: Result) {
-        if (replyAlreadySubmit) return
-        replyAlreadySubmit = true
+    /**
+     * Structured error envelope shared by every operation's failure path.
+     *
+     * `code` is the numeric [TangemError.code], which uses the same numbering
+     * as iOS — the Dart layer classifies errors by this code instead of
+     * matching message strings. Serializing a plain map also avoids handing
+     * an [Exception] subtype to Moshi, which has no adapter for it.
+     */
+    private fun errorEnvelope(error: TangemError): Map<String, Any> = mapOf(
+        "code" to error.code,
+        "message" to error.toString(),
+    )
 
-        handler.post {
-            result.error("-1", converter.prettyPrint(ex, "  "), null)
-        }
+    private fun handleResult(methodResul: String, callback: Result) {
+        callback.success(methodResul)
+    }
+
+    private fun handleException(ex: Exception, result: Result) {
+        result.error("-1", converter.prettyPrint(ex, "  "), null)
     }
 
     @Throws(Exception::class)

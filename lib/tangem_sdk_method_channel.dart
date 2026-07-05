@@ -50,7 +50,7 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     final args = <String, dynamic>{};
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
-    if (accessCode != null) args['accessCode'] = accessCode;
+    // accessCode intentionally NOT sent — native ignores it; see signHash.
 
     return await methodChannel.invokeMethod("scanCard", args);
   }
@@ -70,8 +70,10 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     };
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
-    if (accessCode != null) args['accessCode'] = accessCode;
     if (derivationPath != null) args['derivationPath'] = derivationPath;
+    // accessCode is intentionally NOT sent: the native sign methods ignore it
+    // (the card prompts via UserCodeRequestPolicy). Transmitting it would only
+    // expose the secret to channel instrumentation with no functional effect.
 
     return await methodChannel.invokeMethod("signHash", args);
   }
@@ -91,8 +93,8 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     };
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
-    if (accessCode != null) args['accessCode'] = accessCode;
     if (derivationPath != null) args['derivationPath'] = derivationPath;
+    // accessCode intentionally NOT sent — see signHash above.
 
     return await methodChannel.invokeMethod("signHashes", args);
   }
@@ -107,7 +109,7 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     final args = <String, dynamic>{'curve': curve};
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
-    if (accessCode != null) args['accessCode'] = accessCode;
+    // accessCode intentionally NOT sent — native ignores it; see signHash.
 
     return await methodChannel.invokeMethod("createWallet", args);
   }
@@ -122,7 +124,7 @@ class MethodChannelTangemSdk extends TangemSdkPlatform {
     final args = <String, dynamic>{'walletPublicKey': walletPublicKey};
     if (cardId != null) args['cardId'] = cardId;
     if (initialMessage != null) args['initialMessage'] = initialMessage;
-    if (accessCode != null) args['accessCode'] = accessCode;
+    // accessCode intentionally NOT sent — native ignores it; see signHash.
 
     return await methodChannel.invokeMethod("purgeWallet", args);
   }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SignHashResult {
 
- SignSingleHashResult? get result; Object? get error; int? get id;
+ SignSingleHashResult? get result;@TangemErrorEnvelopeConverter() TangemError? get error; int? get id;
 /// Create a copy of SignHashResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,12 +28,12 @@ $SignHashResultCopyWith<SignHashResult> get copyWith => _$SignHashResultCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignHashResult&&(identical(other.result, result) || other.result == result)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignHashResult&&(identical(other.result, result) || other.result == result)&&(identical(other.error, error) || other.error == error)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,result,const DeepCollectionEquality().hash(error),id);
+int get hashCode => Object.hash(runtimeType,result,error,id);
 
 @override
 String toString() {
@@ -48,11 +48,11 @@ abstract mixin class $SignHashResultCopyWith<$Res>  {
   factory $SignHashResultCopyWith(SignHashResult value, $Res Function(SignHashResult) _then) = _$SignHashResultCopyWithImpl;
 @useResult
 $Res call({
- SignSingleHashResult? result, Object? error, int? id
+ SignSingleHashResult? result,@TangemErrorEnvelopeConverter() TangemError? error, int? id
 });
 
 
-$SignSingleHashResultCopyWith<$Res>? get result;
+$SignSingleHashResultCopyWith<$Res>? get result;$TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -68,7 +68,8 @@ class _$SignHashResultCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? result = freezed,Object? error = freezed,Object? id = freezed,}) {
   return _then(_self.copyWith(
 result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as SignSingleHashResult?,error: freezed == error ? _self.error : error ,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as SignSingleHashResult?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -83,6 +84,18 @@ $SignSingleHashResultCopyWith<$Res>? get result {
 
   return $SignSingleHashResultCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of SignHashResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }
@@ -163,7 +176,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SignSingleHashResult? result,  Object? error,  int? id)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SignSingleHashResult? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SignHashResult() when $default != null:
 return $default(_that.result,_that.error,_that.id);case _:
@@ -184,7 +197,7 @@ return $default(_that.result,_that.error,_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SignSingleHashResult? result,  Object? error,  int? id)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SignSingleHashResult? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)  $default,) {final _that = this;
 switch (_that) {
 case _SignHashResult():
 return $default(_that.result,_that.error,_that.id);}
@@ -201,7 +214,7 @@ return $default(_that.result,_that.error,_that.id);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SignSingleHashResult? result,  Object? error,  int? id)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SignSingleHashResult? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)?  $default,) {final _that = this;
 switch (_that) {
 case _SignHashResult() when $default != null:
 return $default(_that.result,_that.error,_that.id);case _:
@@ -216,11 +229,11 @@ return $default(_that.result,_that.error,_that.id);case _:
 @JsonSerializable()
 
 class _SignHashResult implements SignHashResult {
-  const _SignHashResult({this.result, this.error, this.id});
+  const _SignHashResult({this.result, @TangemErrorEnvelopeConverter() this.error, this.id});
   factory _SignHashResult.fromJson(Map<String, dynamic> json) => _$SignHashResultFromJson(json);
 
 @override final  SignSingleHashResult? result;
-@override final  Object? error;
+@override@TangemErrorEnvelopeConverter() final  TangemError? error;
 @override final  int? id;
 
 /// Create a copy of SignHashResult
@@ -236,12 +249,12 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignHashResult&&(identical(other.result, result) || other.result == result)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignHashResult&&(identical(other.result, result) || other.result == result)&&(identical(other.error, error) || other.error == error)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,result,const DeepCollectionEquality().hash(error),id);
+int get hashCode => Object.hash(runtimeType,result,error,id);
 
 @override
 String toString() {
@@ -256,11 +269,11 @@ abstract mixin class _$SignHashResultCopyWith<$Res> implements $SignHashResultCo
   factory _$SignHashResultCopyWith(_SignHashResult value, $Res Function(_SignHashResult) _then) = __$SignHashResultCopyWithImpl;
 @override @useResult
 $Res call({
- SignSingleHashResult? result, Object? error, int? id
+ SignSingleHashResult? result,@TangemErrorEnvelopeConverter() TangemError? error, int? id
 });
 
 
-@override $SignSingleHashResultCopyWith<$Res>? get result;
+@override $SignSingleHashResultCopyWith<$Res>? get result;@override $TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -276,7 +289,8 @@ class __$SignHashResultCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? result = freezed,Object? error = freezed,Object? id = freezed,}) {
   return _then(_SignHashResult(
 result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as SignSingleHashResult?,error: freezed == error ? _self.error : error ,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as SignSingleHashResult?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -292,6 +306,18 @@ $SignSingleHashResultCopyWith<$Res>? get result {
 
   return $SignSingleHashResultCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of SignHashResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }
@@ -597,7 +623,7 @@ $CardCopyWith<$Res>? get card {
 /// @nodoc
 mixin _$SignHashesResult {
 
- SignMultipleHashesResult? get result; Object? get error; int? get id;
+ SignMultipleHashesResult? get result;@TangemErrorEnvelopeConverter() TangemError? get error; int? get id;
 /// Create a copy of SignHashesResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -610,12 +636,12 @@ $SignHashesResultCopyWith<SignHashesResult> get copyWith => _$SignHashesResultCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignHashesResult&&(identical(other.result, result) || other.result == result)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignHashesResult&&(identical(other.result, result) || other.result == result)&&(identical(other.error, error) || other.error == error)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,result,const DeepCollectionEquality().hash(error),id);
+int get hashCode => Object.hash(runtimeType,result,error,id);
 
 @override
 String toString() {
@@ -630,11 +656,11 @@ abstract mixin class $SignHashesResultCopyWith<$Res>  {
   factory $SignHashesResultCopyWith(SignHashesResult value, $Res Function(SignHashesResult) _then) = _$SignHashesResultCopyWithImpl;
 @useResult
 $Res call({
- SignMultipleHashesResult? result, Object? error, int? id
+ SignMultipleHashesResult? result,@TangemErrorEnvelopeConverter() TangemError? error, int? id
 });
 
 
-$SignMultipleHashesResultCopyWith<$Res>? get result;
+$SignMultipleHashesResultCopyWith<$Res>? get result;$TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -650,7 +676,8 @@ class _$SignHashesResultCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? result = freezed,Object? error = freezed,Object? id = freezed,}) {
   return _then(_self.copyWith(
 result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as SignMultipleHashesResult?,error: freezed == error ? _self.error : error ,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as SignMultipleHashesResult?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -665,6 +692,18 @@ $SignMultipleHashesResultCopyWith<$Res>? get result {
 
   return $SignMultipleHashesResultCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of SignHashesResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }
@@ -745,7 +784,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SignMultipleHashesResult? result,  Object? error,  int? id)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SignMultipleHashesResult? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SignHashesResult() when $default != null:
 return $default(_that.result,_that.error,_that.id);case _:
@@ -766,7 +805,7 @@ return $default(_that.result,_that.error,_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SignMultipleHashesResult? result,  Object? error,  int? id)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SignMultipleHashesResult? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)  $default,) {final _that = this;
 switch (_that) {
 case _SignHashesResult():
 return $default(_that.result,_that.error,_that.id);}
@@ -783,7 +822,7 @@ return $default(_that.result,_that.error,_that.id);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SignMultipleHashesResult? result,  Object? error,  int? id)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SignMultipleHashesResult? result, @TangemErrorEnvelopeConverter()  TangemError? error,  int? id)?  $default,) {final _that = this;
 switch (_that) {
 case _SignHashesResult() when $default != null:
 return $default(_that.result,_that.error,_that.id);case _:
@@ -798,11 +837,11 @@ return $default(_that.result,_that.error,_that.id);case _:
 @JsonSerializable()
 
 class _SignHashesResult implements SignHashesResult {
-  const _SignHashesResult({this.result, this.error, this.id});
+  const _SignHashesResult({this.result, @TangemErrorEnvelopeConverter() this.error, this.id});
   factory _SignHashesResult.fromJson(Map<String, dynamic> json) => _$SignHashesResultFromJson(json);
 
 @override final  SignMultipleHashesResult? result;
-@override final  Object? error;
+@override@TangemErrorEnvelopeConverter() final  TangemError? error;
 @override final  int? id;
 
 /// Create a copy of SignHashesResult
@@ -818,12 +857,12 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignHashesResult&&(identical(other.result, result) || other.result == result)&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignHashesResult&&(identical(other.result, result) || other.result == result)&&(identical(other.error, error) || other.error == error)&&(identical(other.id, id) || other.id == id));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,result,const DeepCollectionEquality().hash(error),id);
+int get hashCode => Object.hash(runtimeType,result,error,id);
 
 @override
 String toString() {
@@ -838,11 +877,11 @@ abstract mixin class _$SignHashesResultCopyWith<$Res> implements $SignHashesResu
   factory _$SignHashesResultCopyWith(_SignHashesResult value, $Res Function(_SignHashesResult) _then) = __$SignHashesResultCopyWithImpl;
 @override @useResult
 $Res call({
- SignMultipleHashesResult? result, Object? error, int? id
+ SignMultipleHashesResult? result,@TangemErrorEnvelopeConverter() TangemError? error, int? id
 });
 
 
-@override $SignMultipleHashesResultCopyWith<$Res>? get result;
+@override $SignMultipleHashesResultCopyWith<$Res>? get result;@override $TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -858,7 +897,8 @@ class __$SignHashesResultCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? result = freezed,Object? error = freezed,Object? id = freezed,}) {
   return _then(_SignHashesResult(
 result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as SignMultipleHashesResult?,error: freezed == error ? _self.error : error ,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as SignMultipleHashesResult?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -874,6 +914,18 @@ $SignMultipleHashesResultCopyWith<$Res>? get result {
 
   return $SignMultipleHashesResultCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
+  });
+}/// Create a copy of SignHashesResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }

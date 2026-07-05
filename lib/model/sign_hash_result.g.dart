@@ -13,14 +13,14 @@ _SignHashResult _$SignHashResultFromJson(Map<String, dynamic> json) =>
           : SignSingleHashResult.fromJson(
               json['result'] as Map<String, dynamic>,
             ),
-      error: json['error'],
+      error: const TangemErrorEnvelopeConverter().fromJson(json['error']),
       id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SignHashResultToJson(_SignHashResult instance) =>
     <String, dynamic>{
       'result': instance.result,
-      'error': instance.error,
+      'error': const TangemErrorEnvelopeConverter().toJson(instance.error),
       'id': instance.id,
     };
 
@@ -48,14 +48,14 @@ _SignHashesResult _$SignHashesResultFromJson(Map<String, dynamic> json) =>
           : SignMultipleHashesResult.fromJson(
               json['result'] as Map<String, dynamic>,
             ),
-      error: json['error'],
+      error: const TangemErrorEnvelopeConverter().fromJson(json['error']),
       id: (json['id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SignHashesResultToJson(_SignHashesResult instance) =>
     <String, dynamic>{
       'result': instance.result,
-      'error': instance.error,
+      'error': const TangemErrorEnvelopeConverter().toJson(instance.error),
       'id': instance.id,
     };
 

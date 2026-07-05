@@ -278,7 +278,11 @@ class _CommandListWidgetState extends State<CommandListWidget> {
     try {
       final res = await _sdk.createWallet(curve: "Secp256k1", cardId: _cardId);
 
-      _walletPublicKey = res.wallet.publicKey;
+      if (res.error != null) {
+        _notify(res.error!.message);
+        return;
+      }
+      _walletPublicKey = res.wallet?.publicKey;
 
       _printResponse(res);
     } catch (e) {

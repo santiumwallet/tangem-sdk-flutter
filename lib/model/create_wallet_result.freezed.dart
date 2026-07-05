@@ -15,16 +15,12 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CreateWalletResult {
 
-/**
-     * The newly created wallet information
-     */
- CardWallet get wallet;/**
-     * Card ID where the wallet was created
-     */
- String get cardId;/**
-     * Status message from the operation
-     */
- String? get message;
+/// The newly created wallet information. Null when the operation failed —
+/// check [error].
+ CardWallet? get wallet;/// Card ID where the wallet was created. Null when the operation failed.
+ String? get cardId;/// Status message from the operation
+ String? get message;/// Native SDK error when the operation failed.
+@TangemErrorEnvelopeConverter() TangemError? get error;
 /// Create a copy of CreateWalletResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -37,16 +33,16 @@ $CreateWalletResultCopyWith<CreateWalletResult> get copyWith => _$CreateWalletRe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWalletResult&&(identical(other.wallet, wallet) || other.wallet == wallet)&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWalletResult&&(identical(other.wallet, wallet) || other.wallet == wallet)&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.message, message) || other.message == message)&&(identical(other.error, error) || other.error == error));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,wallet,cardId,message);
+int get hashCode => Object.hash(runtimeType,wallet,cardId,message,error);
 
 @override
 String toString() {
-  return 'CreateWalletResult(wallet: $wallet, cardId: $cardId, message: $message)';
+  return 'CreateWalletResult(wallet: $wallet, cardId: $cardId, message: $message, error: $error)';
 }
 
 
@@ -57,11 +53,11 @@ abstract mixin class $CreateWalletResultCopyWith<$Res>  {
   factory $CreateWalletResultCopyWith(CreateWalletResult value, $Res Function(CreateWalletResult) _then) = _$CreateWalletResultCopyWithImpl;
 @useResult
 $Res call({
- CardWallet wallet, String cardId, String? message
+ CardWallet? wallet, String? cardId, String? message,@TangemErrorEnvelopeConverter() TangemError? error
 });
 
 
-$CardWalletCopyWith<$Res> get wallet;
+$CardWalletCopyWith<$Res>? get wallet;$TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -74,22 +70,38 @@ class _$CreateWalletResultCopyWithImpl<$Res>
 
 /// Create a copy of CreateWalletResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? wallet = null,Object? cardId = null,Object? message = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? wallet = freezed,Object? cardId = freezed,Object? message = freezed,Object? error = freezed,}) {
   return _then(_self.copyWith(
-wallet: null == wallet ? _self.wallet : wallet // ignore: cast_nullable_to_non_nullable
-as CardWallet,cardId: null == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
-as String,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String?,
+wallet: freezed == wallet ? _self.wallet : wallet // ignore: cast_nullable_to_non_nullable
+as CardWallet?,cardId: freezed == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
+as String?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,
   ));
 }
 /// Create a copy of CreateWalletResult
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$CardWalletCopyWith<$Res> get wallet {
-  
-  return $CardWalletCopyWith<$Res>(_self.wallet, (value) {
+$CardWalletCopyWith<$Res>? get wallet {
+    if (_self.wallet == null) {
+    return null;
+  }
+
+  return $CardWalletCopyWith<$Res>(_self.wallet!, (value) {
     return _then(_self.copyWith(wallet: value));
+  });
+}/// Create a copy of CreateWalletResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }
@@ -170,10 +182,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CardWallet wallet,  String cardId,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CardWallet? wallet,  String? cardId,  String? message, @TangemErrorEnvelopeConverter()  TangemError? error)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateWalletResult() when $default != null:
-return $default(_that.wallet,_that.cardId,_that.message);case _:
+return $default(_that.wallet,_that.cardId,_that.message,_that.error);case _:
   return orElse();
 
 }
@@ -191,10 +203,10 @@ return $default(_that.wallet,_that.cardId,_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CardWallet wallet,  String cardId,  String? message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CardWallet? wallet,  String? cardId,  String? message, @TangemErrorEnvelopeConverter()  TangemError? error)  $default,) {final _that = this;
 switch (_that) {
 case _CreateWalletResult():
-return $default(_that.wallet,_that.cardId,_that.message);}
+return $default(_that.wallet,_that.cardId,_that.message,_that.error);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -208,10 +220,10 @@ return $default(_that.wallet,_that.cardId,_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CardWallet wallet,  String cardId,  String? message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CardWallet? wallet,  String? cardId,  String? message, @TangemErrorEnvelopeConverter()  TangemError? error)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateWalletResult() when $default != null:
-return $default(_that.wallet,_that.cardId,_that.message);case _:
+return $default(_that.wallet,_that.cardId,_that.message,_that.error);case _:
   return null;
 
 }
@@ -223,21 +235,18 @@ return $default(_that.wallet,_that.cardId,_that.message);case _:
 @JsonSerializable()
 
 class _CreateWalletResult implements CreateWalletResult {
-  const _CreateWalletResult({required this.wallet, required this.cardId, this.message});
+  const _CreateWalletResult({this.wallet, this.cardId, this.message, @TangemErrorEnvelopeConverter() this.error});
   factory _CreateWalletResult.fromJson(Map<String, dynamic> json) => _$CreateWalletResultFromJson(json);
 
-/**
-     * The newly created wallet information
-     */
-@override final  CardWallet wallet;
-/**
-     * Card ID where the wallet was created
-     */
-@override final  String cardId;
-/**
-     * Status message from the operation
-     */
+/// The newly created wallet information. Null when the operation failed —
+/// check [error].
+@override final  CardWallet? wallet;
+/// Card ID where the wallet was created. Null when the operation failed.
+@override final  String? cardId;
+/// Status message from the operation
 @override final  String? message;
+/// Native SDK error when the operation failed.
+@override@TangemErrorEnvelopeConverter() final  TangemError? error;
 
 /// Create a copy of CreateWalletResult
 /// with the given fields replaced by the non-null parameter values.
@@ -252,16 +261,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateWalletResult&&(identical(other.wallet, wallet) || other.wallet == wallet)&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateWalletResult&&(identical(other.wallet, wallet) || other.wallet == wallet)&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.message, message) || other.message == message)&&(identical(other.error, error) || other.error == error));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,wallet,cardId,message);
+int get hashCode => Object.hash(runtimeType,wallet,cardId,message,error);
 
 @override
 String toString() {
-  return 'CreateWalletResult(wallet: $wallet, cardId: $cardId, message: $message)';
+  return 'CreateWalletResult(wallet: $wallet, cardId: $cardId, message: $message, error: $error)';
 }
 
 
@@ -272,11 +281,11 @@ abstract mixin class _$CreateWalletResultCopyWith<$Res> implements $CreateWallet
   factory _$CreateWalletResultCopyWith(_CreateWalletResult value, $Res Function(_CreateWalletResult) _then) = __$CreateWalletResultCopyWithImpl;
 @override @useResult
 $Res call({
- CardWallet wallet, String cardId, String? message
+ CardWallet? wallet, String? cardId, String? message,@TangemErrorEnvelopeConverter() TangemError? error
 });
 
 
-@override $CardWalletCopyWith<$Res> get wallet;
+@override $CardWalletCopyWith<$Res>? get wallet;@override $TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -289,12 +298,13 @@ class __$CreateWalletResultCopyWithImpl<$Res>
 
 /// Create a copy of CreateWalletResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? wallet = null,Object? cardId = null,Object? message = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? wallet = freezed,Object? cardId = freezed,Object? message = freezed,Object? error = freezed,}) {
   return _then(_CreateWalletResult(
-wallet: null == wallet ? _self.wallet : wallet // ignore: cast_nullable_to_non_nullable
-as CardWallet,cardId: null == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
-as String,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String?,
+wallet: freezed == wallet ? _self.wallet : wallet // ignore: cast_nullable_to_non_nullable
+as CardWallet?,cardId: freezed == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
+as String?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,
   ));
 }
 
@@ -302,10 +312,25 @@ as String?,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$CardWalletCopyWith<$Res> get wallet {
-  
-  return $CardWalletCopyWith<$Res>(_self.wallet, (value) {
+$CardWalletCopyWith<$Res>? get wallet {
+    if (_self.wallet == null) {
+    return null;
+  }
+
+  return $CardWalletCopyWith<$Res>(_self.wallet!, (value) {
     return _then(_self.copyWith(wallet: value));
+  });
+}/// Create a copy of CreateWalletResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
+
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
   });
 }
 }

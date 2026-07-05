@@ -8,9 +8,12 @@ part of 'create_wallet_result.dart';
 
 _CreateWalletResult _$CreateWalletResultFromJson(Map<String, dynamic> json) =>
     _CreateWalletResult(
-      wallet: CardWallet.fromJson(json['wallet'] as Map<String, dynamic>),
-      cardId: json['cardId'] as String,
+      wallet: json['wallet'] == null
+          ? null
+          : CardWallet.fromJson(json['wallet'] as Map<String, dynamic>),
+      cardId: json['cardId'] as String?,
       message: json['message'] as String?,
+      error: const TangemErrorEnvelopeConverter().fromJson(json['error']),
     );
 
 Map<String, dynamic> _$CreateWalletResultToJson(_CreateWalletResult instance) =>
@@ -18,4 +21,5 @@ Map<String, dynamic> _$CreateWalletResultToJson(_CreateWalletResult instance) =>
       'wallet': instance.wallet,
       'cardId': instance.cardId,
       'message': instance.message,
+      'error': const TangemErrorEnvelopeConverter().toJson(instance.error),
     };

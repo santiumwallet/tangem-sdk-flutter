@@ -9,14 +9,14 @@ part of 'tangem_error.dart';
 _TangemError _$TangemErrorFromJson(Map<String, dynamic> json) => _TangemError(
   code: json['code'] as String,
   message: json['message'] as String,
+  nativeCode: (json['nativeCode'] as num?)?.toInt(),
   details: json['details'] as String?,
-  originalError: json['originalError'],
 );
 
 Map<String, dynamic> _$TangemErrorToJson(_TangemError instance) =>
     <String, dynamic>{
       'code': instance.code,
       'message': instance.message,
+      'nativeCode': instance.nativeCode,
       'details': instance.details,
-      'originalError': instance.originalError,
     };

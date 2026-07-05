@@ -15,19 +15,13 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PurgeWalletResult {
 
-/**
-     * Card ID where the wallet was purged
-     */
- String get cardId;/**
-     * Index of the purged wallet
-     */
- int get walletIndex;/**
-     * Status message from the operation
-     */
- String? get message;/**
-     * Whether the purge operation was successful
-     */
- bool get success;
+/// Card ID where the wallet was purged. Null when the operation failed —
+/// check [error].
+ String? get cardId;/// Hex public key of the purged wallet, as echoed by the native side.
+ String? get walletPublicKey;/// Status message from the operation
+ String? get message;/// Whether the purge operation was successful
+ bool get success;/// Native SDK error when the operation failed.
+@TangemErrorEnvelopeConverter() TangemError? get error;
 /// Create a copy of PurgeWalletResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -40,16 +34,16 @@ $PurgeWalletResultCopyWith<PurgeWalletResult> get copyWith => _$PurgeWalletResul
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PurgeWalletResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.walletIndex, walletIndex) || other.walletIndex == walletIndex)&&(identical(other.message, message) || other.message == message)&&(identical(other.success, success) || other.success == success));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PurgeWalletResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.walletPublicKey, walletPublicKey) || other.walletPublicKey == walletPublicKey)&&(identical(other.message, message) || other.message == message)&&(identical(other.success, success) || other.success == success)&&(identical(other.error, error) || other.error == error));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cardId,walletIndex,message,success);
+int get hashCode => Object.hash(runtimeType,cardId,walletPublicKey,message,success,error);
 
 @override
 String toString() {
-  return 'PurgeWalletResult(cardId: $cardId, walletIndex: $walletIndex, message: $message, success: $success)';
+  return 'PurgeWalletResult(cardId: $cardId, walletPublicKey: $walletPublicKey, message: $message, success: $success, error: $error)';
 }
 
 
@@ -60,11 +54,11 @@ abstract mixin class $PurgeWalletResultCopyWith<$Res>  {
   factory $PurgeWalletResultCopyWith(PurgeWalletResult value, $Res Function(PurgeWalletResult) _then) = _$PurgeWalletResultCopyWithImpl;
 @useResult
 $Res call({
- String cardId, int walletIndex, String? message, bool success
+ String? cardId, String? walletPublicKey, String? message, bool success,@TangemErrorEnvelopeConverter() TangemError? error
 });
 
 
-
+$TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -77,16 +71,29 @@ class _$PurgeWalletResultCopyWithImpl<$Res>
 
 /// Create a copy of PurgeWalletResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? cardId = null,Object? walletIndex = null,Object? message = freezed,Object? success = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? cardId = freezed,Object? walletPublicKey = freezed,Object? message = freezed,Object? success = null,Object? error = freezed,}) {
   return _then(_self.copyWith(
-cardId: null == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
-as String,walletIndex: null == walletIndex ? _self.walletIndex : walletIndex // ignore: cast_nullable_to_non_nullable
-as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+cardId: freezed == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
+as String?,walletPublicKey: freezed == walletPublicKey ? _self.walletPublicKey : walletPublicKey // ignore: cast_nullable_to_non_nullable
+as String?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,
   ));
 }
+/// Create a copy of PurgeWalletResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
 
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
+  });
+}
 }
 
 
@@ -165,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String cardId,  int walletIndex,  String? message,  bool success)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? cardId,  String? walletPublicKey,  String? message,  bool success, @TangemErrorEnvelopeConverter()  TangemError? error)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PurgeWalletResult() when $default != null:
-return $default(_that.cardId,_that.walletIndex,_that.message,_that.success);case _:
+return $default(_that.cardId,_that.walletPublicKey,_that.message,_that.success,_that.error);case _:
   return orElse();
 
 }
@@ -186,10 +193,10 @@ return $default(_that.cardId,_that.walletIndex,_that.message,_that.success);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String cardId,  int walletIndex,  String? message,  bool success)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? cardId,  String? walletPublicKey,  String? message,  bool success, @TangemErrorEnvelopeConverter()  TangemError? error)  $default,) {final _that = this;
 switch (_that) {
 case _PurgeWalletResult():
-return $default(_that.cardId,_that.walletIndex,_that.message,_that.success);}
+return $default(_that.cardId,_that.walletPublicKey,_that.message,_that.success,_that.error);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -203,10 +210,10 @@ return $default(_that.cardId,_that.walletIndex,_that.message,_that.success);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String cardId,  int walletIndex,  String? message,  bool success)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? cardId,  String? walletPublicKey,  String? message,  bool success, @TangemErrorEnvelopeConverter()  TangemError? error)?  $default,) {final _that = this;
 switch (_that) {
 case _PurgeWalletResult() when $default != null:
-return $default(_that.cardId,_that.walletIndex,_that.message,_that.success);case _:
+return $default(_that.cardId,_that.walletPublicKey,_that.message,_that.success,_that.error);case _:
   return null;
 
 }
@@ -218,25 +225,20 @@ return $default(_that.cardId,_that.walletIndex,_that.message,_that.success);case
 @JsonSerializable()
 
 class _PurgeWalletResult implements PurgeWalletResult {
-  const _PurgeWalletResult({required this.cardId, required this.walletIndex, this.message, this.success = true});
+  const _PurgeWalletResult({this.cardId, this.walletPublicKey, this.message, this.success = false, @TangemErrorEnvelopeConverter() this.error});
   factory _PurgeWalletResult.fromJson(Map<String, dynamic> json) => _$PurgeWalletResultFromJson(json);
 
-/**
-     * Card ID where the wallet was purged
-     */
-@override final  String cardId;
-/**
-     * Index of the purged wallet
-     */
-@override final  int walletIndex;
-/**
-     * Status message from the operation
-     */
+/// Card ID where the wallet was purged. Null when the operation failed —
+/// check [error].
+@override final  String? cardId;
+/// Hex public key of the purged wallet, as echoed by the native side.
+@override final  String? walletPublicKey;
+/// Status message from the operation
 @override final  String? message;
-/**
-     * Whether the purge operation was successful
-     */
+/// Whether the purge operation was successful
 @override@JsonKey() final  bool success;
+/// Native SDK error when the operation failed.
+@override@TangemErrorEnvelopeConverter() final  TangemError? error;
 
 /// Create a copy of PurgeWalletResult
 /// with the given fields replaced by the non-null parameter values.
@@ -251,16 +253,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PurgeWalletResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.walletIndex, walletIndex) || other.walletIndex == walletIndex)&&(identical(other.message, message) || other.message == message)&&(identical(other.success, success) || other.success == success));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PurgeWalletResult&&(identical(other.cardId, cardId) || other.cardId == cardId)&&(identical(other.walletPublicKey, walletPublicKey) || other.walletPublicKey == walletPublicKey)&&(identical(other.message, message) || other.message == message)&&(identical(other.success, success) || other.success == success)&&(identical(other.error, error) || other.error == error));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,cardId,walletIndex,message,success);
+int get hashCode => Object.hash(runtimeType,cardId,walletPublicKey,message,success,error);
 
 @override
 String toString() {
-  return 'PurgeWalletResult(cardId: $cardId, walletIndex: $walletIndex, message: $message, success: $success)';
+  return 'PurgeWalletResult(cardId: $cardId, walletPublicKey: $walletPublicKey, message: $message, success: $success, error: $error)';
 }
 
 
@@ -271,11 +273,11 @@ abstract mixin class _$PurgeWalletResultCopyWith<$Res> implements $PurgeWalletRe
   factory _$PurgeWalletResultCopyWith(_PurgeWalletResult value, $Res Function(_PurgeWalletResult) _then) = __$PurgeWalletResultCopyWithImpl;
 @override @useResult
 $Res call({
- String cardId, int walletIndex, String? message, bool success
+ String? cardId, String? walletPublicKey, String? message, bool success,@TangemErrorEnvelopeConverter() TangemError? error
 });
 
 
-
+@override $TangemErrorCopyWith<$Res>? get error;
 
 }
 /// @nodoc
@@ -288,17 +290,30 @@ class __$PurgeWalletResultCopyWithImpl<$Res>
 
 /// Create a copy of PurgeWalletResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? cardId = null,Object? walletIndex = null,Object? message = freezed,Object? success = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? cardId = freezed,Object? walletPublicKey = freezed,Object? message = freezed,Object? success = null,Object? error = freezed,}) {
   return _then(_PurgeWalletResult(
-cardId: null == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
-as String,walletIndex: null == walletIndex ? _self.walletIndex : walletIndex // ignore: cast_nullable_to_non_nullable
-as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+cardId: freezed == cardId ? _self.cardId : cardId // ignore: cast_nullable_to_non_nullable
+as String?,walletPublicKey: freezed == walletPublicKey ? _self.walletPublicKey : walletPublicKey // ignore: cast_nullable_to_non_nullable
+as String?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
+as TangemError?,
   ));
 }
 
+/// Create a copy of PurgeWalletResult
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$TangemErrorCopyWith<$Res>? get error {
+    if (_self.error == null) {
+    return null;
+  }
 
+  return $TangemErrorCopyWith<$Res>(_self.error!, (value) {
+    return _then(_self.copyWith(error: value));
+  });
+}
 }
 
 // dart format on

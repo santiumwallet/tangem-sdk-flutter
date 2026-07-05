@@ -8,16 +8,18 @@ part of 'purge_wallet_result.dart';
 
 _PurgeWalletResult _$PurgeWalletResultFromJson(Map<String, dynamic> json) =>
     _PurgeWalletResult(
-      cardId: json['cardId'] as String,
-      walletIndex: (json['walletIndex'] as num).toInt(),
+      cardId: json['cardId'] as String?,
+      walletPublicKey: json['walletPublicKey'] as String?,
       message: json['message'] as String?,
-      success: json['success'] as bool? ?? true,
+      success: json['success'] as bool? ?? false,
+      error: const TangemErrorEnvelopeConverter().fromJson(json['error']),
     );
 
 Map<String, dynamic> _$PurgeWalletResultToJson(_PurgeWalletResult instance) =>
     <String, dynamic>{
       'cardId': instance.cardId,
-      'walletIndex': instance.walletIndex,
+      'walletPublicKey': instance.walletPublicKey,
       'message': instance.message,
       'success': instance.success,
+      'error': const TangemErrorEnvelopeConverter().toJson(instance.error),
     };

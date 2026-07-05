@@ -30,7 +30,7 @@ enum Status {
   Warning(1),
   @JsonValue("skipped")
   Skipped(2),
-  @JsonValue('verifiedOnline')
+  @JsonValue('verifiedOffline')
   VerifiedOffline(3),
   @JsonValue('verified')
   Verified(4);
